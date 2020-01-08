@@ -9,9 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.teleop.DifferentialDrive;
-import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.commands.teleop.DiffDrive;
+import frc.robot.subsystems.DriveTrain;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -23,7 +23,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveTrain m_DriveTrain = new DriveTrain();
 
-  private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_DriveTrain);
+  private final DiffDrive m_diffDrive = new DiffDrive(m_DriveTrain);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.

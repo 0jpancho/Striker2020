@@ -13,6 +13,7 @@ import java.util.Set;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -25,6 +26,8 @@ public class DiffDrive implements Command {
 
   private final DifferentialDriveKinematics m_Kinematics = 
     new DifferentialDriveKinematics(0.51);
+
+  private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_DriveTrain.getHeading());
 
   private final DifferentialDrive drive = 
     new DifferentialDrive(m_DriveTrain.leftMaster, m_DriveTrain.rightMaster);

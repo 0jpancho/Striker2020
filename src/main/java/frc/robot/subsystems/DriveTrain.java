@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
@@ -70,5 +71,13 @@ public class DriveTrain implements Subsystem {
 
   public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
     
+  }
+
+  public Rotation2d getHeading() {
+    return navx.getYaw();
+  }
+
+  public void resetYaw(){
+    navx.reset();
   }
 }
