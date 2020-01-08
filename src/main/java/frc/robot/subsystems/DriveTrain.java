@@ -7,28 +7,29 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
 public class DriveTrain implements Subsystem {
   
-  private final WPI_TalonSRX leftMaster = 
+  public final WPI_TalonSRX leftMaster = 
     new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  private final WPI_TalonSRX leftFollower = 
+  public final WPI_TalonSRX leftFollower = 
     new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
       
-  private final WPI_TalonSRX rightMaster = 
+  public final WPI_TalonSRX rightMaster = 
     new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
-  private final WPI_TalonSRX rightFollower =
+  public final WPI_TalonSRX rightFollower =
     new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
   private final AHRS navx = new AHRS(Port.kMXP);
@@ -39,12 +40,12 @@ public class DriveTrain implements Subsystem {
     leftMaster.setInverted(false);
     leftMaster.setSensorPhase(true);
 
-    leftFollower.setInverted(false);
+    leftFollower.setInverted(InvertType.FollowMaster);
 
     rightMaster.setInverted(true);
     leftMaster.setSensorPhase(true);
 
-    rightFollower.setInverted(true);
+    rightFollower.setInverted(InvertType.FollowMaster);
 
     //Set neutral mode
     leftMaster.setNeutralMode(NeutralMode.Brake);
@@ -67,7 +68,7 @@ public class DriveTrain implements Subsystem {
 
   }
 
-  public void setPIDConfigIDx(int config){
-
+  public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
+    
   }
 }

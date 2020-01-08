@@ -11,6 +11,7 @@ import frc.robot.subsystems.DriveTrain;
 
 import java.util.Set;
 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -18,22 +19,20 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 /**
  * An example command that uses an example subsystem.
  */
-public class DifferentialDrive implements Command {
+public class DiffDrive implements Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final DriveTrain m_DriveTrain;
+  private DriveTrain m_DriveTrain = new DriveTrain();
 
   private final DifferentialDriveKinematics m_Kinematics = 
     new DifferentialDriveKinematics(0.51);
 
-
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public DifferentialDrive(DriveTrain subsystem) {
+  private final DifferentialDrive drive = 
+    new DifferentialDrive(m_DriveTrain.leftMaster, m_DriveTrain.rightMaster);
+  
+  public DiffDrive(DriveTrain subsystem) {
     m_DriveTrain = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
+
 
   }
 
