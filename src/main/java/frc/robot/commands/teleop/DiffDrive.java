@@ -11,6 +11,7 @@ import frc.robot.subsystems.DriveTrain;
 
 import java.util.Set;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -32,16 +33,18 @@ public class DiffDrive implements Command {
   private final DifferentialDrive drive = 
     new DifferentialDrive(m_DriveTrain.leftMaster, m_DriveTrain.rightMaster);
   
+  
   public DiffDrive(DriveTrain subsystem) {
     m_DriveTrain = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-
 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -64,5 +67,9 @@ public class DiffDrive implements Command {
   public Set<Subsystem> getRequirements() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  public void updateOdemetry(){
+    //m_odometry.update(m_DriveTrain.getHeading(),, rightDistanceMeters)
   }
 }

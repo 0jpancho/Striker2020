@@ -74,10 +74,32 @@ public class DriveTrain implements Subsystem {
   }
 
   public Rotation2d getHeading() {
-    return navx.getYaw();
+    
+    float angle = navx.getYaw();
+
+    while(angle >= 360) {
+      angle -= 360;
+    }
+    while(angle < 0) {
+      angle += 360;
+    }
+    return Rotation2d.fromDegrees((double)angle);
   }
 
   public void resetYaw(){
     navx.reset();
+  }
+
+  public void getLeftEnc(){
+    leftMaster.getSensorCollection().getQuadraturePosition();
+  }
+
+  public void getRightEnc(){
+    rightMaster.getSensorCollection().getQuadraturePosition();
+  }
+
+  public void resetEncoders(){
+    leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
+    rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
   }
 }
