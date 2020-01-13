@@ -21,7 +21,9 @@ import frc.robot.Constants;
 
 public class DriveTrain implements Subsystem {
   
-  public final WPI_TalonSRX leftMaster = 
+  public static final double getLeftEnc = 0;
+
+public final WPI_TalonSRX leftMaster = 
     new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
   public final WPI_TalonSRX leftFollower = 
@@ -86,16 +88,16 @@ public class DriveTrain implements Subsystem {
     return Rotation2d.fromDegrees((double)angle);
   }
 
-  public void resetYaw(){
+  public void resetHeading(){
     navx.reset();
   }
 
-  public void getLeftEnc(){
-    leftMaster.getSensorCollection().getQuadraturePosition();
+  public int getLeftEnc(){
+    return leftMaster.getSensorCollection().getQuadraturePosition();
   }
 
-  public void getRightEnc(){
-    rightMaster.getSensorCollection().getQuadraturePosition();
+  public int getRightEnc(){
+    return rightMaster.getSensorCollection().getQuadraturePosition();
   }
 
   public void resetEncoders(){

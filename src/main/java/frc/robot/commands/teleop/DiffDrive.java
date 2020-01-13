@@ -70,6 +70,6 @@ public class DiffDrive implements Command {
   }
 
   public void updateOdemetry(){
-    //m_odometry.update(m_DriveTrain.getHeading(),, rightDistanceMeters)
+    m_odometry.update(m_DriveTrain.getHeading(), m_DriveTrain.getLeftEnc(), m_DriveTrain.getRightEnc());
   }
 }
