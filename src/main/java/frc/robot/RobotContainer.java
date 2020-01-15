@@ -8,9 +8,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.teleop.DiffDrive;
+import frc.robot.commands.teleop.SimpleArcade;
 import frc.robot.subsystems.DriveTrain;
 
 /**
@@ -19,11 +21,13 @@ import frc.robot.subsystems.DriveTrain;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
+
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final DriveTrain m_DriveTrain = new DriveTrain();
 
-  private final DiffDrive m_diffDrive = new DiffDrive(m_DriveTrain);
+  private Joystick driver = new Joystick(0);
+
+  private final DriveTrain m_DriveTrain = new DriveTrain();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -31,6 +35,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    m_DriveTrain.setDefaultCommand(
+      new SimpleArcade(m_DriveTrain, driver.getY(), driver.getX()));  
   }
 
   /**
@@ -50,6 +57,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_diffDrive;
+    return null;
   }
 }

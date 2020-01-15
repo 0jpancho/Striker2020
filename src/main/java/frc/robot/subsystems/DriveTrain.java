@@ -16,14 +16,14 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class DriveTrain implements Subsystem {
-  
-  public static final double getLeftEnc = 0;
+public class DriveTrain extends SubsystemBase {
 
-public final WPI_TalonSRX leftMaster = 
+  public final WPI_TalonSRX leftMaster = 
     new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
   public final WPI_TalonSRX leftFollower = 
@@ -68,17 +68,26 @@ public final WPI_TalonSRX leftMaster =
 
   @Override
   public void periodic() {
-
+      SmartDashboard.putNumber("Left Enc Value", getLeftEnc());
+      SmartDashboard.putNumber("Right Enc Value", getRightEnc());
+      
+      SmartDashboard.putNumber("Heading", navx.getYaw());
+      SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
+      SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
+      
+      SmartDashboard.updateValues();
   }
 
-  public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
-    
+  public void ArcadeDrive(double forward, double rotation){
+      leftMaster.set(ControlMode.PercentOutput, forward + rotation);
+      rightMaster.set(ControlMode.PercentOutput, forward - rotation);
   }
 
   public Rotation2d getHeading() {
     
     float angle = navx.getYaw();
 
+    //Normalize from -180 to +180 degrees
     while(angle >= 360) {
       angle -= 360;
     }
@@ -103,5 +112,9 @@ public final WPI_TalonSRX leftMaster =
   public void resetEncoders(){
     leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
     rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
+  }
+
+  public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
+    
   }
 }
