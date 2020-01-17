@@ -28,7 +28,7 @@ public class DiffDrive implements Command {
   private final DifferentialDriveKinematics m_Kinematics = 
     new DifferentialDriveKinematics(0.51);
 
-  private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_DriveTrain.getHeading());
+  //private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_DriveTrain.getHeading());
 
   private final DifferentialDrive drive = 
     new DifferentialDrive(m_DriveTrain.leftMaster, m_DriveTrain.rightMaster);
@@ -70,6 +70,6 @@ public class DiffDrive implements Command {
   }
 
   public void updateOdemetry(){
-    m_odometry.update(m_DriveTrain.getHeading(), m_DriveTrain.getLeftEnc(), m_DriveTrain.getRightEnc());
+    //m_odometry.update(m_DriveTrain.getHeading(), m_DriveTrain.getLeftEnc(), m_DriveTrain.getRightEnc());
   }
 }

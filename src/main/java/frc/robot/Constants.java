@@ -29,9 +29,10 @@ public final class Constants {
         public static final double kWheelDiameter = 4;
         public static final double kCountsPerInch = (kWheelDiameter * Math.PI) / kEncoderResolution;
 
-        public static final int kLeftMasterID = 0;
-        public static final int kRightMasterID = 1;
-        public static final int kLeftFollowerID = 2;
-        public static final int kRightFollowerID = 3;
+        public static final int kLeftMasterID = 10;
+        public static final int kLeftFollowerID = 11;
+
+        public static final int kRightMasterID = 12;
+        public static final int kRightFollowerID = 13;
     }
 }

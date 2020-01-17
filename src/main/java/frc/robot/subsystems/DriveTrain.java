@@ -16,7 +16,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -35,9 +34,15 @@ public class DriveTrain extends SubsystemBase {
   public final WPI_TalonSRX rightFollower =
     new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
-  private final AHRS navx = new AHRS(Port.kMXP);
+  //private final AHRS navx = new AHRS(Port.kMXP);
   
   public DriveTrain() {
+
+    leftMaster.configFactoryDefault();
+    leftFollower.configFactoryDefault();
+
+    rightMaster.configFactoryDefault();
+    rightFollower.configFactoryDefault();
 
     //Configure motor inversions/sensor phase
     leftMaster.setInverted(false);
@@ -71,9 +76,9 @@ public class DriveTrain extends SubsystemBase {
       SmartDashboard.putNumber("Left Enc Value", getLeftEnc());
       SmartDashboard.putNumber("Right Enc Value", getRightEnc());
       
-      SmartDashboard.putNumber("Heading", navx.getYaw());
-      SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
-      SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
+      //SmartDashboard.putNumber("Heading", navx.getYaw());
+      //SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
+      //SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
       
       SmartDashboard.updateValues();
   }
@@ -82,7 +87,7 @@ public class DriveTrain extends SubsystemBase {
       leftMaster.set(ControlMode.PercentOutput, forward + rotation);
       rightMaster.set(ControlMode.PercentOutput, forward - rotation);
   }
-
+  /*
   public Rotation2d getHeading() {
     
     float angle = navx.getYaw();
@@ -96,11 +101,11 @@ public class DriveTrain extends SubsystemBase {
     }
     return Rotation2d.fromDegrees((double)angle);
   }
-
+  
   public void resetHeading(){
     navx.reset();
   }
-
+  */
   public int getLeftEnc(){
     return leftMaster.getSensorCollection().getQuadraturePosition();
   }
