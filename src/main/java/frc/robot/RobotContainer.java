@@ -29,7 +29,6 @@ public class RobotContainer {
   private Joystick driver = new Joystick(0);
 
   private final DriveTrain m_DriveTrain = new DriveTrain();
-  private final SimpleArcade test;
 
 
   /**
@@ -39,9 +38,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    //m_DriveTrain.setDefaultCommand(new SimpleArcade(m_DriveTrain, driver.getY(), driver.getX()));
-    test = new SimpleArcade(m_DriveTrain, 0, 0);
-    System.out.println(m_DriveTrain);
+    m_DriveTrain.setDefaultCommand(new SimpleArcade(m_DriveTrain, driver.getY(), driver.getX()));
+
   
   }
 
