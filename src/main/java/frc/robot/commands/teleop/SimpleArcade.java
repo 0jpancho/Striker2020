@@ -1,6 +1,8 @@
 package frc.robot.commands.teleop;
 
 import java.util.Set;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DriveTrain;
@@ -8,10 +10,10 @@ import frc.robot.subsystems.DriveTrain;
 public class SimpleArcade extends CommandBase {
 
     private final DriveTrain m_driveTrain;
-    private final double m_forward;
-    private final double m_rotation;
+    private final DoubleSupplier m_forward;
+    private final DoubleSupplier m_rotation;
 
-    public SimpleArcade(DriveTrain driveTrain, double forward, double rotation){
+    public SimpleArcade(DriveTrain driveTrain, DoubleSupplier forward, DoubleSupplier rotation){
         m_driveTrain = driveTrain;
         m_forward = forward;
         m_rotation = rotation;
@@ -41,12 +43,8 @@ public class SimpleArcade extends CommandBase {
         return false;
     }
 
-    @Override
     public Set<Subsystem> getRequirements() {
         // TODO Auto-generated method stub
         return null;
     }
-
-    
-
 }

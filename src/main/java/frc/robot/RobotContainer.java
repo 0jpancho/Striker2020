@@ -38,7 +38,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    m_DriveTrain.setDefaultCommand(new SimpleArcade(m_DriveTrain, driver.getY(), driver.getX()));
+    m_DriveTrain.setDefaultCommand(
+      new SimpleArcade(m_DriveTrain, driver::getY, driver::getX));
 
   
   }

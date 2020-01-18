@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -83,9 +85,9 @@ public class DriveTrain extends SubsystemBase {
       SmartDashboard.updateValues();
   }
 
-  public void ArcadeDrive(double forward, double rotation){
-      leftMaster.set(ControlMode.PercentOutput, forward + rotation);
-      rightMaster.set(ControlMode.PercentOutput, forward - rotation);
+  public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
+      leftMaster.set(ControlMode.PercentOutput, forward.getAsDouble() + rotation.getAsDouble());
+      rightMaster.set(ControlMode.PercentOutput, forward.getAsDouble() - rotation.getAsDouble());
   }
   /*
   public Rotation2d getHeading() {
