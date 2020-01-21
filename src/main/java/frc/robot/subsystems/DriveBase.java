@@ -76,9 +76,9 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putNumber("Left Enc Value", getLeftEncVelo());
       SmartDashboard.putNumber("Right Enc Value", getRightEncVelo());
       
-      //SmartDashboard.putNumber("Heading", navx.getYaw());
-      //SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
-      //SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
+      SmartDashboard.putNumber("Heading", navx.getYaw());
+      SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
+      SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
       
       SmartDashboard.updateValues();
   }
