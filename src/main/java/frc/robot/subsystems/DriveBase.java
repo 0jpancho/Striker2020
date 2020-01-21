@@ -22,23 +22,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class DriveTrain extends SubsystemBase {
+public class DriveBase extends SubsystemBase {
 
-  public final WPI_TalonSRX leftMaster = 
-    new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
+  public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  public final WPI_TalonSRX leftFollower = 
-    new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
-      
-  public final WPI_TalonSRX rightMaster = 
-    new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
+  public final WPI_TalonSRX leftFollower = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
-  public final WPI_TalonSRX rightFollower =
-    new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+  public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
-  //private final AHRS navx = new AHRS(Port.kMXP);
-  
-  public DriveTrain() {
+  public final WPI_TalonSRX rightFollower = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+
+  private final AHRS navx = new AHRS(Port.kMXP);
+
+  public DriveBase() {
 
     leftMaster.configFactoryDefault();
     leftFollower.configFactoryDefault();
@@ -71,12 +67,14 @@ public class DriveTrain extends SubsystemBase {
     //Config encoders
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+
+    navx.enableLogging(false);
   }
 
   @Override
   public void periodic() {
-      SmartDashboard.putNumber("Left Enc Value", getLeftEnc());
-      SmartDashboard.putNumber("Right Enc Value", getRightEnc());
+      SmartDashboard.putNumber("Left Enc Value", getLeftEncVelo());
+      SmartDashboard.putNumber("Right Enc Value", getRightEncVelo());
       
       //SmartDashboard.putNumber("Heading", navx.getYaw());
       //SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
@@ -89,7 +87,7 @@ public class DriveTrain extends SubsystemBase {
       leftMaster.set(ControlMode.PercentOutput, forward.getAsDouble() + rotation.getAsDouble());
       rightMaster.set(ControlMode.PercentOutput, forward.getAsDouble() - rotation.getAsDouble());
   }
-  /*
+  
   public Rotation2d getHeading() {
     
     float angle = navx.getYaw();
@@ -107,13 +105,13 @@ public class DriveTrain extends SubsystemBase {
   public void resetHeading(){
     navx.reset();
   }
-  */
-  public int getLeftEnc(){
-    return leftMaster.getSensorCollection().getQuadraturePosition();
+  
+  public int getLeftEncVelo(){
+    return leftMaster.getSensorCollection().getQuadratureVelocity();
   }
 
-  public int getRightEnc(){
-    return rightMaster.getSensorCollection().getQuadraturePosition();
+  public int getRightEncVelo(){
+    return rightMaster.getSensorCollection().getQuadratureVelocity();
   }
 
   public void resetEncoders(){

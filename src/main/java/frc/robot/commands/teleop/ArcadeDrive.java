@@ -5,15 +5,15 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.DriveBase;
 
-public class SimpleArcade extends CommandBase {
+public class ArcadeDrive extends CommandBase {
 
-    private final DriveTrain m_driveTrain;
+    private final DriveBase m_driveTrain;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
 
-    public SimpleArcade(DriveTrain driveTrain, DoubleSupplier forward, DoubleSupplier rotation){
+    public ArcadeDrive(DriveBase driveTrain, DoubleSupplier forward, DoubleSupplier rotation){
         m_driveTrain = driveTrain;
         m_forward = forward;
         m_rotation = rotation;
@@ -44,7 +44,6 @@ public class SimpleArcade extends CommandBase {
     }
 
     public Set<Subsystem> getRequirements() {
-        // TODO Auto-generated method stub
         return null;
     }
 }

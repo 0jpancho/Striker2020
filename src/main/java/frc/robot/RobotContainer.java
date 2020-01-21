@@ -11,10 +11,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.teleop.DiffDrive;
-import frc.robot.commands.teleop.SimpleArcade;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.commands.teleop.ArcadeDrive;
+import frc.robot.subsystems.DriveBase;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -28,7 +26,7 @@ public class RobotContainer {
 
   private Joystick driver = new Joystick(0);
 
-  private final DriveTrain m_DriveTrain = new DriveTrain();
+  private final DriveBase m_DriveBase = new DriveBase();
 
 
   /**
@@ -38,10 +36,17 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
-    m_DriveTrain.setDefaultCommand(
-      new SimpleArcade(m_DriveTrain, driver::getY, driver::getX));
+    m_DriveBase.setDefaultCommand(
+      new ArcadeDrive(m_DriveBase, driver::getY, driver::getX));
 
-  
+    /*
+    double forward = driver.getY() * Constants.DriveConstants.kMaxSpeed;
+    double rot = driver.getX() * Constants.DriveConstants.kMaxAngularSpeed;
+
+    m_DriveBase.setDefaultCommand(
+      new DiffDrive(m_DriveBase, forward, rot)
+    );
+    */
   }
 
   /**

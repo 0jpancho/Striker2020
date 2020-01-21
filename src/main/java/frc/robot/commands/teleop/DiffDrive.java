@@ -7,14 +7,18 @@
 
 package frc.robot.commands.teleop;
 
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.Constants;
+import frc.robot.subsystems.DriveBase;
 
 import java.util.Set;
 
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -23,26 +27,33 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 public class DiffDrive implements Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private DriveTrain m_DriveTrain = new DriveTrain();
-
-  private final DifferentialDriveKinematics m_Kinematics = 
-    new DifferentialDriveKinematics(0.51);
-
-  //private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(m_DriveTrain.getHeading());
-
-  private final DifferentialDrive drive = 
-    new DifferentialDrive(m_DriveTrain.leftMaster, m_DriveTrain.rightMaster);
   
-  
-  public DiffDrive(DriveTrain subsystem) {
-    m_DriveTrain = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
+  private DriveBase m_DriveBase = new DriveBase();
 
+  private final DifferentialDriveKinematics m_kinematics = 
+    new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
+
+  private final DifferentialDriveOdometry m_odometry = 
+    new DifferentialDriveOdometry(m_DriveBase.getHeading());
+
+  
+  private final PIDController m_LPID = new PIDController(0.1, 0, 0);
+  private final PIDController m_RPID = new PIDController(0.1, 0, 0);
+  
+  double forward = 0;
+  double rot = 0;
+  
+  public DiffDrive(DriveBase subsystem, double forward, double rot) {
+    m_DriveBase = subsystem;
+    this.forward = forward;
+    this.rot = rot;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_DriveBase.resetEncoders();
+    m_DriveBase.resetHeading();
 
 
   }
@@ -50,6 +61,29 @@ public class DiffDrive implements Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    updateOdometry();
+
+    drive(forward, rot);
+  }
+
+  public void setSpeeds(DifferentialDriveWheelSpeeds speeds){
+    double leftOutput = m_LPID.calculate(m_DriveBase.getLeftEncVelo(), 
+      speeds.leftMetersPerSecond);
+    double rightOutput = m_RPID.calculate(m_DriveBase.getRightEncVelo(),
+      speeds.rightMetersPerSecond);
+
+    m_DriveBase.leftMaster.set(ControlMode.PercentOutput, leftOutput);
+    m_DriveBase.rightMaster.set(ControlMode.PercentOutput, rightOutput);
+  }
+
+  public void drive(double forward, double rot){
+    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
+    setSpeeds(wheelSpeeds);
+
+  }
+
+  public void updateOdometry(){
+    m_odometry.update(m_DriveBase.getHeading(), m_DriveBase.getLeftEncVelo(), m_DriveBase.getRightEncVelo());
   }
 
   // Called once the command ends or is interrupted.
@@ -65,11 +99,6 @@ public class DiffDrive implements Command {
 
   @Override
   public Set<Subsystem> getRequirements() {
-    // TODO Auto-generated method stub
     return null;
-  }
-
-  public void updateOdemetry(){
-    //m_odometry.update(m_DriveTrain.getHeading(), m_DriveTrain.getLeftEnc(), m_DriveTrain.getRightEnc());
   }
 }

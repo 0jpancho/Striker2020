@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -19,14 +21,13 @@ public final class Constants {
 
     public final class DriveConstants{
 
-        public static final double kMaxSpeed = 3.0; // meters per second
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+        // inches
+        public static final double kWheelDiameter = 6;
 
         public static final double kTrackWidth = 0.51; // meters
-        public static final double kWheelRadius = 0.0508; // meters
+        public final double kWheelRadius = Units.inchesToMeters(kWheelDiameter); // meters
         public static final int kEncoderResolution = 4096;
 
-        public static final double kWheelDiameter = 4;
         public static final double kCountsPerInch = (kWheelDiameter * Math.PI) / kEncoderResolution;
 
         public static final int kLeftMasterID = 10;
@@ -34,5 +35,8 @@ public final class Constants {
 
         public static final int kRightMasterID = 12;
         public static final int kRightFollowerID = 13;
+
+        public static final double kMaxSpeed = 3.956304;  //12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
+        public static final double kMaxAngularSpeed = 2 * Math.PI;  //1 rad/s (test)
     }
 }
