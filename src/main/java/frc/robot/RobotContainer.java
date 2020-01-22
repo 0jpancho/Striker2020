@@ -37,7 +37,8 @@ public class RobotContainer {
     configureButtonBindings();
     
     m_DriveBase.setDefaultCommand(
-      new ArcadeDrive(m_DriveBase, driver::getY, driver::getX));
+      new ArcadeDrive(m_DriveBase, driver::getY, driver::getX)
+    );
 
     /*
     double forward = driver.getY() * Constants.DriveConstants.kMaxSpeed;
