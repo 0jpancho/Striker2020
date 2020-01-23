@@ -10,8 +10,6 @@ package frc.robot.commands.teleop;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
 
-import java.util.Set;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -19,15 +17,13 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
  * An example command that uses an example subsystem.
  */
-public class DiffDrive implements Command {
+public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   
   private DriveBase m_DriveBase = new DriveBase();
@@ -98,10 +94,5 @@ public class DiffDrive implements Command {
   @Override
   public boolean isFinished() {
     return false;
-  }
-
-  @Override
-  public Set<Subsystem> getRequirements() {
-    return null;
   }
 }

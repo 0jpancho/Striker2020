@@ -87,16 +87,7 @@ public class DriveBase extends SubsystemBase {
   }
   
   public Rotation2d getHeading() {
-    
     float angle = navx.getYaw();
-
-    //Normalize from -180 to +180 degrees
-    while(angle >= 360) {
-      angle -= 360;
-    }
-    while(angle < 0) {
-      angle += 360;
-    }
     return Rotation2d.fromDegrees((double)angle);
   }
   
