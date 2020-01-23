@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -55,7 +57,8 @@ public class DiffDrive implements Command {
     m_DriveBase.resetEncoders();
     m_DriveBase.resetHeading();
 
-
+    SmartDashboard.putData("Left PID Controller", m_LPID);
+    SmartDashboard.putData("Right PID Controller", m_RPID);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -67,9 +70,9 @@ public class DiffDrive implements Command {
   }
 
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds){
-    double leftOutput = m_LPID.calculate(m_DriveBase.getLeftEncVelo(), 
+    double leftOutput = m_LPID.calculate(m_DriveBase.getLeftVelo(), 
       speeds.leftMetersPerSecond);
-    double rightOutput = m_RPID.calculate(m_DriveBase.getRightEncVelo(),
+    double rightOutput = m_RPID.calculate(m_DriveBase.getRightVelo(),
       speeds.rightMetersPerSecond);
 
     m_DriveBase.leftMaster.set(ControlMode.PercentOutput, leftOutput);
@@ -83,7 +86,7 @@ public class DiffDrive implements Command {
   }
 
   public void updateOdometry(){
-    m_odometry.update(m_DriveBase.getHeading(), m_DriveBase.getLeftEncVelo(), m_DriveBase.getRightEncVelo());
+    m_odometry.update(m_DriveBase.getHeading(), m_DriveBase.getLeftVelo(), m_DriveBase.getRightVelo());
   }
 
   // Called once the command ends or is interrupted.

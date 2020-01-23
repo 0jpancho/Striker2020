@@ -73,14 +73,12 @@ public class DriveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
-      SmartDashboard.putNumber("Left Enc Value", getLeftEncVelo());
-      SmartDashboard.putNumber("Right Enc Value", getRightEncVelo());
+      SmartDashboard.putNumber("Left Enc Velo", getLeftVelo());
+      SmartDashboard.putNumber("Right Enc Velo", getRightVelo());
       
       SmartDashboard.putNumber("Heading", navx.getYaw());
       SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
       SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
-      
-      SmartDashboard.updateValues();
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
@@ -106,12 +104,20 @@ public class DriveBase extends SubsystemBase {
     navx.reset();
   }
   
-  public int getLeftEncVelo(){
+  public int getLeftVelo(){
     return leftMaster.getSensorCollection().getQuadratureVelocity();
   }
 
-  public int getRightEncVelo(){
+  public int getRightVelo(){
     return rightMaster.getSensorCollection().getQuadratureVelocity();
+  }
+
+  public int getLeftPos(){
+    return leftMaster.getSensorCollection().getQuadraturePosition();
+  }
+
+  public int getRightPos(){
+    return rightMaster.getSensorCollection().getQuadraturePosition();
   }
 
   public void resetEncoders(){
@@ -120,6 +126,10 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
+    
+  }
+
+  public void getRequirements(){
     
   }
 }

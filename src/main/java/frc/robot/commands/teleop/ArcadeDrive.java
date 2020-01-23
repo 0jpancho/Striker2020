@@ -7,15 +7,15 @@ import frc.robot.subsystems.DriveBase;
 
 public class ArcadeDrive extends CommandBase {
 
-    private final DriveBase m_driveTrain;
+    private final DriveBase m_DriveBase;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
 
-    public ArcadeDrive(DriveBase driveTrain, DoubleSupplier forward, DoubleSupplier rotation){
-        m_driveTrain = driveTrain;
+    public ArcadeDrive(DriveBase driveBase, DoubleSupplier forward, DoubleSupplier rotation){
+        m_DriveBase = driveBase;
         m_forward = forward;
         m_rotation = rotation;
-        addRequirements(driveTrain);
+        addRequirements(driveBase);
     }
 
      // Called when the command is initially scheduled.
@@ -27,7 +27,7 @@ public class ArcadeDrive extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_driveTrain.ArcadeDrive(m_forward, m_rotation);
+        m_DriveBase.ArcadeDrive(m_forward, m_rotation);
     }
    
     // Called once the command ends or is interrupted.
