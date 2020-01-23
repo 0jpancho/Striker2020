@@ -1,10 +1,8 @@
 package frc.robot.commands.teleop;
 
-import java.util.Set;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.DriveBase;
 
 public class ArcadeDrive extends CommandBase {
@@ -43,7 +41,4 @@ public class ArcadeDrive extends CommandBase {
         return false;
     }
 
-    public Set<Subsystem> getRequirements() {
-        return null;
-    }
 }
