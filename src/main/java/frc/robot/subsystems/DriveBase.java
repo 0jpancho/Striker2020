@@ -27,7 +27,7 @@ public class DriveBase extends SubsystemBase {
 
   public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  public final WPI_TalonSRX leftFollower = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+  public final WPI_TalonSRX leftFollower = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
 
   public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
@@ -49,14 +49,13 @@ public class DriveBase extends SubsystemBase {
     rightFollower.follow(rightMaster);
 
     //Configure motor inversions/sensor phase
-  
     leftMaster.setInverted(true);
+    leftFollower.setInverted(true);
     leftMaster.setSensorPhase(false);
-    leftFollower.setInverted(InvertType.FollowMaster);
 
     rightMaster.setInverted(false);
+    rightFollower.setInverted(false);
     rightMaster.setSensorPhase(false);
-    rightFollower.setInverted(InvertType.FollowMaster);
 
     //Set neutral mode
     leftMaster.setNeutralMode(NeutralMode.Coast);
@@ -72,6 +71,10 @@ public class DriveBase extends SubsystemBase {
 
     leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+
+    //Reset sensors
+    resetEncoders();
+    resetHeading();
 
     navx.enableLogging(false);
   }
@@ -90,8 +93,8 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
-      leftMaster.set(ControlMode.PercentOutput, forward.getAsDouble() + rotation.getAsDouble());
-      rightMaster.set(ControlMode.PercentOutput, forward.getAsDouble() - rotation.getAsDouble());
+      leftMaster.set(ControlMode.PercentOutput, forward.getAsDouble() - rotation.getAsDouble());
+      rightMaster.set(ControlMode.PercentOutput, forward.getAsDouble() + rotation.getAsDouble());
   }
   
   public Rotation2d getHeading() {
@@ -125,10 +128,6 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
-    
-  }
-
-  public void getRequirements(){
     
   }
 

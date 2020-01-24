@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.DiffDrive;
 import frc.robot.subsystems.DriveBase;
 
 /**
@@ -36,13 +37,15 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     
+    
     m_DriveBase.setDefaultCommand(
       new ArcadeDrive(m_DriveBase, driver::getY, driver::getX)
     );
 
-    m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
-
     /*
+    m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
+    
+    
     double forward = driver.getY() * Constants.DriveConstants.kMaxSpeed;
     double rot = driver.getX() * Constants.DriveConstants.kMaxAngularSpeed;
 
@@ -50,6 +53,7 @@ public class RobotContainer {
       new DiffDrive(m_DriveBase, forward, rot)
     );
     */
+    
   }
 
   /**
@@ -67,8 +71,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+  /*
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return null;
   }
+  */
 }
