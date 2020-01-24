@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.teleop;
+package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
@@ -38,8 +38,8 @@ public class DiffDrive extends CommandBase {
   private final PIDController m_LPID = new PIDController(0.1, 0, 0);
   private final PIDController m_RPID = new PIDController(0.1, 0, 0);
   
-  double forward = 0;
-  double rot = 0;
+  private double forward = 0;
+  private double rot = 0;
   
   public DiffDrive(DriveBase subsystem, double forward, double rot) {
     m_DriveBase = subsystem;

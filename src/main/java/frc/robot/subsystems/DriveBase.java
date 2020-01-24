@@ -12,6 +12,7 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -36,21 +37,25 @@ public class DriveBase extends SubsystemBase {
 
   public DriveBase() {
 
+    //Rest configs back to default - prevents conflicts
     leftMaster.configFactoryDefault();
     leftFollower.configFactoryDefault();
 
     rightMaster.configFactoryDefault();
     rightFollower.configFactoryDefault();
 
-    //Configure motor inversions/sensor phase
-    leftMaster.setInverted(false);
-    leftMaster.setSensorPhase(true);
+    //Set followers to masters
+    leftFollower.follow(leftMaster);
+    rightFollower.follow(rightMaster);
 
+    //Configure motor inversions/sensor phase
+  
+    leftMaster.setInverted(true);
+    leftMaster.setSensorPhase(false);
     leftFollower.setInverted(InvertType.FollowMaster);
 
-    rightMaster.setInverted(true);
-    leftMaster.setSensorPhase(true);
-
+    rightMaster.setInverted(false);
+    rightMaster.setSensorPhase(false);
     rightFollower.setInverted(InvertType.FollowMaster);
 
     //Set neutral mode
@@ -60,13 +65,13 @@ public class DriveBase extends SubsystemBase {
     leftFollower.setNeutralMode(NeutralMode.Coast);
     rightFollower.setNeutralMode(NeutralMode.Coast);
 
-    //Set followers to masters
-    //leftFollower.follow(leftMaster);
-    //rightFollower.follow(rightMaster);
-
     //Config encoders
+    // TODO Config Talons per command use. Drive base difference between auton/driving
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+
+    leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+    rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
     navx.enableLogging(false);
   }
@@ -75,6 +80,9 @@ public class DriveBase extends SubsystemBase {
   public void periodic() {
       SmartDashboard.putNumber("Left Enc Velo", getLeftVelo());
       SmartDashboard.putNumber("Right Enc Velo", getRightVelo());
+
+      SmartDashboard.putNumber("Left Enc Pos", getLeftPos());
+      SmartDashboard.putNumber("Right Enc Pos", getRightPos());
       
       SmartDashboard.putNumber("Heading", navx.getYaw());
       SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
