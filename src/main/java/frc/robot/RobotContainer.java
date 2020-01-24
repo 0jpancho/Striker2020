@@ -40,6 +40,8 @@ public class RobotContainer {
       new ArcadeDrive(m_DriveBase, driver::getY, driver::getX)
     );
 
+    m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
+
     /*
     double forward = driver.getY() * Constants.DriveConstants.kMaxSpeed;
     double rot = driver.getX() * Constants.DriveConstants.kMaxAngularSpeed;

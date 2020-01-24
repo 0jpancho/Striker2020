@@ -54,15 +54,15 @@ public class DriveBase extends SubsystemBase {
     rightFollower.setInverted(InvertType.FollowMaster);
 
     //Set neutral mode
-    leftMaster.setNeutralMode(NeutralMode.Brake);
-    rightMaster.setNeutralMode(NeutralMode.Brake);
+    leftMaster.setNeutralMode(NeutralMode.Coast);
+    rightMaster.setNeutralMode(NeutralMode.Coast);
     
-    leftFollower.setNeutralMode(NeutralMode.Brake);
-    rightFollower.setNeutralMode(NeutralMode.Brake);
+    leftFollower.setNeutralMode(NeutralMode.Coast);
+    rightFollower.setNeutralMode(NeutralMode.Coast);
 
     //Set followers to masters
-    leftFollower.follow(leftMaster);
-    rightFollower.follow(rightMaster);
+    //leftFollower.follow(leftMaster);
+    //rightFollower.follow(rightMaster);
 
     //Config encoders
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -122,5 +122,35 @@ public class DriveBase extends SubsystemBase {
 
   public void getRequirements(){
     
+  }
+
+  public void testMotors(boolean leftM, boolean leftS, boolean rightM, boolean rightS){
+    if(leftM){
+      leftMaster.set(ControlMode.PercentOutput, 1);
+    }
+    else{
+      leftMaster.set(ControlMode.PercentOutput, 0);
+    }
+
+    if(leftS){
+      leftFollower.set(ControlMode.PercentOutput, 1);
+    }
+    else{
+      leftFollower.set(ControlMode.PercentOutput, 0);
+    }
+
+    if(rightM){
+      rightMaster.set(ControlMode.PercentOutput, 1);
+    }
+    else{
+      rightMaster.set(ControlMode.PercentOutput, 0);
+    }
+
+    if(rightS){
+      rightFollower.set(ControlMode.PercentOutput, 1);
+    }
+    else{
+      rightFollower.set(ControlMode.PercentOutput, 0);
+    }
   }
 }
