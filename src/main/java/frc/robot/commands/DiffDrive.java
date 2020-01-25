@@ -45,6 +45,7 @@ public class DiffDrive extends CommandBase {
     m_DriveBase = subsystem;
     this.forward = forward;
     this.rot = rot;
+    addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
