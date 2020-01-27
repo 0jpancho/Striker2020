@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
@@ -48,12 +49,12 @@ public class DriveBase extends SubsystemBase {
     rightFollower.follow(rightMaster);
 
     //Configure motor inversions/sensor phase
-    leftMaster.setInverted(true);
-    leftFollower.setInverted(true);
-    leftMaster.setSensorPhase(false);
+    leftMaster.setInverted(false);
+    leftFollower.setInverted(InvertType.FollowMaster);
+    leftMaster.setSensorPhase(true);
 
-    rightMaster.setInverted(false);
-    rightFollower.setInverted(false);
+    rightMaster.setInverted(true);
+    rightFollower.setInverted(InvertType.FollowMaster);
     rightMaster.setSensorPhase(false);
 
     //Set neutral mode
@@ -68,7 +69,7 @@ public class DriveBase extends SubsystemBase {
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 
-    leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+    leftMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
     //Reset sensors
@@ -92,8 +93,13 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
-      leftMaster.set(ControlMode.PercentOutput, forward.getAsDouble() - rotation.getAsDouble());
-      rightMaster.set(ControlMode.PercentOutput, forward.getAsDouble() + rotation.getAsDouble());
+      leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
+      rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
+  }
+
+  public void tankDrive(DoubleSupplier left, DoubleSupplier right){
+    leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
+    rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
   }
   
   public Rotation2d getHeading() {

@@ -10,7 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.DiffDrive;
+import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.DriveBase;
 
 /**
@@ -23,7 +25,9 @@ import frc.robot.subsystems.DriveBase;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private Joystick driver = new Joystick(0);
+  private Joystick driverLeft = new Joystick(0);
+  private Joystick driverRight = new Joystick(1);
+  
 
   private final DriveBase m_DriveBase = new DriveBase();
 
@@ -40,17 +44,21 @@ public class RobotContainer {
       new ArcadeDrive(m_DriveBase, driver::getY, driver::getX)
     );
     */
+
+    m_DriveBase.setDefaultCommand(
+      new TankDrive(m_DriveBase, driverLeft::getY, driverRight::getY)  
+    );
     
     //m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
     
-    
-    double forward = driver.getY() * Constants.DriveConstants.kMaxSpeed;
+    /*
+    double forward = -driver.getY() * Constants.DriveConstants.kMaxSpeed;
     double rot = driver.getX() * Constants.DriveConstants.kMaxAngularSpeed;
 
     m_DriveBase.setDefaultCommand(
       new DiffDrive(m_DriveBase, forward, rot)
     );
-    
+    */
     
   }
 
