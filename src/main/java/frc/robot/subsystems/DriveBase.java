@@ -10,18 +10,15 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -31,16 +28,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
 public class DriveBase extends SubsystemBase {
 
   public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  public final WPI_TalonSRX leftFollower = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
+  public final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
 
   public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
-  public final WPI_TalonSRX rightFollower = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+  public final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
   private final AHRS navx;
 
@@ -57,41 +53,48 @@ public class DriveBase extends SubsystemBase {
 
   private double leftDistance = 0;
   private double rightDistance = 0;
+
   public DriveBase() {
 
     //Rest configs back to default - prevents conflicts
     leftMaster.configFactoryDefault();
-    leftFollower.configFactoryDefault();
+    leftSlave.configFactoryDefault();
 
     rightMaster.configFactoryDefault();
-    rightFollower.configFactoryDefault();
+    rightSlave.configFactoryDefault();
 
     //Set followers to masters
-    leftFollower.follow(leftMaster);
-    rightFollower.follow(rightMaster);
+    leftSlave.follow(leftMaster);
+    rightSlave.follow(rightMaster);
 
     //Configure motor inversions/sensor phase
     leftMaster.setInverted(false);
-    leftFollower.setInverted(InvertType.FollowMaster);
-    leftMaster.setSensorPhase(true);
+    leftSlave.setInverted(false);
+    leftMaster.setSensorPhase(false);
 
     rightMaster.setInverted(true);
-    rightFollower.setInverted(InvertType.FollowMaster);
+    rightSlave.setInverted(true);
     rightMaster.setSensorPhase(false);
 
     //Set neutral mode
     leftMaster.setNeutralMode(NeutralMode.Coast);
     rightMaster.setNeutralMode(NeutralMode.Coast);
     
-    leftFollower.setNeutralMode(NeutralMode.Coast);
-    rightFollower.setNeutralMode(NeutralMode.Coast);
+    leftSlave.setNeutralMode(NeutralMode.Coast);
+    rightSlave.setNeutralMode(NeutralMode.Coast);
+
+    //Set current limit
+    leftMaster.configContinuousCurrentLimit(40);
+    leftSlave.configContinuousCurrentLimit(40);
+
+    rightMaster.configContinuousCurrentLimit(40);
+    rightSlave.configContinuousCurrentLimit(40);
 
     //Config encoders
     // TODO Config Talons per command use. Drive base difference between auton/driving
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 
-    //
     leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
@@ -108,15 +111,18 @@ public class DriveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
-      SmartDashboard.putNumber("Left Enc Velo", getLeftVelo());
-      SmartDashboard.putNumber("Right Enc Velo", getRightVelo());
+      SmartDashboard.putNumber("Left Enc Velo", getLVeloTicks());
+      SmartDashboard.putNumber("Right Enc Velo", getRVeloTicks());
 
-      SmartDashboard.putNumber("Left Enc Pos", getLeftPos());
-      SmartDashboard.putNumber("Right Enc Pos", getRightPos());
+      SmartDashboard.putNumber("Left Enc Pos", getLPosTicks());
+      SmartDashboard.putNumber("Right Enc Pos", getRPosTicks());
       
+      SmartDashboard.putNumber("Left Distance", leftDistance);
+      SmartDashboard.putNumber("Right Distance", rightDistance);
+
       SmartDashboard.putNumber("Heading", navx.getYaw());
-      SmartDashboard.putBoolean("NavX Cal?", navx.isCalibrating());
-      SmartDashboard.putBoolean("NavX Alive?", navx.isConnected());
+      SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
+      SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
@@ -133,16 +139,16 @@ public class DriveBase extends SubsystemBase {
     final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
     final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-    final double leftOutput = m_LPID.calculate(getLeftVelo(),
+    final double leftOutput = m_LPID.calculate(getLVeloTicks(),
         speeds.leftMetersPerSecond);
-    final double rightOutput = m_RPID.calculate(getRightVelo(),
+    final double rightOutput = m_RPID.calculate(getRVeloTicks(),
         speeds.rightMetersPerSecond);
     leftMaster.setVoltage(leftOutput + leftFeedforward);
     rightMaster.setVoltage(rightOutput + rightFeedforward);
   }
 
-  public void differentialDrive(double xSpeed, double rot) {
-    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
+  public void differentialDrive(double forward, double rot) {
+    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
     setSpeeds(wheelSpeeds);
   }
 
@@ -155,25 +161,25 @@ public class DriveBase extends SubsystemBase {
     navx.zeroYaw();
   }
   
-  public int getLeftVelo(){
+  public int getLVeloTicks(){
     return leftMaster.getSensorCollection().getQuadratureVelocity();
   }
 
-  public int getRightVelo(){
+  public int getRVeloTicks(){
     return rightMaster.getSensorCollection().getQuadratureVelocity();
   }
 
-  public int getLeftPos(){
+  public int getLPosTicks(){
     return leftMaster.getSensorCollection().getQuadraturePosition();
   }
 
-  public int getRightPos(){
+  public int getRPosTicks(){
     return rightMaster.getSensorCollection().getQuadraturePosition();
   }
 
   public void updateOdometry() {
-    leftDistance += Units.inchesToMeters(getLeftPos() * Constants.DriveConstants.kCountsPerInch);
-    rightDistance += Units.inchesToMeters(getRightPos() * Constants.DriveConstants.kCountsPerInch);
+    leftDistance += Units.inchesToMeters(getLPosTicks() * Constants.DriveConstants.kCountsPerInch);
+    rightDistance += Units.inchesToMeters(getRPosTicks() * Constants.DriveConstants.kCountsPerInch);
     m_odometry.update(getHeading(), leftDistance, rightDistance);
   }
 

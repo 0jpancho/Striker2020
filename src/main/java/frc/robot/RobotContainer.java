@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.DiffDrive;
 import frc.robot.commands.TankDrive;
@@ -31,6 +32,8 @@ public class RobotContainer {
 
   private final DriveBase m_DriveBase = new DriveBase();
 
+  private double forward = 0;
+  private double rot = 0;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -38,6 +41,9 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    SmartDashboard.putNumber("Input Forward", forward);
+    SmartDashboard.putNumber("Input Rotation", rot);
     
     /*
     m_DriveBase.setDefaultCommand(
@@ -53,8 +59,8 @@ public class RobotContainer {
     //m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
     
     
-    double forward = -driverLeft.getY() * Constants.DriveConstants.kMaxSpeed;
-    double rot = driverLeft.getX() * Constants.DriveConstants.kMaxAngularSpeed;
+    forward = -driverLeft.getY() * Constants.DriveConstants.kMaxSpeed;
+    rot = driverLeft.getX() * Constants.DriveConstants.kMaxAngularSpeed;
 
     m_DriveBase.setDefaultCommand(
       new DiffDrive(m_DriveBase, forward, rot)
