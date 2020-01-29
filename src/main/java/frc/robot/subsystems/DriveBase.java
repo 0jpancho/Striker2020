@@ -40,8 +40,8 @@ public class DriveBase extends SubsystemBase {
 
   private final AHRS navx;
 
-  private final PIDController m_LPID = new PIDController(0.1, 0, 0);
-  private final PIDController m_RPID = new PIDController(0.1, 0, 0);
+  private final PIDController m_LPID = new PIDController(0.0001, 0, 0);
+  private final PIDController m_RPID = new PIDController(0.0001, 0, 0);
 
   private final DifferentialDriveKinematics m_kinematics = 
     new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
@@ -49,13 +49,9 @@ public class DriveBase extends SubsystemBase {
   private final DifferentialDriveOdometry m_odometry;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
-
-  private double leftDistance = 0;
-  private double rightDistance = 0;
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
 
   public DriveBase() {
-
     //Rest configs back to default - prevents conflicts
     leftMaster.configFactoryDefault();
     leftSlave.configFactoryDefault();
@@ -74,21 +70,27 @@ public class DriveBase extends SubsystemBase {
 
     rightMaster.setInverted(true);
     rightSlave.setInverted(true);
-    rightMaster.setSensorPhase(false);
+    rightMaster.setSensorPhase(true);
 
     //Set neutral mode
-    leftMaster.setNeutralMode(NeutralMode.Coast);
-    rightMaster.setNeutralMode(NeutralMode.Coast);
+    leftMaster.setNeutralMode(NeutralMode.Brake);
+    rightMaster.setNeutralMode(NeutralMode.Brake);
     
-    leftSlave.setNeutralMode(NeutralMode.Coast);
-    rightSlave.setNeutralMode(NeutralMode.Coast);
+    leftSlave.setNeutralMode(NeutralMode.Brake);
+    rightSlave.setNeutralMode(NeutralMode.Brake);
 
     //Set current limit
     leftMaster.configContinuousCurrentLimit(40);
+    leftMaster.configPeakCurrentDuration(0);
+
     leftSlave.configContinuousCurrentLimit(40);
+    leftSlave.configPeakCurrentDuration(0);
 
     rightMaster.configContinuousCurrentLimit(40);
+    rightMaster.configPeakCurrentDuration(0);
+
     rightSlave.configContinuousCurrentLimit(40);
+    rightSlave.configPeakCurrentDuration(0);
 
     //Config encoders
     // TODO Config Talons per command use. Drive base difference between auton/driving
@@ -98,11 +100,14 @@ public class DriveBase extends SubsystemBase {
     leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
+    //leftMaster.configOpenloopRamp(0.2);
+    //rightMaster.configOpenloopRamp(0.2);
+
     navx = new AHRS();
 
     m_odometry = new DifferentialDriveOdometry(getHeading());
 
-    navx.enableLogging(true);
+    navx.enableLogging(false);
 
     //Reset sensors
     resetEncoders();
@@ -111,14 +116,16 @@ public class DriveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
-      SmartDashboard.putNumber("Left Enc Velo", getLVeloTicks());
-      SmartDashboard.putNumber("Right Enc Velo", getRVeloTicks());
+      SmartDashboard.putNumber("Left Enc Velo FPS", (getLVeloTicks() * Constants.DriveConstants.kInchesPerCount) / 12);
+      SmartDashboard.putNumber("Right Enc Velo FPS", (getRVeloTicks() * Constants.DriveConstants.kInchesPerCount) / 12);
 
       SmartDashboard.putNumber("Left Enc Pos", getLPosTicks());
       SmartDashboard.putNumber("Right Enc Pos", getRPosTicks());
       
-      SmartDashboard.putNumber("Left Distance", leftDistance);
-      SmartDashboard.putNumber("Right Distance", rightDistance);
+      SmartDashboard.putNumber("Left Distance", (getLPosTicks() * 
+                                Constants.DriveConstants.kInchesPerCount) / 12);
+      SmartDashboard.putNumber("Right Distance", (getRPosTicks() * 
+                                Constants.DriveConstants.kInchesPerCount) / 12);
 
       SmartDashboard.putNumber("Heading", navx.getYaw());
       SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
@@ -162,15 +169,15 @@ public class DriveBase extends SubsystemBase {
   }
   
   public int getLVeloTicks(){
-    return leftMaster.getSensorCollection().getQuadratureVelocity();
+    return -leftMaster.getSensorCollection().getQuadratureVelocity();
+  }
+
+  public int getLPosTicks(){
+    return -leftMaster.getSensorCollection().getQuadraturePosition();
   }
 
   public int getRVeloTicks(){
     return rightMaster.getSensorCollection().getQuadratureVelocity();
-  }
-
-  public int getLPosTicks(){
-    return leftMaster.getSensorCollection().getQuadraturePosition();
   }
 
   public int getRPosTicks(){
@@ -178,9 +185,8 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void updateOdometry() {
-    leftDistance += Units.inchesToMeters(getLPosTicks() * Constants.DriveConstants.kCountsPerInch);
-    rightDistance += Units.inchesToMeters(getRPosTicks() * Constants.DriveConstants.kCountsPerInch);
-    m_odometry.update(getHeading(), leftDistance, rightDistance);
+    m_odometry.update(getHeading(), Units.inchesToMeters((getLPosTicks() * Constants.DriveConstants.kInchesPerCount)), 
+                                    Units.inchesToMeters((getRPosTicks() * Constants.DriveConstants.kInchesPerCount)));
   }
 
   public void resetEncoders(){

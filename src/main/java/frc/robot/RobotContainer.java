@@ -7,13 +7,13 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ArcadeDrive;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.commands.DiffDrive;
-import frc.robot.commands.TankDrive;
 import frc.robot.subsystems.DriveBase;
 
 /**
@@ -26,14 +26,15 @@ import frc.robot.subsystems.DriveBase;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private Joystick driverLeft = new Joystick(0);
-  private Joystick driverRight = new Joystick(1);
-  
+  //private Joystick driverLeft = new Joystick(0);
+  //private Joystick driverRight = new Joystick(1);
 
-  private final DriveBase m_DriveBase = new DriveBase();
+  private XboxController driver = new XboxController(0);
 
-  private double forward = 0;
-  private double rot = 0;
+  private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
+
+  public final DriveBase m_driveBase = new DriveBase();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -41,29 +42,12 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-
-    SmartDashboard.putNumber("Input Forward", forward);
-    SmartDashboard.putNumber("Input Rotation", rot);
     
-    /*
-    m_DriveBase.setDefaultCommand(
-      new ArcadeDrive(m_DriveBase, driverLeft::getY, driverLeft::getX)
-    );
-    */
+    DoubleSupplier forward = () -> m_forwardLimiter.calculate(driver.getY(Hand.kLeft));
+    DoubleSupplier rot = () -> m_rotLimiter.calculate(driver.getX(Hand.kRight));
 
-    /*
-    m_DriveBase.setDefaultCommand(
-      new TankDrive(m_DriveBase, driverLeft::getY, driverRight::getY)  
-    );
-    */
-    //m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
-    
-    
-    forward = -driverLeft.getY() * Constants.DriveConstants.kMaxSpeed;
-    rot = driverLeft.getX() * Constants.DriveConstants.kMaxAngularSpeed;
-
-    m_DriveBase.setDefaultCommand(
-      new DiffDrive(m_DriveBase, forward, rot)
+    m_driveBase.setDefaultCommand(
+      new DiffDrive(m_driveBase, forward, rot)
     );
     
   }

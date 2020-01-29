@@ -7,7 +7,12 @@
 
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
+
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -18,10 +23,10 @@ public class DiffDrive extends CommandBase {
   
   private DriveBase m_DriveBase = new DriveBase();
   
-  private double forward = 0;
-  private double rot = 0;
+  private DoubleSupplier forward;
+  private DoubleSupplier rot;
   
-  public DiffDrive(DriveBase subsystem, double forward, double rot) {
+  public DiffDrive(DriveBase subsystem, DoubleSupplier forward, DoubleSupplier rot) {
     m_DriveBase = subsystem;
     this.forward = forward;
     this.rot = rot;
@@ -38,9 +43,25 @@ public class DiffDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    double inputForward = forward.getAsDouble();
+    double inputRot = rot.getAsDouble();
+
+    if (Math.abs(inputForward) < 0.1){
+      inputForward = 0;
+    } 
+
+    if (Math.abs(inputRot) < 0.1){
+      inputRot = 0;
+    }
+
+    SmartDashboard.putNumber("Input Forward", forward.getAsDouble());
+    SmartDashboard.putNumber("Input Rotation", rot.getAsDouble());
+
     m_DriveBase.updateOdometry();
 
-    m_DriveBase.differentialDrive(forward, rot);
+    m_DriveBase.differentialDrive(-inputForward * Constants.DriveConstants.kMaxSpeed, 
+                                  -inputRot * Constants.DriveConstants.kMaxAngularSpeed);
   }
 
   // Called once the command ends or is interrupted.

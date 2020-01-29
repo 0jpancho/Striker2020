@@ -28,7 +28,7 @@ public final class Constants {
         public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameter); // meters
         public static final int kEncoderResolution = 4096;
 
-        public static final double kCountsPerInch = (kWheelDiameter * Math.PI) / kEncoderResolution;
+        public static final double kInchesPerCount = (kWheelDiameter * Math.PI) / kEncoderResolution;
 
         public static final int kLeftMasterID = 10;
         public static final int kLeftFollowerID = 11;
@@ -37,6 +37,30 @@ public final class Constants {
         public static final int kRightFollowerID = 13;
 
         public static final double kMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // 1 rad/s (test)
+        public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth; // 1 rad/s (test)
+    }
+
+    public final static class GamepadVals{
+        // Gamepad axis
+        public static final int kGamepadAxisLeftStickX = 1;
+        public static final int kGamepadAxisLeftStickY = 2;
+        public static final int kGamepadAxisShoulder = 3;
+        public static final int kGamepadAxisRightStickX = 4;
+        public static final int kGamepadAxisRightStickY = 5;
+        public static final int kGamepadAxisDpad = 6;
+
+        // Gamepad buttons
+        public static final int kGamepadButtonA = 1; // Bottom Button
+        public static final int kGamepadButtonB = 2; // Right Button
+        public static final int kGamepadButtonX = 3; // Left Button
+        public static final int kGamepadButtonY = 4; // Top Button
+        public static final int kGamepadButtonShoulderL = 5;
+        public static final int kGamepadButtonShoulderR = 6;
+        public static final int kGamepadButtonBack = 7;
+        public static final int kGamepadButtonStart = 8;
+        public static final int kGamepadButtonLeftStick = 9;
+        public static final int kGamepadButtonRightStick = 10;
+        public static final int kGamepadButtonMode = -1;
+        public static final int kGamepadButtonLogitech = -1;
     }
 }
