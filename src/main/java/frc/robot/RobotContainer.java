@@ -41,24 +41,24 @@ public class RobotContainer {
     
     /*
     m_DriveBase.setDefaultCommand(
-      new ArcadeDrive(m_DriveBase, driver::getY, driver::getX)
+      new ArcadeDrive(m_DriveBase, driverLeft::getY, driverLeft::getX)
     );
     */
 
+    /*
     m_DriveBase.setDefaultCommand(
       new TankDrive(m_DriveBase, driverLeft::getY, driverRight::getY)  
     );
-    
+    */
     //m_DriveBase.testMotors(driver.getRawButton(2), driver.getRawButton(4), driver.getRawButton(3), driver.getRawButton(5));
     
-    /*
-    double forward = -driver.getY() * Constants.DriveConstants.kMaxSpeed;
-    double rot = driver.getX() * Constants.DriveConstants.kMaxAngularSpeed;
+    
+    double forward = -driverLeft.getY() * Constants.DriveConstants.kMaxSpeed;
+    double rot = driverLeft.getX() * Constants.DriveConstants.kMaxAngularSpeed;
 
     m_DriveBase.setDefaultCommand(
       new DiffDrive(m_DriveBase, forward, rot)
     );
-    */
     
   }
 

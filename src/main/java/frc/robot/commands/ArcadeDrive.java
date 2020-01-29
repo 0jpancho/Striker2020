@@ -21,8 +21,8 @@ public class ArcadeDrive extends CommandBase {
      // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-
-
+        m_DriveBase.resetEncoders();
+        m_DriveBase.resetHeading();
     }
     // Called every time the scheduler runs while the command is scheduled.
     @Override

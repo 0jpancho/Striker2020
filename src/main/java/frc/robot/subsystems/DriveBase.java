@@ -17,9 +17,18 @@ import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -33,8 +42,21 @@ public class DriveBase extends SubsystemBase {
 
   public final WPI_TalonSRX rightFollower = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
-  private final AHRS navx = new AHRS(Port.kMXP);
+  private final AHRS navx;
 
+  private final PIDController m_LPID = new PIDController(0.1, 0, 0);
+  private final PIDController m_RPID = new PIDController(0.1, 0, 0);
+
+  private final DifferentialDriveKinematics m_kinematics = 
+    new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
+
+  private final DifferentialDriveOdometry m_odometry;
+
+  // Gains are for example purposes only - must be determined for your own robot!
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
+
+  private double leftDistance = 0;
+  private double rightDistance = 0;
   public DriveBase() {
 
     //Rest configs back to default - prevents conflicts
@@ -69,14 +91,19 @@ public class DriveBase extends SubsystemBase {
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 
-    leftMaster.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
+    //
+    leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+
+    navx = new AHRS();
+
+    m_odometry = new DifferentialDriveOdometry(getHeading());
+
+    navx.enableLogging(true);
 
     //Reset sensors
     resetEncoders();
     resetHeading();
-
-    navx.enableLogging(false);
   }
 
   @Override
@@ -93,22 +120,39 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
-      leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
-      rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
+      leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
+      rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
   }
 
   public void tankDrive(DoubleSupplier left, DoubleSupplier right){
     leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
     rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
   }
-  
-  public Rotation2d getHeading() {
-    float angle = navx.getYaw();
-    return Rotation2d.fromDegrees((double)angle);
+
+  public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+    final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+    final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+
+    final double leftOutput = m_LPID.calculate(getLeftVelo(),
+        speeds.leftMetersPerSecond);
+    final double rightOutput = m_RPID.calculate(getRightVelo(),
+        speeds.rightMetersPerSecond);
+    leftMaster.setVoltage(leftOutput + leftFeedforward);
+    rightMaster.setVoltage(rightOutput + rightFeedforward);
   }
-  
+
+  public void differentialDrive(double xSpeed, double rot) {
+    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, rot));
+    setSpeeds(wheelSpeeds);
+  }
+
+  public Rotation2d getHeading() {
+    double angle = navx.getYaw();
+    return Rotation2d.fromDegrees(angle);
+  }
+
   public void resetHeading(){
-    navx.reset();
+    navx.zeroYaw();
   }
   
   public int getLeftVelo(){
@@ -127,42 +171,14 @@ public class DriveBase extends SubsystemBase {
     return rightMaster.getSensorCollection().getQuadraturePosition();
   }
 
+  public void updateOdometry() {
+    leftDistance += Units.inchesToMeters(getLeftPos() * Constants.DriveConstants.kCountsPerInch);
+    rightDistance += Units.inchesToMeters(getRightPos() * Constants.DriveConstants.kCountsPerInch);
+    m_odometry.update(getHeading(), leftDistance, rightDistance);
+  }
+
   public void resetEncoders(){
     leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
     rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
-  }
-
-  public void setPIDConfig(int config, double kP, double kI, double kD, double timeout){
-    
-  }
-
-  public void testMotors(boolean leftM, boolean leftS, boolean rightM, boolean rightS){
-    if(leftM){
-      leftMaster.set(ControlMode.PercentOutput, 1);
-    }
-    else{
-      leftMaster.set(ControlMode.PercentOutput, 0);
-    }
-
-    if(leftS){
-      leftFollower.set(ControlMode.PercentOutput, 1);
-    }
-    else{
-      leftFollower.set(ControlMode.PercentOutput, 0);
-    }
-
-    if(rightM){
-      rightMaster.set(ControlMode.PercentOutput, 1);
-    }
-    else{
-      rightMaster.set(ControlMode.PercentOutput, 0);
-    }
-
-    if(rightS){
-      rightFollower.set(ControlMode.PercentOutput, 1);
-    }
-    else{
-      rightFollower.set(ControlMode.PercentOutput, 0);
-    }
   }
 }
