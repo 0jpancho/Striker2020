@@ -51,6 +51,12 @@ public class DriveBase extends SubsystemBase {
   // Gains are for example purposes only - must be determined for your own robot!
   SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
 
+  private double leftFPS;
+  private double rightFPS;
+
+  private double leftMetersTraveled;
+  private double rightMetersTraveled;
+
   public DriveBase() {
     //Rest configs back to default - prevents conflicts
     leftMaster.configFactoryDefault();
@@ -103,6 +109,8 @@ public class DriveBase extends SubsystemBase {
     //leftMaster.configOpenloopRamp(0.2);
     //rightMaster.configOpenloopRamp(0.2);
 
+    //19.5 inches track width
+
     navx = new AHRS();
 
     m_odometry = new DifferentialDriveOdometry(getHeading());
@@ -116,26 +124,28 @@ public class DriveBase extends SubsystemBase {
 
   @Override
   public void periodic() {
-      SmartDashboard.putNumber("Left Enc Velo FPS", (getLVeloTicks() * Constants.DriveConstants.kInchesPerCount) / 12);
-      SmartDashboard.putNumber("Right Enc Velo FPS", (getRVeloTicks() * Constants.DriveConstants.kInchesPerCount) / 12);
-
-      SmartDashboard.putNumber("Left Enc Pos", getLPosTicks());
-      SmartDashboard.putNumber("Right Enc Pos", getRPosTicks());
       
-      SmartDashboard.putNumber("Left Distance", (getLPosTicks() * 
-                                Constants.DriveConstants.kInchesPerCount) / 12);
-      SmartDashboard.putNumber("Right Distance", (getRPosTicks() * 
-                                Constants.DriveConstants.kInchesPerCount) / 12);
+    leftFPS = (getLVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+    rightFPS = (getRVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
 
-      SmartDashboard.putNumber("Heading", navx.getYaw());
-      SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
-      SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
+    double leftDistanceTraveled = (getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+    double rightDistanceTraveled = (getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+  
+    SmartDashboard.putNumber("Left Enc Velo FPS", leftFPS);
+    SmartDashboard.putNumber("Right Enc Velo FPS", rightFPS);
 
-      SmartDashboard.putData(m_LPID);
-      SmartDashboard.putData(m_RPID);
+    SmartDashboard.putNumber("Left Enc Pos", getLPosTicks());
+    SmartDashboard.putNumber("Right Enc Pos", getRPosTicks());
+    
+    SmartDashboard.putNumber("Left Distance", leftDistanceTraveled);
+    SmartDashboard.putNumber("Right Distance", rightDistanceTraveled);
+
+    SmartDashboard.putNumber("Heading", navx.getYaw());
+    SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
+    SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
   }
 
-  public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
+  public void arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
       leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
       rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
   }
@@ -188,8 +198,9 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void updateOdometry() {
-    m_odometry.update(getHeading(), Units.inchesToMeters((getLPosTicks() * Constants.DriveConstants.kInchesPerCount)), 
-                                    Units.inchesToMeters((getRPosTicks() * Constants.DriveConstants.kInchesPerCount)));
+    leftMetersTraveled = getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+    rightMetersTraveled = getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+    m_odometry.update(getHeading(), leftMetersTraveled, rightMetersTraveled);
   }
 
   public void resetEncoders(){

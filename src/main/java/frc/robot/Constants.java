@@ -23,6 +23,8 @@ public final class Constants {
 
         // inches
         public static final double kWheelDiameter = 6;
+        public static final double kWheelCircumferenceInches = Math.PI * kWheelDiameter;
+        public static final double kWheelCircumferenceMeters = Units.inchesToMeters(kWheelCircumferenceInches);
 
         public static final double kTrackWidth = 0.51; // meters
         public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameter); // meters
