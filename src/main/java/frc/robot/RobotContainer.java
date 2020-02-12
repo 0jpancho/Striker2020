@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import frc.robot.commands.DiffDrive;
+import frc.robot.commands.drivebase.DiffDrive;
 import frc.robot.subsystems.DriveBase;
 
 /**
