@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 public class DriveBase extends SubsystemBase {
@@ -99,7 +98,6 @@ public class DriveBase extends SubsystemBase {
     rightSlave.configPeakCurrentDuration(0);
 
     //Config encoders
-    // TODO Config Talons per command use. Drive base difference between auton/driving
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
     rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 
@@ -125,17 +123,21 @@ public class DriveBase extends SubsystemBase {
   @Override
   public void periodic() {
       
-    leftFPS = (getLVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
-    rightFPS = (getRVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+    leftFPS = (getLVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / 
+                                  Constants.DriveConstants.kEncoderResolution)) / 12;
 
-    double leftDistanceTraveled = (getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
-    double rightDistanceTraveled = (getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+    rightFPS = (getRVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / 
+                                   Constants.DriveConstants.kEncoderResolution)) / 12;
+
   
     SmartDashboard.putNumber("Left Enc Velo FPS", leftFPS);
     SmartDashboard.putNumber("Right Enc Velo FPS", rightFPS);
 
     SmartDashboard.putNumber("Left Enc Pos", getLPosTicks());
     SmartDashboard.putNumber("Right Enc Pos", getRPosTicks());
+
+    double leftDistanceTraveled = (getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
+    double rightDistanceTraveled = (getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceInches / Constants.DriveConstants.kEncoderResolution)) / 12;
     
     SmartDashboard.putNumber("Left Distance", leftDistanceTraveled);
     SmartDashboard.putNumber("Right Distance", rightDistanceTraveled);

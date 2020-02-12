@@ -9,25 +9,16 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.util.Units;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
- * declared globally (i.e. public static).  Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
-public final class Constants {
+public abstract class Constants {
 
     public final static class DriveConstants {
-
         // inches
         public static final double kWheelDiameter = 6;
         public static final double kWheelCircumferenceInches = Math.PI * kWheelDiameter;
         public static final double kWheelCircumferenceMeters = Units.inchesToMeters(kWheelCircumferenceInches);
 
-        public static final double kTrackWidth = 0.51; // meters
-        public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameter); // meters
+        public static final double kTrackWidth = Units.inchesToMeters(19.5); // meters
+        public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameter / 2); // meters
         public static final int kEncoderResolution = 4096;
 
         public static final double kInchesPerCount = (kWheelDiameter * Math.PI) / kEncoderResolution;
@@ -42,7 +33,24 @@ public final class Constants {
         public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth; 
     }
 
-    public final static class GamepadVals{
+    public final static class ShooterConstants {
+        public static final int kLeftShooter = 0;
+        public static final int kRightShooter = 0;
+
+        public static final int kWheelDiameterInches = 4;
+        public static final int kWheelRadiusInches = 2;
+        public static final double kWheelCircumferenceInches = Math.PI * kWheelDiameterInches;
+
+        public static final int kEncoderResolution = 4096;
+
+        public static final int kSlotIdx = 0;
+        public static final int kPIDLoopIdx = 0;
+        public static final int kTimeoutMs = 30;     //kP,    kI, kD, kF, Iz,   PeakOut
+        public final static Gains kGains = new Gains(0.25, 0.001, 20, 0,  300,  1.00);
+        
+    }
+
+    public final static class GamepadIDs{
         // Gamepad axis
         public static final int kGamepadAxisLeftStickX = 1;
         public static final int kGamepadAxisLeftStickY = 2;
