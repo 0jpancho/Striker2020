@@ -49,7 +49,7 @@ public class DriveBase extends SubsystemBase {
   private final DifferentialDriveOdometry m_odometry;
 
   // Gains are for example purposes only - must be determined for your own robot!
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
 
   public DriveBase() {
     //Rest configs back to default - prevents conflicts
@@ -130,6 +130,9 @@ public class DriveBase extends SubsystemBase {
       SmartDashboard.putNumber("Heading", navx.getYaw());
       SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
       SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
+
+      SmartDashboard.putData(m_LPID);
+      SmartDashboard.putData(m_RPID);
   }
 
   public void ArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){

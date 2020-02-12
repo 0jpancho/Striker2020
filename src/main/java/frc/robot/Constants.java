@@ -37,7 +37,7 @@ public final class Constants {
         public static final int kRightFollowerID = 13;
 
         public static final double kMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
-        public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth; // 1 rad/s (test)
+        public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth; 
     }
 
     public final static class GamepadVals{
