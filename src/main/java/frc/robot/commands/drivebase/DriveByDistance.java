@@ -33,18 +33,16 @@ public class DriveByDistance extends CommandBase{
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        drive.setDriveConfig(ControlMode.Disabled, 0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-
         if ((drive.getLPosTicks() - tolerance < drive.getLPosTicks() && drive.getLPosTicks() < drive.getLPosTicks() + tolerance) &&
              drive.getRPosTicks() - tolerance < drive.getRPosTicks() && drive.getRPosTicks() < drive.getRPosTicks() + tolerance){
-
             return true;
         }
-
         else{
             return false;
         }
