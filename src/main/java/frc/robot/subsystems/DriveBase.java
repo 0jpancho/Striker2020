@@ -19,6 +19,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -32,15 +34,17 @@ import frc.robot.Constants;
 
 public class DriveBase extends SubsystemBase {
 
+  PowerDistributionPanel pdp = new PowerDistributionPanel();
+
   public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  public final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
+  private final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
 
   public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
-  public final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+  private final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
-  TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
+  private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
 
   private final AHRS navx;
 
@@ -80,6 +84,11 @@ public class DriveBase extends SubsystemBase {
     // Set current limit
     motorConfig.continuousCurrentLimit = 40;
     motorConfig.peakCurrentDuration = 0; 
+
+    motorConfig.nominalOutputForward = 0;
+    motorConfig.nominalOutputReverse = 0;
+    motorConfig.peakOutputForward = 1;
+    motorConfig.peakOutputReverse = -1;
 
     //Vals set to config to minimize clutter. Expandable if needed
     leftMaster.configAllSettings(motorConfig);
@@ -121,19 +130,9 @@ public class DriveBase extends SubsystemBase {
     rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
     rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
-    leftMaster.configNominalOutputForward(0, Constants.DriveConstants.kTimeoutMs);
-		leftMaster.configNominalOutputReverse(0, Constants.DriveConstants.kTimeoutMs);
-		leftMaster.configPeakOutputForward(1, Constants.DriveConstants.kTimeoutMs);
-    leftMaster.configPeakOutputReverse(-1, Constants.DriveConstants.kTimeoutMs);
-        
-    rightMaster.configNominalOutputForward(0, Constants.DriveConstants.kTimeoutMs);
-		rightMaster.configNominalOutputReverse(0, Constants.DriveConstants.kTimeoutMs);
-		rightMaster.configPeakOutputForward(1, Constants.DriveConstants.kTimeoutMs);
-    rightMaster.configPeakOutputReverse(-1, Constants.DriveConstants.kTimeoutMs);
+    navx = new AHRS(SPI.Port.kMXP);
 
-    navx = new AHRS();
-
-    m_odometry = new DifferentialDriveOdometry(getHeading());
+    m_odometry = new DifferentialDriveOdometry(getHeadingPose());
 
     navx.enableLogging(false);
 
@@ -167,9 +166,11 @@ public class DriveBase extends SubsystemBase {
 
     SmartDashboard.putData(m_LPID);
     SmartDashboard.putData(m_RPID);
+
+    SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
   }
 
-  public void setDriveConfig(ControlMode controlMode, double motorVal){
+  public void configMotors(ControlMode controlMode, double motorVal){
     this.controlMode = controlMode;
     this.motorVal = motorVal;
   }
@@ -201,9 +202,13 @@ public class DriveBase extends SubsystemBase {
     setSpeeds(wheelSpeeds);
   }
 
-  public Rotation2d getHeading() {
+  public Rotation2d getHeadingPose() {
     double angle = navx.getYaw();
     return Rotation2d.fromDegrees(angle);
+  }
+
+  public double getHeadingDegrees(){
+    return navx.getYaw();
   }
 
   public void resetHeading(){
@@ -213,7 +218,7 @@ public class DriveBase extends SubsystemBase {
   public void updateOdometry() {
     leftMetersTraveled = getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
     rightMetersTraveled = getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
-    m_odometry.update(getHeading(), leftMetersTraveled, rightMetersTraveled);
+    m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
   }
 
   public void resetEncoders(){

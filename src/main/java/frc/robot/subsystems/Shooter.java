@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
@@ -28,14 +29,14 @@ public class Shooter implements Subsystem{
         motorConfig.slot0.kI = Constants.ShooterConstants.kGains.kI;
         motorConfig.slot0.kD = Constants.ShooterConstants.kGains.kD;
         motorConfig.slot0.kF = Constants.ShooterConstants.kGains.kF;
+
+        motorConfig.nominalOutputForward = 0;
+        motorConfig.nominalOutputReverse = 0;
+        motorConfig.peakOutputForward = 0;
+        motorConfig.peakOutputReverse = 0;
        
         motorConfig.continuousCurrentLimit = 40;
         motorConfig.peakCurrentDuration = 0;
-      
-        motorConfig.slot0.kP = 0;
-        motorConfig.slot0.kI = 0;
-        motorConfig.slot0.kD = 0;
-        motorConfig.slot0.kF = 0;
 
         left.configAllSettings(motorConfig);
         right.configAllSettings(motorConfig);
@@ -47,10 +48,10 @@ public class Shooter implements Subsystem{
         right.setInverted(true);    
         
 
-        left.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 
+        left.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
                                             Constants.ShooterConstants.kPIDLoopIdx, 
                                             Constants.ShooterConstants.kTimeoutMs);
-        right.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 
+        right.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
                                             Constants.ShooterConstants.kPIDLoopIdx, 
                                             Constants.ShooterConstants.kTimeoutMs);
 
@@ -61,25 +62,21 @@ public class Shooter implements Subsystem{
         right.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         right.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         right.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-
-        left.configNominalOutputForward(0, Constants.ShooterConstants.kTimeoutMs);
-		left.configNominalOutputReverse(0, Constants.ShooterConstants.kTimeoutMs);
-		left.configPeakOutputForward(1, Constants.ShooterConstants.kTimeoutMs);
-        left.configPeakOutputReverse(-1, Constants.ShooterConstants.kTimeoutMs);
-        
-        right.configNominalOutputForward(0, Constants.ShooterConstants.kTimeoutMs);
-		right.configNominalOutputReverse(0, Constants.ShooterConstants.kTimeoutMs);
-		right.configPeakOutputForward(1, Constants.ShooterConstants.kTimeoutMs);
-        right.configPeakOutputReverse(-1, Constants.ShooterConstants.kTimeoutMs);
     }
 
     @Override
     public void periodic(){
         left.set(controlMode, sendableMotorVal);
         right.set(controlMode, sendableMotorVal);
+
+        SmartDashboard.putNumber("Left Enc Pos", left.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Left Enc Velo", right.getSelectedSensorVelocity());
+
+        SmartDashboard.putNumber("Right Enc Pos", right.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right Enc Velo", right.getSelectedSensorVelocity());
     }
 
-    public void setShooterConfig(ControlMode mode, double value){
+    public void configMotors(ControlMode mode, double value){
         this.controlMode = mode;
         this.sendableMotorVal = value;
     }

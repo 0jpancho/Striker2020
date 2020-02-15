@@ -8,7 +8,7 @@ import frc.robot.subsystems.DriveBase;
 
 public class DriveByDistance extends CommandBase{
     
-    DriveBase drive = new DriveBase();
+    private DriveBase drive = new DriveBase();
 
     
     private double targetDistance; //meters
@@ -21,19 +21,19 @@ public class DriveByDistance extends CommandBase{
 
     @Override
     public void initialize() {
-        drive.setDriveConfig(ControlMode.PercentOutput, 0);
+        drive.configMotors(ControlMode.PercentOutput, 0);
         targetDistance *= Constants.DriveConstants.kMetersPerCount;
     }
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        drive.setDriveConfig(ControlMode.Position, targetDistance);
+        drive.configMotors(ControlMode.Position, targetDistance);
     }
    
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        drive.setDriveConfig(ControlMode.Disabled, 0);
+        drive.configMotors(ControlMode.Disabled, 0);
     }
 
     // Returns true when the command should end.

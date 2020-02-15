@@ -10,7 +10,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.util.Units;
 
 public abstract class Constants {
-
     public final static class DriveConstants {
         // inches
         public static final double kWheelDiameterInches = 6;
@@ -19,6 +18,8 @@ public abstract class Constants {
 
         public static final double kTrackWidth = Units.inchesToMeters(19.5); // meters
         public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameterInches / 2); // meters
+        
+        //SRX Mag Encoder
         public static final int kEncoderResolution = 4096;
 
         public static final double kInchesPerCount = kWheelCircumferenceInches / kEncoderResolution;
@@ -50,11 +51,12 @@ public abstract class Constants {
         public static final int kWheelRadiusInches = 2;
         public static final double kWheelCircumferenceInches = Math.PI * kWheelDiameterInches;
 
-        public static final int kEncoderResolution = 4096;
+        //Hi-Res CIMcoder
+        public static final int kEncoderResolution = 256;
 
         public static final int kSlotIdx = 0;
         public static final int kPIDLoopIdx = 0;
-        public static final int kTimeoutMs = 30;   
+        public static final int kTimeoutMs = 20;   
                                                    //kP kI kD kF Iz PeakOut
         public final static Gains kGains = new Gains(1, 0, 0, 0, 0, 1.00);
     }
