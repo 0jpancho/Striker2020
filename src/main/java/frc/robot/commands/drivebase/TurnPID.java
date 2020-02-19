@@ -9,18 +9,18 @@ import frc.robot.subsystems.DriveBase;
 
 public class TurnPID extends CommandBase {
 
-    private DriveBase drive = new DriveBase();
+    private DriveBase m_drive = new DriveBase();
 
     private double targetAngle = 0;
     private double tolerance = 0;
 
-    PIDController turnController = new PIDController(Constants.DriveConstants.kTurnGains.kP, 
-                                                     Constants.DriveConstants.kTurnGains.kP, 
-                                                     Constants.DriveConstants.kTurnGains.kP);
+    private PIDController turnController = new PIDController(Constants.DriveConstants.kTurnGains.kP, 
+                                                             Constants.DriveConstants.kTurnGains.kI, 
+                                                             Constants.DriveConstants.kTurnGains.kD);
 
 
     public TurnPID(DriveBase drive, double targetAngle, double tolerance){
-        this.drive = drive;
+        this.m_drive = drive;
 
         this.targetAngle = targetAngle;
         this.tolerance = tolerance;
@@ -28,18 +28,20 @@ public class TurnPID extends CommandBase {
 
     @Override
     public void initialize() {
-        drive.resetHeading();
-        drive.configMotors(ControlMode.PercentOutput, 0);
+        m_drive.resetHeading();
+        m_drive.configMotors(ControlMode.PercentOutput, 0);
 
-        turnController.setSetpoint(targetAngle);
+        turnController.reset();
+
         turnController.setTolerance(tolerance);
         turnController.enableContinuousInput(-180, 180);
+        turnController.setSetpoint(targetAngle);
     }
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-      drive.leftMaster.set(ControlMode.PercentOutput, turnController.calculate(drive.getHeadingDegrees()));
-      drive.rightMaster.set(ControlMode.PercentOutput, turnController.calculate(-drive.getHeadingDegrees()));
+      m_drive.leftMaster.set(ControlMode.PercentOutput, turnController.calculate(m_drive.getHeadingDegrees()));
+      m_drive.rightMaster.set(ControlMode.PercentOutput, turnController.calculate(-m_drive.getHeadingDegrees()));
     }
    
     // Called once the command ends or is interrupted.

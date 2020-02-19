@@ -5,14 +5,16 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class ShootOpenLoop extends CommandBase{
+public class OpenLoopShooting extends CommandBase{
 
     private Shooter shooter = new Shooter();
     private double power;
 
-    public ShootOpenLoop(Shooter shooter, double power){
+    public OpenLoopShooting(Shooter shooter, double power){
        this.shooter = shooter;
        this.power = power;
+
+       addRequirements(shooter);
     }
 
     @Override
@@ -35,5 +37,4 @@ public class ShootOpenLoop extends CommandBase{
     public boolean isFinished() {
         return false;
     }
-    
 }

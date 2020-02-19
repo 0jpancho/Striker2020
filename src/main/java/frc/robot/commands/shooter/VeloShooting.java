@@ -8,13 +8,17 @@ import frc.robot.subsystems.Shooter;
 
 public class VeloShooting extends CommandBase{
     
-    private Shooter shooter = new Shooter();
+    private Shooter m_shooter = new Shooter();
     private double inputRPM;
     private double targetRPM;
+    private boolean toggle;
 
-    public VeloShooting(Shooter shooter, double inputRPM){
-        this.shooter = shooter;
+    public VeloShooting(Shooter shooter, double inputRPM, boolean toggle){
+        this.m_shooter = shooter;
         this.inputRPM = inputRPM;
+        this.toggle = toggle;
+
+        addRequirements(shooter);
     }
     
     @Override
@@ -25,18 +29,18 @@ public class VeloShooting extends CommandBase{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        shooter.configMotors(ControlMode.Velocity, targetRPM);
+        m_shooter.configMotors(ControlMode.Velocity, targetRPM);
     }
     
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        shooter.configMotors(ControlMode.PercentOutput, 0);
+        m_shooter.configMotors(ControlMode.PercentOutput, 0);
     }
     
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return !toggle;
     }
 }

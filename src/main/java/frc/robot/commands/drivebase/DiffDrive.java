@@ -9,10 +9,7 @@ package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
-
 import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -21,23 +18,24 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   
-  private DriveBase m_DriveBase = new DriveBase();
+  private DriveBase m_drive = new DriveBase();
   
   private DoubleSupplier forward;
   private DoubleSupplier rot;
   
-  public DiffDrive(DriveBase subsystem, DoubleSupplier forward, DoubleSupplier rot) {
-    m_DriveBase = subsystem;
+  public DiffDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rot) {
+    m_drive = drive;
     this.forward = forward;
     this.rot = rot;
-    addRequirements(subsystem);
+    
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_DriveBase.resetEncoders();
-    m_DriveBase.resetHeading();
+    m_drive.resetEncoders();
+    m_drive.resetHeading();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,12 +53,9 @@ public class DiffDrive extends CommandBase {
       inputRot = 0;
     }
 
-    SmartDashboard.putNumber("Input Forward", forward.getAsDouble());
-    SmartDashboard.putNumber("Input Rotation", rot.getAsDouble());
+    m_drive.updateOdometry();
 
-    m_DriveBase.updateOdometry();
-
-    m_DriveBase.differentialDrive(-inputForward * Constants.DriveConstants.kMaxSpeed, 
+    m_drive.differentialDrive(-inputForward * Constants.DriveConstants.kMaxSpeed, 
                                   -inputRot * Constants.DriveConstants.kMaxAngularSpeed);
   }
 

@@ -44,16 +44,16 @@ public class Shooter implements Subsystem{
         left.setSensorPhase(false);
         right.setSensorPhase(true);
         
-        left.setInverted(false);
+        left.setInverted(true);
         right.setInverted(true);    
         
 
         left.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
-                                            Constants.ShooterConstants.kPIDLoopIdx, 
-                                            Constants.ShooterConstants.kTimeoutMs);
+                                          Constants.ShooterConstants.kPIDLoopIdx, 
+                                          Constants.ShooterConstants.kTimeoutMs);
         right.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
-                                            Constants.ShooterConstants.kPIDLoopIdx, 
-                                            Constants.ShooterConstants.kTimeoutMs);
+                                           Constants.ShooterConstants.kPIDLoopIdx, 
+                                           Constants.ShooterConstants.kTimeoutMs);
 
         left.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         left.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
@@ -62,6 +62,8 @@ public class Shooter implements Subsystem{
         right.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         right.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         right.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+
+        resetEncoders();
     }
 
     @Override
@@ -79,6 +81,11 @@ public class Shooter implements Subsystem{
     public void configMotors(ControlMode mode, double value){
         this.controlMode = mode;
         this.sendableMotorVal = value;
+    }
+
+    public void resetEncoders(){
+        left.getSensorCollection().setQuadraturePosition(0, Constants.ShooterConstants.kTimeoutMs);
+        right.getSensorCollection().setQuadraturePosition(0, Constants.ShooterConstants.kTimeoutMs);
     }
 
     public void setBrake(boolean isEnabled){

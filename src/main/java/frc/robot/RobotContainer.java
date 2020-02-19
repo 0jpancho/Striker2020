@@ -13,8 +13,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drivebase.DiffDrive;
+import frc.robot.commands.shooter.OpenLoopShooting;
+import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -35,6 +39,9 @@ public class RobotContainer {
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(0.5);
 
   public final DriveBase m_driveBase = new DriveBase();
+  public final Shooter m_shooter = new Shooter();
+
+  
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -49,7 +56,10 @@ public class RobotContainer {
     m_driveBase.setDefaultCommand(
       new DiffDrive(m_driveBase, forward, rot)
     );
-    
+
+    m_shooter.setDefaultCommand(
+      new OpenLoopShooting(m_shooter, driver.getTriggerAxis(Hand.kRight))
+    );
   }
 
   /**
@@ -59,6 +69,9 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    JoystickButton veloShootButton = new JoystickButton(driver, Constants.GamepadIDs.kGamepadButtonShoulderR);
+
+    veloShootButton.whenPressed(new VeloShooting(m_shooter, driver.getTriggerAxis(Hand.kRight), driver.getBumper(Hand.kRight)));
   }
 
 

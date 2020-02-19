@@ -8,39 +8,39 @@ import frc.robot.subsystems.DriveBase;
 
 public class DriveByDistance extends CommandBase{
     
-    private DriveBase drive = new DriveBase();
-
+    private DriveBase m_drive = new DriveBase();
     
     private double targetDistance; //meters
     private double tolerance = 100; //ticks
 
     public DriveByDistance(DriveBase drive, double targetDistance){
-        this.drive = drive;
+        this.m_drive = drive;
         this.targetDistance = targetDistance;
+
+        addRequirements(drive);
     }
 
     @Override
     public void initialize() {
-        drive.configMotors(ControlMode.PercentOutput, 0);
+        m_drive.configMotors(ControlMode.PercentOutput, 0);
         targetDistance *= Constants.DriveConstants.kMetersPerCount;
     }
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        drive.configMotors(ControlMode.Position, targetDistance);
+        m_drive.configMotors(ControlMode.Position, targetDistance);
     }
    
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        drive.configMotors(ControlMode.Disabled, 0);
+        m_drive.configMotors(ControlMode.PercentOutput, 0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if ((drive.getLPosTicks() - tolerance < drive.getLPosTicks() && drive.getLPosTicks() < drive.getLPosTicks() + tolerance) &&
-             drive.getRPosTicks() - tolerance < drive.getRPosTicks() && drive.getRPosTicks() < drive.getRPosTicks() + tolerance){
+        if(Math.abs(m_drive.getLPosTicks() - targetDistance) < tolerance && Math.abs(m_drive.getRPosTicks() - targetDistance) < tolerance){
             return true;
         }
         else{
