@@ -45,11 +45,11 @@ public class DiffDrive extends CommandBase {
     double inputForward = forward.getAsDouble();
     double inputRot = rot.getAsDouble();
 
-    if (Math.abs(inputForward) < 0.1){
+    if (Math.abs(inputForward) < 0.05){
       inputForward = 0;
     } 
 
-    if (Math.abs(inputRot) < 0.1){
+    if (Math.abs(inputRot) < 0.05){
       inputRot = 0;
     }
 

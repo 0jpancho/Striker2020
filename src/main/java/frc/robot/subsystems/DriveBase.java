@@ -70,7 +70,7 @@ public class DriveBase extends SubsystemBase {
   private double leftMetersTraveled;
   private double rightMetersTraveled;
 
-  private ControlMode controlMode;
+  private ControlMode controlMode = ControlMode.PercentOutput;
   private double motorVal;
 
   public DriveBase() {

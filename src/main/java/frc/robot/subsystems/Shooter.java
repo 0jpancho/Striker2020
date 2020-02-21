@@ -17,7 +17,7 @@ public class Shooter implements Subsystem{
 
     private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
 
-    private ControlMode controlMode;
+    private ControlMode controlMode = ControlMode.PercentOutput;
     private double sendableMotorVal;
 
     public Shooter(){

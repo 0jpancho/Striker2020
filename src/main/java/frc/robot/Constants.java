@@ -35,7 +35,7 @@ public abstract class Constants {
         public static final double kMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
         public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth; 
 
-        public final static Gains kDriveGains = new Gains(1, 0, 0, 0, 0, 1.00);
+        public final static Gains kDriveGains = new Gains(0.001, 0, 0, 0, 0, 1.00);
         public final static Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
 
         public static final int kSlotIdx = 0;
