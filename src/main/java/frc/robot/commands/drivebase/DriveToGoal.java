@@ -8,24 +8,24 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveBase;
 
-public class DriveToGoal extends CommandBase{
+public class DriveToGoal extends CommandBase {
 
     private DriveBase m_drive = new DriveBase();
-    
+
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("ty");
-    
-    public DriveToGoal(DriveBase m_drive){
+
+    public DriveToGoal(DriveBase m_drive) {
         this.m_drive = m_drive;
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
 
     }
 
     @Override
-    public void execute(){
+    public void execute() {
 
     }
 
@@ -35,7 +35,7 @@ public class DriveToGoal extends CommandBase{
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return false;
     }
 

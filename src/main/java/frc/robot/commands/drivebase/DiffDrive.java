@@ -17,17 +17,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  
+
   private DriveBase m_drive = new DriveBase();
-  
+
   private DoubleSupplier forward;
   private DoubleSupplier rot;
-  
+
   public DiffDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rot) {
     m_drive = drive;
     this.forward = forward;
     this.rot = rot;
-    
+
     addRequirements(drive);
   }
 
@@ -45,18 +45,18 @@ public class DiffDrive extends CommandBase {
     double inputForward = forward.getAsDouble();
     double inputRot = rot.getAsDouble();
 
-    if (Math.abs(inputForward) < 0.05){
+    if (Math.abs(inputForward) < 0.05) {
       inputForward = 0;
-    } 
+    }
 
-    if (Math.abs(inputRot) < 0.05){
+    if (Math.abs(inputRot) < 0.05) {
       inputRot = 0;
     }
 
     m_drive.updateOdometry();
 
-    m_drive.differentialDrive(-inputForward * Constants.DriveConstants.kMaxSpeed, 
-                                  -inputRot * Constants.DriveConstants.kMaxAngularSpeed);
+    m_drive.differentialDrive(-inputForward * Constants.DriveConstants.kMaxSpeed,
+        -inputRot * Constants.DriveConstants.kMaxAngularSpeed);
   }
 
   // Called once the command ends or is interrupted.

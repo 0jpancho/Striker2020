@@ -11,26 +11,27 @@ public class ArcadeDrive extends CommandBase {
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
 
-    public ArcadeDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rotation){
+    public ArcadeDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rotation) {
         m_drive = drive;
         m_forward = forward;
         m_rotation = rotation;
-        
+
         addRequirements(drive);
     }
 
-     // Called when the command is initially scheduled.
+    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         m_drive.resetEncoders();
         m_drive.resetHeading();
     }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         m_drive.arcadeDrive(m_forward, m_rotation);
     }
-   
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {

@@ -15,11 +15,10 @@ public class TurnPID extends CommandBase {
     private double targetAngle = 0;
     private double tolerance = 0;
 
-    private PIDController turnController = new PIDController(Constants.DriveConstants.kTurnGains.kP, 
-                                                             Constants.DriveConstants.kTurnGains.kI, 
-                                                             Constants.DriveConstants.kTurnGains.kD);
+    private PIDController turnController = new PIDController(Constants.DriveConstants.kTurnGains.kP,
+            Constants.DriveConstants.kTurnGains.kI, Constants.DriveConstants.kTurnGains.kD);
 
-    public TurnPID(DriveBase drive, double targetAngle, double tolerance){
+    public TurnPID(DriveBase drive, double targetAngle, double tolerance) {
         this.m_drive = drive;
 
         this.targetAngle = targetAngle;
@@ -38,13 +37,14 @@ public class TurnPID extends CommandBase {
         turnController.enableContinuousInput(-180, 180);
         turnController.setSetpoint(targetAngle);
     }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-      m_drive.leftMaster.set(ControlMode.PercentOutput, turnController.calculate(m_drive.getHeadingDegrees()));
-      m_drive.rightMaster.set(ControlMode.PercentOutput, turnController.calculate(-m_drive.getHeadingDegrees()));
+        m_drive.leftMaster.set(ControlMode.PercentOutput, turnController.calculate(m_drive.getHeadingDegrees()));
+        m_drive.rightMaster.set(ControlMode.PercentOutput, turnController.calculate(-m_drive.getHeadingDegrees()));
     }
-   
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
@@ -55,5 +55,5 @@ public class TurnPID extends CommandBase {
     public boolean isFinished() {
         return turnController.atSetpoint();
     }
-    
+
 }

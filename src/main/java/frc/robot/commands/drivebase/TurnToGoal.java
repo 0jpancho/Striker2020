@@ -8,7 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveBase;
 
-public class TurnToGoal extends CommandBase{
+public class TurnToGoal extends CommandBase {
 
     private DriveBase m_drive = new DriveBase();
     private double kP = .1f;
@@ -20,29 +20,29 @@ public class TurnToGoal extends CommandBase{
     double leftPower;
     double rightPower;
 
-    public TurnToGoal(DriveBase m_drive){
+    public TurnToGoal(DriveBase m_drive) {
         this.m_drive = m_drive;
 
         addRequirements(m_drive);
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
 
     }
 
     @Override
-    public void execute(){
+    public void execute() {
         double x = tx.getDouble(0.0);
-        
+
         double headingError = x;
         double turnCorrect = 0.0f;
 
-        if (headingError > 1.0){
+        if (headingError > 1.0) {
             turnCorrect = kP * headingError - minPower;
         }
 
-        else if (headingError < 1.0){
+        else if (headingError < 1.0) {
             turnCorrect = kP * headingError + minPower;
         }
 

@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
 
-public class DriveByDistance extends CommandBase{
-    
-    private DriveBase m_drive = new DriveBase();
-    
-    private double targetDistance; //meters
-    private double tolerance = 100; //ticks
+public class DriveByDistance extends CommandBase {
 
-    public DriveByDistance(DriveBase drive, double targetDistance){
+    private DriveBase m_drive = new DriveBase();
+
+    private double targetDistance; // meters
+    private double tolerance = 100; // ticks
+
+    public DriveByDistance(DriveBase drive, double targetDistance) {
         this.m_drive = drive;
         this.targetDistance = targetDistance;
 
@@ -25,12 +25,13 @@ public class DriveByDistance extends CommandBase{
         m_drive.configMotors(ControlMode.PercentOutput, 0);
         targetDistance *= Constants.DriveConstants.kMetersPerCount;
     }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         m_drive.configMotors(ControlMode.Position, targetDistance);
     }
-   
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
@@ -40,10 +41,10 @@ public class DriveByDistance extends CommandBase{
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if(Math.abs(m_drive.getLPosTicks() - targetDistance) < tolerance && Math.abs(m_drive.getRPosTicks() - targetDistance) < tolerance){
+        if (Math.abs(m_drive.getLPosTicks() - targetDistance) < tolerance
+                && Math.abs(m_drive.getRPosTicks() - targetDistance) < tolerance) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

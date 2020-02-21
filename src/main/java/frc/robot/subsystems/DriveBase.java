@@ -35,226 +35,224 @@ import frc.robot.Constants;
 
 public class DriveBase extends SubsystemBase {
 
-  PowerDistributionPanel pdp = new PowerDistributionPanel();
+	PowerDistributionPanel pdp = new PowerDistributionPanel();
 
-  public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
+	public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
 
-  private final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
+	private final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
 
-  public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
+	public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
 
-  private final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+	private final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
 
-  private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
+	private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
 
-  private final AHRS navx;
+	private final AHRS navx;
 
-  private final PIDController m_LPID = new PIDController(Constants.DriveConstants.kDriveGains.kP, 
-                                                         Constants.DriveConstants.kDriveGains.kI,
-                                                         Constants.DriveConstants.kDriveGains.kD);
+	private final PIDController m_LPID = new PIDController(Constants.DriveConstants.kDriveGains.kP,
+			Constants.DriveConstants.kDriveGains.kI, Constants.DriveConstants.kDriveGains.kD);
 
-  private final PIDController m_RPID = new PIDController(Constants.DriveConstants.kDriveGains.kP, 
-                                                         Constants.DriveConstants.kDriveGains.kI,
-                                                         Constants.DriveConstants.kDriveGains.kD);
+	private final PIDController m_RPID = new PIDController(Constants.DriveConstants.kDriveGains.kP,
+			Constants.DriveConstants.kDriveGains.kI, Constants.DriveConstants.kDriveGains.kD);
 
-  private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
+	private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
+			Constants.DriveConstants.kTrackWidth);
 
-  private final DifferentialDriveOdometry m_odometry;
+	private final DifferentialDriveOdometry m_odometry;
 
-  // Gains are for example purposes only - must be determined for your own robot!
-  SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
+	// Gains are for example purposes only - must be determined for your own robot!
+	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
 
-  private double leftMetersPerSec;
-  private double rightMetersPerSec;
+	private double leftMetersPerSec;
+	private double rightMetersPerSec;
 
-  private double leftMetersTraveled;
-  private double rightMetersTraveled;
+	private double leftMetersTraveled;
+	private double rightMetersTraveled;
 
-  private ControlMode controlMode = ControlMode.PercentOutput;
-  private double motorVal;
+	private ControlMode controlMode = ControlMode.PercentOutput;
+	private double motorVal;
 
-  public DriveBase() {
-    // Rest configs back to default - prevents conflicts
-    leftMaster.configFactoryDefault();
-    leftSlave.configFactoryDefault();
+	public DriveBase() {
+		// Rest configs back to default - prevents conflicts
+		leftMaster.configFactoryDefault();
+		leftSlave.configFactoryDefault();
 
-    rightMaster.configFactoryDefault();
-    rightSlave.configFactoryDefault();
+		rightMaster.configFactoryDefault();
+		rightSlave.configFactoryDefault();
 
-    // Set current limit
-    motorConfig.continuousCurrentLimit = 40;
-    motorConfig.peakCurrentDuration = 0; 
+		// Set current limit
+		motorConfig.continuousCurrentLimit = 40;
+		motorConfig.peakCurrentDuration = 0;
 
-    motorConfig.nominalOutputForward = 0;
-    motorConfig.nominalOutputReverse = 0;
-    motorConfig.peakOutputForward = 1;
-    motorConfig.peakOutputReverse = -1;
+		motorConfig.nominalOutputForward = 0;
+		motorConfig.nominalOutputReverse = 0;
+		motorConfig.peakOutputForward = 1;
+		motorConfig.peakOutputReverse = -1;
 
-    //Vals set to config to minimize clutter. Expandable if needed
-    leftMaster.configAllSettings(motorConfig);
-    leftSlave.configAllSettings(motorConfig);
+		// Vals set to config to minimize clutter. Expandable if needed
+		leftMaster.configAllSettings(motorConfig);
+		leftSlave.configAllSettings(motorConfig);
 
-    rightMaster.configAllSettings(motorConfig);
-    rightSlave.configAllSettings(motorConfig);
+		rightMaster.configAllSettings(motorConfig);
+		rightSlave.configAllSettings(motorConfig);
 
-    // Set followers to masters
-    leftSlave.follow(leftMaster);
-    rightSlave.follow(rightMaster);
+		// Set followers to masters
+		leftSlave.follow(leftMaster);
+		rightSlave.follow(rightMaster);
 
-    // Configure motor inversions/sensor phase
-    leftMaster.setInverted(false);
-    leftSlave.setInverted(InvertType.FollowMaster);
-    leftMaster.setSensorPhase(false);
+		// Configure motor inversions/sensor phase
+		leftMaster.setInverted(false);
+		leftSlave.setInverted(InvertType.FollowMaster);
+		leftMaster.setSensorPhase(false);
 
-    rightMaster.setInverted(true);
-    rightSlave.setInverted(InvertType.FollowMaster);
-    rightMaster.setSensorPhase(true);
+		rightMaster.setInverted(true);
+		rightSlave.setInverted(InvertType.FollowMaster);
+		rightMaster.setSensorPhase(true);
 
-    // Set neutral mode
-    setBrakeMode(NeutralMode.Brake);
+		// Set neutral mode
+		setBrakeMode(NeutralMode.Brake);
 
-    // Config encoders
-    leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
-    rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+		// Config encoders
+		leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
+		rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 
-    //Set update period to prevent stale data
-    leftMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
-    leftMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+		// Set update period to prevent stale data
+		leftMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+		leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+		leftMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
-    rightMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-    rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
-    rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+		rightMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
-    navx = new AHRS(SPI.Port.kMXP);
+		navx = new AHRS(SPI.Port.kMXP);
 
-    m_odometry = new DifferentialDriveOdometry(getHeadingPose());
+		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
 
-    navx.enableLogging(false);
+		navx.enableLogging(false);
 
-    // Reset sensors
-    resetEncoders();
-    resetHeading();
-    
-    System.out.println("Drivebase Initialized");
-  }
+		// Reset sensors
+		resetEncoders();
+		resetHeading();
 
-  @Override
-  public void periodic() {
+		System.out.println("Drivebase Initialized");
+	}
 
-    leftMaster.set(controlMode, motorVal);
-    rightMaster.set(controlMode, motorVal);
-      
-    leftMetersPerSec = getLVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / 
-                                          Constants.DriveConstants.kEncoderResolution);
+	@Override
+	public void periodic() {
 
-    rightMetersPerSec = getRVeloTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / 
-                                           Constants.DriveConstants.kEncoderResolution);
+		leftMaster.set(controlMode, motorVal);
+		rightMaster.set(controlMode, motorVal);
 
-  
-    SmartDashboard.putNumber("Left Enc Velo FPS", leftMetersPerSec);
-    SmartDashboard.putNumber("Right Enc Velo FPS", rightMetersPerSec);
-    
-    SmartDashboard.putNumber("Left Distance", leftMetersTraveled);
-    SmartDashboard.putNumber("Right Distance", rightMetersTraveled);
+		leftMetersPerSec = getLVeloTicks()
+				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
 
-    SmartDashboard.putNumber("Heading", navx.getYaw());
-    SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
-    SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
+		rightMetersPerSec = getRVeloTicks()
+				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
 
-    SendableRegistry.add(m_LPID, "Left Drive PID");
-    SendableRegistry.add(m_RPID, "Right Drive PID)");
+		SmartDashboard.putNumber("Left Enc Velo FPS", leftMetersPerSec);
+		SmartDashboard.putNumber("Right Enc Velo FPS", rightMetersPerSec);
 
-    SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
-  }
+		SmartDashboard.putNumber("Left Distance", leftMetersTraveled);
+		SmartDashboard.putNumber("Right Distance", rightMetersTraveled);
 
-  public void configMotors(ControlMode controlMode, double motorVal){
-    this.controlMode = controlMode;
-    this.motorVal = motorVal;
-  }
+		SmartDashboard.putNumber("Heading", navx.getYaw());
+		SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
+		SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
 
-  public void arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation){
-      leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
-      rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
-  }
+		SendableRegistry.add(m_LPID, "Left Drive PID");
+		SendableRegistry.add(m_RPID, "Right Drive PID)");
 
-  public void tankDrive(DoubleSupplier left, DoubleSupplier right){
-    leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
-    rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
-  }
+		SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
+	}
 
-  public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
-    final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
-    final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+	public void configMotors(ControlMode controlMode, double motorVal) {
+		this.controlMode = controlMode;
+		this.motorVal = motorVal;
+	}
 
-    final double leftOutput = m_LPID.calculate(getLVeloTicks(),
-                                               speeds.leftMetersPerSecond);
-    final double rightOutput = m_RPID.calculate(getRVeloTicks(),
-                                                speeds.rightMetersPerSecond);
-    leftMaster.setVoltage(leftOutput + leftFeedforward);
-    rightMaster.setVoltage(rightOutput + rightFeedforward);
-  }
+	public void arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
+		leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
+		rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
+	}
 
-  public void differentialDrive(double forward, double rot) {
-    var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
-    setSpeeds(wheelSpeeds);
-  }
+	public void tankDrive(DoubleSupplier left, DoubleSupplier right) {
+		leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
+		rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
+	}
 
-  public Rotation2d getHeadingPose() {
-    double angle = navx.getYaw();
-    return Rotation2d.fromDegrees(angle);
-  }
+	public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+		final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+		final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-  public double getHeadingDegrees(){
-    return navx.getYaw();
-  }
+		final double leftOutput = m_LPID.calculate(getLVeloTicks(), speeds.leftMetersPerSecond);
+		final double rightOutput = m_RPID.calculate(getRVeloTicks(), speeds.rightMetersPerSecond);
+		leftMaster.setVoltage(leftOutput + leftFeedforward);
+		rightMaster.setVoltage(rightOutput + rightFeedforward);
+	}
 
-  public void resetHeading(){
-    System.out.println("Heading Reset");
-    navx.zeroYaw();
-  }
+	public void differentialDrive(double forward, double rot) {
+		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
+		setSpeeds(wheelSpeeds);
+	}
 
-  public void updateOdometry() {
-    leftMetersTraveled = getLPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
-    rightMetersTraveled = getRPosTicks() * (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
-    m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
-  }
+	public Rotation2d getHeadingPose() {
+		double angle = navx.getYaw();
+		return Rotation2d.fromDegrees(angle);
+	}
 
-  public void resetEncoders(){
-    System.out.println("Encoders Reset");
-    leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
-    rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
-  }
+	public double getHeadingDegrees() {
+		return navx.getYaw();
+	}
 
-  public void setBrakeMode(NeutralMode neutralMode){
-    leftMaster.setNeutralMode(neutralMode);
-    leftSlave.setNeutralMode(neutralMode);
+	public void resetHeading() {
+		System.out.println("Heading Reset");
+		navx.zeroYaw();
+	}
 
-    rightMaster.setNeutralMode(neutralMode);
-    rightSlave.setNeutralMode(neutralMode);
-  }
+	public void updateOdometry() {
+		leftMetersTraveled = getLPosTicks()
+				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+		rightMetersTraveled = getRPosTicks()
+				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+		m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
+	}
 
-  public WPI_TalonSRX getLeftMaster() {
-    return leftMaster;
-  }
+	public void resetEncoders() {
+		System.out.println("Encoders Reset");
+		leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
+		rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
+	}
 
-  public WPI_TalonSRX getRightMaster(){
-    return rightMaster;
-  }
+	public void setBrakeMode(NeutralMode neutralMode) {
+		leftMaster.setNeutralMode(neutralMode);
+		leftSlave.setNeutralMode(neutralMode);
 
-  public int getLVeloTicks(){
-    return -leftMaster.getSensorCollection().getQuadratureVelocity();
-  }
+		rightMaster.setNeutralMode(neutralMode);
+		rightSlave.setNeutralMode(neutralMode);
+	}
 
-  public int getLPosTicks(){
-    return -leftMaster.getSensorCollection().getQuadraturePosition();
-  }
+	public WPI_TalonSRX getLeftMaster() {
+		return leftMaster;
+	}
 
-  public int getRVeloTicks(){
-    return rightMaster.getSensorCollection().getQuadratureVelocity();
-  }
+	public WPI_TalonSRX getRightMaster() {
+		return rightMaster;
+	}
 
-  public int getRPosTicks(){
-    return rightMaster.getSensorCollection().getQuadraturePosition();
-  }
+	public int getLVeloTicks() {
+		return -leftMaster.getSensorCollection().getQuadratureVelocity();
+	}
+
+	public int getLPosTicks() {
+		return -leftMaster.getSensorCollection().getQuadraturePosition();
+	}
+
+	public int getRVeloTicks() {
+		return rightMaster.getSensorCollection().getQuadratureVelocity();
+	}
+
+	public int getRPosTicks() {
+		return rightMaster.getSensorCollection().getQuadraturePosition();
+	}
 }

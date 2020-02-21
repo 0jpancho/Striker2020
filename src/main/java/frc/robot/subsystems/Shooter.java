@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
-public class Shooter implements Subsystem{
+public class Shooter implements Subsystem {
 
     public final WPI_TalonSRX left = new WPI_TalonSRX(Constants.ShooterConstants.kLeftShooter);
     public final WPI_TalonSRX right = new WPI_TalonSRX(Constants.ShooterConstants.kRightShooter);
@@ -20,8 +20,8 @@ public class Shooter implements Subsystem{
     private ControlMode controlMode = ControlMode.PercentOutput;
     private double sendableMotorVal;
 
-    public Shooter(){
-        
+    public Shooter() {
+
         left.configFactoryDefault();
         right.configFactoryDefault();
 
@@ -34,26 +34,23 @@ public class Shooter implements Subsystem{
         motorConfig.nominalOutputReverse = 0;
         motorConfig.peakOutputForward = 1;
         motorConfig.peakOutputReverse = -1;
-       
+
         motorConfig.continuousCurrentLimit = 40;
         motorConfig.peakCurrentDuration = 0;
 
         left.configAllSettings(motorConfig);
         right.configAllSettings(motorConfig);
-        
+
         left.setSensorPhase(false);
         right.setSensorPhase(true);
-        
-        left.setInverted(false);
-        right.setInverted(true);    
-        
 
-        left.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
-                                          Constants.ShooterConstants.kPIDLoopIdx, 
-                                          Constants.ShooterConstants.kTimeoutMs);
-        right.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, 
-                                           Constants.ShooterConstants.kPIDLoopIdx, 
-                                           Constants.ShooterConstants.kTimeoutMs);
+        left.setInverted(false);
+        right.setInverted(true);
+
+        left.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.ShooterConstants.kPIDLoopIdx,
+                Constants.ShooterConstants.kTimeoutMs);
+        right.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.ShooterConstants.kPIDLoopIdx,
+                Constants.ShooterConstants.kTimeoutMs);
 
         left.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         left.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
@@ -69,7 +66,7 @@ public class Shooter implements Subsystem{
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         left.set(controlMode, sendableMotorVal);
         right.set(controlMode, sendableMotorVal);
 
@@ -80,17 +77,17 @@ public class Shooter implements Subsystem{
         SmartDashboard.putNumber("Right Enc Velo", right.getSelectedSensorVelocity());
     }
 
-    public void configMotors(ControlMode mode, double value){
+    public void configMotors(ControlMode mode, double value) {
         this.controlMode = mode;
         this.sendableMotorVal = value;
     }
 
-    public void resetEncoders(){
+    public void resetEncoders() {
         left.getSensorCollection().setQuadraturePosition(0, Constants.ShooterConstants.kTimeoutMs);
         right.getSensorCollection().setQuadraturePosition(0, Constants.ShooterConstants.kTimeoutMs);
     }
 
-    public void setBrake(boolean isEnabled){
+    public void setBrake(boolean isEnabled) {
         left.setInverted(isEnabled);
         right.setInverted(isEnabled);
     }
