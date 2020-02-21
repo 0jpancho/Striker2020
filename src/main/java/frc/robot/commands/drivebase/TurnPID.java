@@ -3,6 +3,7 @@ package frc.robot.commands.drivebase;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveBase;
@@ -18,7 +19,6 @@ public class TurnPID extends CommandBase {
                                                              Constants.DriveConstants.kTurnGains.kI, 
                                                              Constants.DriveConstants.kTurnGains.kD);
 
-
     public TurnPID(DriveBase drive, double targetAngle, double tolerance){
         this.m_drive = drive;
 
@@ -31,6 +31,7 @@ public class TurnPID extends CommandBase {
         m_drive.resetHeading();
         m_drive.configMotors(ControlMode.PercentOutput, 0);
 
+        SendableRegistry.add(turnController, "Turn Controller");
         turnController.reset();
 
         turnController.setTolerance(tolerance);

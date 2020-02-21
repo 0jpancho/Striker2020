@@ -13,12 +13,13 @@ public abstract class Constants {
     public final static class DriveConstants {
         // inches
         public static final double kWheelDiameterInches = 6;
+        public static final double kWheelRadiusInches = 3;
         public static final double kWheelCircumferenceInches = Math.PI * kWheelDiameterInches;
         
         public static final double kWheelCircumferenceMeters = Units.inchesToMeters(kWheelCircumferenceInches);
 
         public static final double kTrackWidth = Units.inchesToMeters(19.5); // meters
-        public final static double kWheelRadius = Units.inchesToMeters(kWheelDiameterInches / 2); // meters
+        public final static double kWheelRadius = Units.inchesToMeters(kWheelRadiusInches); // meters
         
         //SRX Mag Encoder
         public static final int kEncoderResolution = 4096;

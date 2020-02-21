@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -56,8 +57,7 @@ public class DriveBase extends SubsystemBase {
                                                          Constants.DriveConstants.kDriveGains.kI,
                                                          Constants.DriveConstants.kDriveGains.kD);
 
-  private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
-      Constants.DriveConstants.kTrackWidth);
+  private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(Constants.DriveConstants.kTrackWidth);
 
   private final DifferentialDriveOdometry m_odometry;
 
@@ -111,11 +111,7 @@ public class DriveBase extends SubsystemBase {
     rightMaster.setSensorPhase(true);
 
     // Set neutral mode
-    leftMaster.setNeutralMode(NeutralMode.Brake);
-    rightMaster.setNeutralMode(NeutralMode.Brake);
-
-    leftSlave.setNeutralMode(NeutralMode.Brake);
-    rightSlave.setNeutralMode(NeutralMode.Brake);
+    setBrakeMode(NeutralMode.Brake);
 
     // Config encoders
     leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -139,6 +135,8 @@ public class DriveBase extends SubsystemBase {
     // Reset sensors
     resetEncoders();
     resetHeading();
+    
+    System.out.println("Drivebase Initialized");
   }
 
   @Override
@@ -164,8 +162,8 @@ public class DriveBase extends SubsystemBase {
     SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
     SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
 
-    SmartDashboard.putData(m_LPID);
-    SmartDashboard.putData(m_RPID);
+    SendableRegistry.add(m_LPID, "Left Drive PID");
+    SendableRegistry.add(m_RPID, "Right Drive PID)");
 
     SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
   }
@@ -190,9 +188,9 @@ public class DriveBase extends SubsystemBase {
     final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
     final double leftOutput = m_LPID.calculate(getLVeloTicks(),
-        speeds.leftMetersPerSecond);
+                                               speeds.leftMetersPerSecond);
     final double rightOutput = m_RPID.calculate(getRVeloTicks(),
-        speeds.rightMetersPerSecond);
+                                                speeds.rightMetersPerSecond);
     leftMaster.setVoltage(leftOutput + leftFeedforward);
     rightMaster.setVoltage(rightOutput + rightFeedforward);
   }
@@ -212,6 +210,7 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void resetHeading(){
+    System.out.println("Heading Reset");
     navx.zeroYaw();
   }
 
@@ -222,8 +221,17 @@ public class DriveBase extends SubsystemBase {
   }
 
   public void resetEncoders(){
+    System.out.println("Encoders Reset");
     leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
     rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
+  }
+
+  public void setBrakeMode(NeutralMode neutralMode){
+    leftMaster.setNeutralMode(neutralMode);
+    leftSlave.setNeutralMode(neutralMode);
+
+    rightMaster.setNeutralMode(neutralMode);
+    rightSlave.setNeutralMode(neutralMode);
   }
 
   public WPI_TalonSRX getLeftMaster() {

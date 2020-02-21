@@ -32,8 +32,8 @@ public class Shooter implements Subsystem{
 
         motorConfig.nominalOutputForward = 0;
         motorConfig.nominalOutputReverse = 0;
-        motorConfig.peakOutputForward = 0;
-        motorConfig.peakOutputReverse = 0;
+        motorConfig.peakOutputForward = 1;
+        motorConfig.peakOutputReverse = -1;
        
         motorConfig.continuousCurrentLimit = 40;
         motorConfig.peakCurrentDuration = 0;
@@ -44,7 +44,7 @@ public class Shooter implements Subsystem{
         left.setSensorPhase(false);
         right.setSensorPhase(true);
         
-        left.setInverted(true);
+        left.setInverted(false);
         right.setInverted(true);    
         
 
@@ -64,6 +64,8 @@ public class Shooter implements Subsystem{
         right.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
         resetEncoders();
+
+        System.out.println("Shooter Initialized");
     }
 
     @Override
