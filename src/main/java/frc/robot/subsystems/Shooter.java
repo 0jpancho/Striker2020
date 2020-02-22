@@ -55,10 +55,12 @@ public class Shooter implements Subsystem {
         left.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         left.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         left.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        left.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
 
         right.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         right.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         right.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        right.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
 
         resetEncoders();
 

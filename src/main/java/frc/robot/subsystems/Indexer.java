@@ -14,7 +14,7 @@ public class Indexer extends SubsystemBase{
     private WPI_TalonSRX master = new WPI_TalonSRX(Constants.Indexer.kMasterID);
     private WPI_VictorSPX slave = new WPI_VictorSPX(Constants.Indexer.kSlaveID);
 
-    private ControlMode mode;
+    private ControlMode mode = ControlMode.PercentOutput;
     private double motorVal;
 
     public Indexer(){
@@ -34,7 +34,7 @@ public class Indexer extends SubsystemBase{
         slave.configPeakOutputForward(1);
         slave.configPeakOutputReverse(-1);
 
-        master.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, Constants.Indexer.kMasterID, Constants.Indexer.kTimeoutMs);
+        master.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, Constants.Indexer.kPIDLoopIdx, Constants.Indexer.kTimeoutMs);
 
         master.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
         master.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);

@@ -65,7 +65,7 @@ public class RobotContainer {
 
     Shuffleboard.getTab("Sensors").add("Heading", m_driveBase.getHeadingDegrees()).withSize(1, 1).withPosition(0, 0);
     Shuffleboard.getTab("Sensors").add("Navx Calibrating", m_driveBase.navxAlive()).withSize(1, 1).withPosition(1, 0);
-    Shuffleboard.getTab("Sensors").add("Heading", m_driveBase.getHeadingDegrees()).withSize(1, 1).withPosition(0, 1);
+    Shuffleboard.getTab("Sensors").add("NavX Alive", m_driveBase.navxAlive()).withSize(1, 1).withPosition(0, 1);
     Shuffleboard.getTab("Sensors").add("Amps", m_driveBase.getTotalAmps()).withSize(1, 1).withPosition(1, 1);
     Shuffleboard.getTab("Sensors").add("Left Meters", m_driveBase.leftMetersTraveled).withSize(1, 1).withPosition(2, 0);
     Shuffleboard.getTab("Sensors").add("Left M/S", m_driveBase.leftMetersPerSec).withSize(1, 1).withPosition(3, 0);
