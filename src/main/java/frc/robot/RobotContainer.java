@@ -54,7 +54,7 @@ public class RobotContainer {
 
     m_driveBase.setDefaultCommand(new DiffDrive(m_driveBase, forward, rot));
 
-    m_shooter.setDefaultCommand(new OpenLoopShooting(m_shooter, 1));
+    m_shooter.setDefaultCommand(new OpenLoopShooting(m_shooter, driver.getTriggerAxis(Hand.kRight)));
   }
 
   /**
