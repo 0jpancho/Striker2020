@@ -15,8 +15,8 @@ public class TurnPID extends CommandBase {
     private double targetAngle = 0;
     private double tolerance = 0;
 
-    private PIDController turnController = new PIDController(Constants.DriveConstants.kTurnGains.kP,
-            Constants.DriveConstants.kTurnGains.kI, Constants.DriveConstants.kTurnGains.kD);
+    private PIDController turnController = new PIDController(Constants.Drive.kTurnGains.kP,
+            Constants.Drive.kTurnGains.kI, Constants.Drive.kTurnGains.kD);
 
     public TurnPID(DriveBase drive, double targetAngle, double tolerance) {
         this.m_drive = drive;

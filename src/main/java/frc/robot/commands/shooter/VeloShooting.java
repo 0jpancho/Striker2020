@@ -24,7 +24,7 @@ public class VeloShooting extends CommandBase {
     @Override
     public void initialize() {
         // Scale RPM input with units per 100ms (hence / 600)
-        targetRPM = (inputRPM * Constants.ShooterConstants.kEncoderResolution) / 600;
+        targetRPM = (inputRPM * Constants.Shooter.kEncoderResolution) / 600;
     }
 
     // Called every time the scheduler runs while the command is scheduled.

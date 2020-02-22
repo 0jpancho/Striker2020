@@ -15,8 +15,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -37,39 +38,40 @@ public class DriveBase extends SubsystemBase {
 
 	PowerDistributionPanel pdp = new PowerDistributionPanel();
 
-	public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.DriveConstants.kLeftMasterID);
+	public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.Drive.kLeftMasterID);
 
-	private final WPI_TalonSRX leftSlave = new WPI_TalonSRX(Constants.DriveConstants.kLeftFollowerID);
+	private final WPI_VictorSPX leftSlave = new WPI_VictorSPX(Constants.Drive.kLeftFollowerID);
 
-	public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.DriveConstants.kRightMasterID);
+	public final WPI_TalonSRX rightMaster = new WPI_TalonSRX(Constants.Drive.kRightMasterID);
 
-	private final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.DriveConstants.kRightFollowerID);
+	private final WPI_VictorSPX rightSlave = new WPI_VictorSPX(Constants.Drive.kRightFollowerID);
 
-	private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
+	private TalonSRXConfiguration masterConfig = new TalonSRXConfiguration();
+	private VictorSPXConfiguration slaveConfig = new VictorSPXConfiguration();
 
 	private final AHRS navx;
 
-	private final PIDController m_LPID = new PIDController(Constants.DriveConstants.kDriveGains.kP,
-			Constants.DriveConstants.kDriveGains.kI, Constants.DriveConstants.kDriveGains.kD);
+	private final PIDController m_LPID = new PIDController(Constants.Drive.kDriveGains.kP,
+			Constants.Drive.kDriveGains.kI, Constants.Drive.kDriveGains.kD);
 
-	private final PIDController m_RPID = new PIDController(Constants.DriveConstants.kDriveGains.kP,
-			Constants.DriveConstants.kDriveGains.kI, Constants.DriveConstants.kDriveGains.kD);
+	private final PIDController m_RPID = new PIDController(Constants.Drive.kDriveGains.kP,
+			Constants.Drive.kDriveGains.kI, Constants.Drive.kDriveGains.kD);
 
 	private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
-			Constants.DriveConstants.kTrackWidth);
+			Constants.Drive.kTrackWidth);
 
 	private final DifferentialDriveOdometry m_odometry;
 
 	// Gains are for example purposes only - must be determined for your own robot!
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1);
 
-	private double leftMetersPerSec;
-	private double rightMetersPerSec;
+	public double leftMetersPerSec;
+	public double rightMetersPerSec;
 
-	private double leftMetersTraveled;
-	private double rightMetersTraveled;
+	public double leftMetersTraveled;
+	public double rightMetersTraveled;
 
-	private ControlMode controlMode = ControlMode.PercentOutput;
+	private ControlMode mode = ControlMode.PercentOutput;
 	private double motorVal;
 
 	public DriveBase() {
@@ -81,20 +83,25 @@ public class DriveBase extends SubsystemBase {
 		rightSlave.configFactoryDefault();
 
 		// Set current limit
-		motorConfig.continuousCurrentLimit = 40;
-		motorConfig.peakCurrentDuration = 0;
+		masterConfig.continuousCurrentLimit = 40;
+		masterConfig.peakCurrentDuration = 0;
 
-		motorConfig.nominalOutputForward = 0;
-		motorConfig.nominalOutputReverse = 0;
-		motorConfig.peakOutputForward = 1;
-		motorConfig.peakOutputReverse = -1;
+		masterConfig.nominalOutputForward = 0;
+		masterConfig.nominalOutputReverse = 0;
+		masterConfig.peakOutputForward = 1;
+		masterConfig.peakOutputReverse = -1;
+
+		slaveConfig.nominalOutputForward = 0;
+		slaveConfig.nominalOutputReverse = 0;
+		slaveConfig.peakOutputForward = 1;
+		slaveConfig.peakOutputReverse = -1;
 
 		// Vals set to config to minimize clutter. Expandable if needed
-		leftMaster.configAllSettings(motorConfig);
-		leftSlave.configAllSettings(motorConfig);
+		leftMaster.configAllSettings(masterConfig);
+		leftSlave.configAllSettings(slaveConfig);
 
-		rightMaster.configAllSettings(motorConfig);
-		rightSlave.configAllSettings(motorConfig);
+		rightMaster.configAllSettings(masterConfig);
+		rightSlave.configAllSettings(slaveConfig);
 
 		// Set followers to masters
 		leftSlave.follow(leftMaster);
@@ -141,20 +148,20 @@ public class DriveBase extends SubsystemBase {
 	@Override
 	public void periodic() {
 
-		leftMaster.set(controlMode, motorVal);
-		rightMaster.set(controlMode, motorVal);
+		leftMaster.set(mode, motorVal);
+		rightMaster.set(mode, motorVal);
 
 		leftMetersPerSec = getLVeloTicks()
-				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 
 		rightMetersPerSec = getRVeloTicks()
-				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 
-		SmartDashboard.putNumber("Left Enc Velo FPS", leftMetersPerSec);
-		SmartDashboard.putNumber("Right Enc Velo FPS", rightMetersPerSec);
+		SmartDashboard.putNumber("Left Enc Velo M/S", leftMetersPerSec);
+		SmartDashboard.putNumber("Right Enc Velo M/S", rightMetersPerSec);
 
-		SmartDashboard.putNumber("Left Distance", leftMetersTraveled);
-		SmartDashboard.putNumber("Right Distance", rightMetersTraveled);
+		SmartDashboard.putNumber("Left Meters Traveled", leftMetersTraveled);
+		SmartDashboard.putNumber("Right Meters Traveled", rightMetersTraveled);
 
 		SmartDashboard.putNumber("Heading", navx.getYaw());
 		SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
@@ -167,7 +174,7 @@ public class DriveBase extends SubsystemBase {
 	}
 
 	public void configMotors(ControlMode controlMode, double motorVal) {
-		this.controlMode = controlMode;
+		this.mode = controlMode;
 		this.motorVal = motorVal;
 	}
 
@@ -205,16 +212,28 @@ public class DriveBase extends SubsystemBase {
 		return navx.getYaw();
 	}
 
+	public boolean navxCalibrating(){
+		return navx.isCalibrating();
+	}
+
+	public boolean navxAlive(){
+		return navx.isConnected();
+	}
+
 	public void resetHeading() {
 		System.out.println("Heading Reset");
 		navx.zeroYaw();
 	}
 
+	public double getTotalAmps() {
+		return pdp.getTotalCurrent();
+	}
+
 	public void updateOdometry() {
 		leftMetersTraveled = getLPosTicks()
-				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 		rightMetersTraveled = getRPosTicks()
-				* (Constants.DriveConstants.kWheelCircumferenceMeters / Constants.DriveConstants.kEncoderResolution);
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 		m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
 	}
 

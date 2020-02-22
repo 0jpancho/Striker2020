@@ -23,7 +23,7 @@ public class DriveByDistance extends CommandBase {
     @Override
     public void initialize() {
         m_drive.configMotors(ControlMode.PercentOutput, 0);
-        targetDistance *= Constants.DriveConstants.kMetersPerCount;
+        targetDistance *= Constants.Drive.kMetersPerCount;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
