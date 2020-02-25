@@ -34,8 +34,8 @@ public class DiffDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_drive.resetEncoders();
     m_drive.resetHeading();
+    m_drive.resetOdometry();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,7 +53,7 @@ public class DiffDrive extends CommandBase {
       inputRot = 0;
     }
 
-    m_drive.updateOdometry();
+    //m_drive.updateOdometry();
 
     m_drive.differentialDrive(-inputForward * Constants.Drive.kMaxSpeed,
         -inputRot * Constants.Drive.kMaxAngularSpeed);

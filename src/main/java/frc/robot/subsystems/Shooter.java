@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
+import frc.robot.vision.Limelight;
 
 public class Shooter implements Subsystem {
 
@@ -17,7 +18,9 @@ public class Shooter implements Subsystem {
 
     private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
 
-    private ControlMode mode = ControlMode.PercentOutput;
+    private Limelight limelight = new Limelight();
+
+    private ControlMode mode = ControlMode.Disabled;
     private double motorVal;
 
     public Shooter() {
@@ -35,14 +38,14 @@ public class Shooter implements Subsystem {
         motorConfig.peakOutputForward = 1;
         motorConfig.peakOutputReverse = -1;
 
-        motorConfig.continuousCurrentLimit = 40;
+        motorConfig.continuousCurrentLimit = 35;
         motorConfig.peakCurrentDuration = 0;
 
         left.configAllSettings(motorConfig);
         right.configAllSettings(motorConfig);
 
         left.setSensorPhase(false);
-        right.setSensorPhase(true);
+        right.setSensorPhase(false);
 
         left.setInverted(false);
         right.setInverted(true);
@@ -65,23 +68,26 @@ public class Shooter implements Subsystem {
         resetEncoders();
 
         System.out.println("Shooter Initialized");
+
+        
     }
 
     @Override
     public void periodic() {
-        left.set(mode, motorVal);
-        right.set(mode, motorVal);
+        SmartDashboard.putNumber("LShooter Error", left.getClosedLoopError());
+        SmartDashboard.putNumber("RShooter Error", right.getClosedLoopError());
 
-        SmartDashboard.putNumber("Left Enc Pos", left.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Left Enc Velo", right.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("LTarget", left.getClosedLoopTarget());
+        SmartDashboard.putNumber("RTarget", right.getClosedLoopTarget());
 
-        SmartDashboard.putNumber("Right Enc Pos", right.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Right Enc Velo", right.getSelectedSensorVelocity());
+        System.out.println("Current RPM:" );
+
+        left.set(this.mode, this.motorVal);
     }
 
-    public void configMotors(ControlMode mode, double motorVal) {
-        this.mode = mode;
-        this.motorVal = motorVal;
+    public void setMotors(ControlMode mode, double motorVal) {
+        left.set(mode, motorVal);
+        right.set(mode, motorVal);
     }
 
     public void resetEncoders() {
@@ -92,5 +98,9 @@ public class Shooter implements Subsystem {
     public void setBrake(boolean isEnabled) {
         left.setInverted(isEnabled);
         right.setInverted(isEnabled);
+    }
+
+    public Limelight getLimelight() {
+        return this.limelight;
     }
 }

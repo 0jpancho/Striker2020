@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drivebase.DiffDrive;
 import frc.robot.commands.shooter.OpenLoopShooting;
@@ -23,6 +24,8 @@ import frc.robot.commands.indexer.SimpleFeed;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.vision.Limelight;
+import frc.robot.vision.ControlMode.LedMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -61,8 +64,8 @@ public class RobotContainer {
 
     m_driveBase.setDefaultCommand(new DiffDrive(m_driveBase, forward, rot));
 
-    m_shooter.setDefaultCommand(new OpenLoopShooting(m_shooter, driver.getTriggerAxis(Hand.kRight)));
-
+    
+    /*
     Shuffleboard.getTab("Sensors").add("Heading", m_driveBase.getHeadingDegrees()).withSize(1, 1).withPosition(0, 0);
     Shuffleboard.getTab("Sensors").add("Navx Calibrating", m_driveBase.navxAlive()).withSize(1, 1).withPosition(1, 0);
     Shuffleboard.getTab("Sensors").add("NavX Alive", m_driveBase.navxAlive()).withSize(1, 1).withPosition(0, 1);
@@ -71,6 +74,7 @@ public class RobotContainer {
     Shuffleboard.getTab("Sensors").add("Left M/S", m_driveBase.leftMetersPerSec).withSize(1, 1).withPosition(3, 0);
     Shuffleboard.getTab("Sensors").add("Right Meters", m_driveBase.rightMetersTraveled).withSize(1, 1).withPosition(2, 1);
     Shuffleboard.getTab("Sensors").add("Right M/S", m_driveBase.rightMetersPerSec).withSize(1, 1).withPosition(3, 1);
+    */
   }
 
   /**
@@ -80,13 +84,20 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton veloShootButton = new JoystickButton(driver, Constants.GamepadIDs.kGamepadButtonShoulderR);
-    JoystickButton runIndexer = new JoystickButton(driver, Constants.GamepadIDs.kGamepadButtonShoulderL);
+  
+    Button A = new JoystickButton(driver, 1);
+    Button B = new JoystickButton(driver, 2);
+    Button X = new JoystickButton(driver, 3);
+    Button Y = new JoystickButton(driver, 4);
+    Button LB = new JoystickButton(driver, 5);
+    Button RB = new JoystickButton(driver, 6);
+    Button Start = new JoystickButton(driver, 7);
+    Button Select = new JoystickButton(driver, 8);
 
-    veloShootButton
-        .whileHeld(new VeloShooting(m_shooter, driver.getTriggerAxis(Hand.kRight), driver.getBumper(Hand.kRight)));
+     //A.whileHeld(new OpenLoopShooting(m_shooter, 1));
+     A.whileHeld(new VeloShooting(m_shooter, 800));
+     B.whileHeld(new SimpleFeed(m_indexer, 0.75));
 
-    runIndexer.whileHeld(new SimpleFeed(m_indexer, 0.5));
   }
 
   /**

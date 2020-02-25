@@ -7,11 +7,11 @@ import frc.robot.subsystems.Shooter;
 
 public class OpenLoopShooting extends CommandBase {
 
-    private Shooter shooter = new Shooter();
+    private Shooter m_shooter = new Shooter();
     private double power;
 
     public OpenLoopShooting(Shooter shooter, double power) {
-        this.shooter = shooter;
+        this.m_shooter = shooter;
         this.power = power;
 
         addRequirements(shooter);
@@ -19,19 +19,19 @@ public class OpenLoopShooting extends CommandBase {
 
     @Override
     public void initialize() {
-        shooter.configMotors(ControlMode.PercentOutput, 0);
+        m_shooter.setMotors(ControlMode.PercentOutput, 0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        shooter.configMotors(ControlMode.PercentOutput, power);
+        m_shooter.setMotors(ControlMode.PercentOutput, power);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        shooter.configMotors(ControlMode.PercentOutput, 0);
+        m_shooter.setMotors(ControlMode.PercentOutput, 0);
     }
 
     // Returns true when the command should end.

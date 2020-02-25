@@ -20,23 +20,23 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.vision.Limelight;
 
 public class DriveBase extends SubsystemBase {
 
-	PowerDistributionPanel pdp = new PowerDistributionPanel();
+	//private PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.Drive.kLeftMasterID);
 
@@ -73,6 +73,10 @@ public class DriveBase extends SubsystemBase {
 
 	private ControlMode mode = ControlMode.PercentOutput;
 	private double motorVal;
+
+	private Pose2d pose = new Pose2d();
+
+	private Limelight limelight = new Limelight();
 
 	public DriveBase() {
 		// Rest configs back to default - prevents conflicts
@@ -139,10 +143,14 @@ public class DriveBase extends SubsystemBase {
 		navx.enableLogging(false);
 
 		// Reset sensors
-		resetEncoders();
 		resetHeading();
+		resetOdometry();
 
 		System.out.println("Drivebase Initialized");
+
+		SendableRegistry.add(m_LPID, "Left Drive PID");
+		SendableRegistry.add(m_RPID, "Right Drive PID)");
+		SendableRegistry.add(navx, "NavX");
 	}
 
 	@Override
@@ -157,6 +165,7 @@ public class DriveBase extends SubsystemBase {
 		rightMetersPerSec = getRVeloTicks()
 				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 
+		/*
 		SmartDashboard.putNumber("Left Enc Velo M/S", leftMetersPerSec);
 		SmartDashboard.putNumber("Right Enc Velo M/S", rightMetersPerSec);
 
@@ -167,10 +176,10 @@ public class DriveBase extends SubsystemBase {
 		SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
 		SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
 
-		SendableRegistry.add(m_LPID, "Left Drive PID");
-		SendableRegistry.add(m_RPID, "Right Drive PID)");
-
 		SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
+		*/
+
+		updateOdometry();
 	}
 
 	public void configMotors(ControlMode controlMode, double motorVal) {
@@ -203,11 +212,26 @@ public class DriveBase extends SubsystemBase {
 		setSpeeds(wheelSpeeds);
 	}
 
+
+
 	public Rotation2d getHeadingPose() {
 		double angle = navx.getYaw();
 		return Rotation2d.fromDegrees(angle);
 	}
 
+	public Pose2d getPose() {
+		return pose;
+	}
+
+	public Limelight getLimelight() {
+		return limelight;
+	}
+	
+	public void resetOdometry() {
+		resetEncoders();
+		m_odometry.resetPosition(new Pose2d(), getHeadingPose());
+	}
+	
 	public double getHeadingDegrees() {
 		return navx.getYaw();
 	}
@@ -224,11 +248,11 @@ public class DriveBase extends SubsystemBase {
 		System.out.println("Heading Reset");
 		navx.zeroYaw();
 	}
-
+	/*
 	public double getTotalAmps() {
 		return pdp.getTotalCurrent();
 	}
-
+	*/
 	public void updateOdometry() {
 		leftMetersTraveled = getLPosTicks()
 				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);

@@ -1,5 +1,7 @@
 package frc.robot.commands.indexer;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,15 +20,15 @@ public class SimpleFeed extends CommandBase {
     }
 
     public void initialize(){
-        indexer.configMotors(ControlMode.PercentOutput, 0);
+        indexer.setMotors(ControlMode.PercentOutput, 0);
     }
 
     public void execute(){
-        indexer.configMotors(ControlMode.PercentOutput, power);
+        indexer.setMotors(ControlMode.PercentOutput, power);
     }
 
     public void end(boolean interrupted){
-        indexer.configMotors(ControlMode.PercentOutput, 0);
+        indexer.setMotors(ControlMode.PercentOutput, 0);
     }
 
     public boolean isFinished(){
