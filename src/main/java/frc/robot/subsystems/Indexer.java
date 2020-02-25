@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -22,7 +21,7 @@ public class Indexer extends SubsystemBase{
         master.configFactoryDefault();
         slave.configFactoryDefault();
 
-        master.configContinuousCurrentLimit(40);
+        master.configContinuousCurrentLimit(35);
         master.configPeakCurrentDuration(0);
 
         master.configNominalOutputForward(0);

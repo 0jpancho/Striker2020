@@ -138,9 +138,9 @@ public class DriveBase extends SubsystemBase {
 
 		navx = new AHRS(SPI.Port.kMXP);
 
-		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
-
 		navx.enableLogging(false);
+
+		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
 
 		// Reset sensors
 		resetHeading();
@@ -175,8 +175,6 @@ public class DriveBase extends SubsystemBase {
 		SmartDashboard.putNumber("Heading", navx.getYaw());
 		SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
 		SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
-
-		SmartDashboard.putNumber("Robot Current Draw", pdp.getTotalCurrent());
 		*/
 
 		updateOdometry();
@@ -212,11 +210,22 @@ public class DriveBase extends SubsystemBase {
 		setSpeeds(wheelSpeeds);
 	}
 
-
+	public void updateOdometry() {
+		leftMetersTraveled = getLPosTicks()
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
+		rightMetersTraveled = getRPosTicks()
+				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
+		m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
+	}
 
 	public Rotation2d getHeadingPose() {
 		double angle = navx.getYaw();
 		return Rotation2d.fromDegrees(angle);
+	}
+
+	public void resetOdometry() {
+		resetEncoders();
+		m_odometry.resetPosition(new Pose2d(), getHeadingPose());
 	}
 
 	public Pose2d getPose() {
@@ -225,11 +234,6 @@ public class DriveBase extends SubsystemBase {
 
 	public Limelight getLimelight() {
 		return limelight;
-	}
-	
-	public void resetOdometry() {
-		resetEncoders();
-		m_odometry.resetPosition(new Pose2d(), getHeadingPose());
 	}
 	
 	public double getHeadingDegrees() {
@@ -253,14 +257,6 @@ public class DriveBase extends SubsystemBase {
 		return pdp.getTotalCurrent();
 	}
 	*/
-	public void updateOdometry() {
-		leftMetersTraveled = getLPosTicks()
-				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
-		rightMetersTraveled = getRPosTicks()
-				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
-		m_odometry.update(getHeadingPose(), leftMetersTraveled, rightMetersTraveled);
-	}
-
 	public void resetEncoders() {
 		System.out.println("Encoders Reset");
 		leftMaster.getSensorCollection().setQuadraturePosition(0, 20);

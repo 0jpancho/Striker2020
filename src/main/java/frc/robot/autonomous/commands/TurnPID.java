@@ -15,7 +15,7 @@ public class TurnPID extends CommandBase {
     private double targetAngle = 0;
     private double tolerance = 0;
 
-    private PIDController turnController = new PIDController(Constants.Drive.kTurnGains.kP,
+    private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP,
             Constants.Drive.kTurnGains.kI, Constants.Drive.kTurnGains.kD);
 
     public TurnPID(DriveBase drive, double targetAngle, double tolerance) {
@@ -30,19 +30,19 @@ public class TurnPID extends CommandBase {
         m_drive.resetHeading();
         m_drive.configMotors(ControlMode.PercentOutput, 0);
 
-        SendableRegistry.add(turnController, "Turn Controller");
-        turnController.reset();
+        SendableRegistry.add(controller, "Turn Controller");
+        controller.reset();
 
-        turnController.setTolerance(tolerance);
-        turnController.enableContinuousInput(-180, 180);
-        turnController.setSetpoint(targetAngle);
+        controller.setTolerance(tolerance);
+        controller.enableContinuousInput(-180, 180);
+        controller.setSetpoint(targetAngle);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.leftMaster.set(ControlMode.PercentOutput, turnController.calculate(m_drive.getHeadingDegrees()));
-        m_drive.rightMaster.set(ControlMode.PercentOutput, turnController.calculate(-m_drive.getHeadingDegrees()));
+        m_drive.leftMaster.set(ControlMode.PercentOutput, controller.calculate(m_drive.getHeadingDegrees()));
+        m_drive.rightMaster.set(ControlMode.PercentOutput, controller.calculate(-m_drive.getHeadingDegrees()));
     }
 
     // Called once the command ends or is interrupted.
@@ -53,7 +53,10 @@ public class TurnPID extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return turnController.atSetpoint();
+        if (Math.abs(targetAngle - m_drive.getHeadingDegrees()) < 1) {
+            return true;
+          }
+          return false;
     }
 
 }

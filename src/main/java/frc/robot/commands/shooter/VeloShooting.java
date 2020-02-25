@@ -2,7 +2,6 @@ package frc.robot.commands.shooter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
@@ -24,7 +23,7 @@ public class VeloShooting extends CommandBase {
     public void initialize() {
         // Scale RPM input with units per 100ms (hence / 600)
         targetCountsPer100ms = (inputRPM * Constants.Shooter.kEncoderResolution) / 600;
-        System.out.println("Target RPM:" + inputRPM);
+        
     }
 
     // Called every time the scheduler runs while the command is scheduled.

@@ -68,19 +68,19 @@ public class Shooter implements Subsystem {
         resetEncoders();
 
         System.out.println("Shooter Initialized");
-
-        
     }
 
     @Override
     public void periodic() {
+
         SmartDashboard.putNumber("LShooter Error", left.getClosedLoopError());
         SmartDashboard.putNumber("RShooter Error", right.getClosedLoopError());
 
         SmartDashboard.putNumber("LTarget", left.getClosedLoopTarget());
         SmartDashboard.putNumber("RTarget", right.getClosedLoopTarget());
 
-        System.out.println("Current RPM:" );
+        SmartDashboard.putNumber("L Counts / s", left.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("R Counts / s", right.getSelectedSensorVelocity());
 
         left.set(this.mode, this.motorVal);
     }
