@@ -6,11 +6,11 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 
 public class TurnPID extends CommandBase {
 
-    private DriveBase m_drive = new DriveBase();
+    private Drivebase m_drive = new Drivebase();
 
     private double targetAngle = 0;
     private double tolerance = 0;
@@ -18,7 +18,7 @@ public class TurnPID extends CommandBase {
     private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP,
             Constants.Drive.kTurnGains.kI, Constants.Drive.kTurnGains.kD);
 
-    public TurnPID(DriveBase drive, double targetAngle, double tolerance) {
+    public TurnPID(Drivebase drive, double targetAngle, double tolerance) {
         this.m_drive = drive;
 
         this.targetAngle = targetAngle;

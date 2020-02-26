@@ -68,7 +68,6 @@ public class Shooter implements Subsystem {
 
     @Override
     public void periodic() {
-
         leftMotor.set(this.mode, this.motorVal);
     }
 
@@ -97,5 +96,13 @@ public class Shooter implements Subsystem {
 
     public WPI_TalonSRX getRight(){
         return rightMotor;
+    } 
+
+    public int getLeftVelo() {
+        return leftMotor.getSelectedSensorVelocity();
+    }
+
+    public int getRightVelo() {
+        return rightMotor.getSelectedSensorVelocity();
     }
 }

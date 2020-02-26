@@ -20,7 +20,7 @@ import frc.robot.commands.drivebase.DiffDrive;
 import frc.robot.commands.shooter.OpenLoopShooting;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.SimpleFeed;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.vision.Limelight;
@@ -45,10 +45,14 @@ public class RobotContainer {
   private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(0.5);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(0.5);
 
-  private final DriveBase m_driveBase = new DriveBase();
+  //Subsystems
+  private final Drivebase m_drivebase = new Drivebase();
   private final Shooter m_shooter = new Shooter();
   private final Indexer m_indexer = new Indexer();
   private final Limelight m_limelight = new Limelight();
+
+  //Commands
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -62,16 +66,16 @@ public class RobotContainer {
     DoubleSupplier forward = () -> m_forwardLimiter.calculate(driver.getY(Hand.kLeft));
     DoubleSupplier rot = () -> m_rotLimiter.calculate(driver.getX(Hand.kRight));
 
-    m_driveBase.setDefaultCommand(new DiffDrive(m_driveBase, forward, rot));
+    m_drivebase.setDefaultCommand(new DiffDrive(m_drivebase, forward, rot));
 
-    SmartDashboard.putNumber("Heading", m_driveBase.getHeadingDegrees());
-    SmartDashboard.putNumber("Heading", m_driveBase.getHeadingDegrees());
-    SmartDashboard.putBoolean("Navx Calibrating", m_driveBase.navxAlive());
-    SmartDashboard.putBoolean("NavX Alive", m_driveBase.navxAlive());
-    SmartDashboard.putNumber("Left MTraveled", m_driveBase.leftMetersTraveled);
-    SmartDashboard.putNumber("Left MPerSec", m_driveBase.leftMetersPerSec);
-    SmartDashboard.putNumber("Right MTraveled", m_driveBase.rightMetersTraveled);
-    SmartDashboard.putNumber("Right MPerSec", m_driveBase.rightMetersPerSec);
+    SmartDashboard.putNumber("Heading", m_drivebase.getHeadingDegrees());
+    SmartDashboard.putNumber("Heading", m_drivebase.getHeadingDegrees());
+    SmartDashboard.putBoolean("Navx Calibrating", m_drivebase.navxAlive());
+    SmartDashboard.putBoolean("NavX Alive", m_drivebase.navxAlive());
+    SmartDashboard.putNumber("Left MTraveled", m_drivebase.leftMetersTraveled);
+    SmartDashboard.putNumber("Left MPerSec", m_drivebase.leftMetersPerSec);
+    SmartDashboard.putNumber("Right MTraveled", m_drivebase.rightMetersTraveled);
+    SmartDashboard.putNumber("Right MPerSec", m_drivebase.rightMetersPerSec);
     SmartDashboard.putNumber("ShooterL Velo", m_shooter.leftMotor.getSelectedSensorVelocity());
     SmartDashboard.putNumber("ShooterR Velo", m_shooter.rightMotor.getSelectedSensorVelocity());
     SmartDashboard.putNumber("Shooter Setpoint", m_shooter.getMotorVal());

@@ -32,9 +32,8 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.vision.Limelight;
 
-public class DriveBase extends SubsystemBase {
+public class Drivebase extends SubsystemBase {
 
 	//private PowerDistributionPanel pdp = new PowerDistributionPanel();
 
@@ -74,9 +73,16 @@ public class DriveBase extends SubsystemBase {
 	private ControlMode mode = ControlMode.PercentOutput;
 	private double motorVal;
 
-	private Pose2d pose = new Pose2d();
+	public Drivebase() {
 
-	public DriveBase() {
+		navx = new AHRS(SPI.Port.kMXP);
+		navx.enableLogging(false);
+
+		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
+
+		// Reset sensors
+		resetHeading();
+		resetOdometry();
 		// Rest configs back to default - prevents conflicts
 		leftMaster.configFactoryDefault();
 		leftSlave.configFactoryDefault();
@@ -134,16 +140,6 @@ public class DriveBase extends SubsystemBase {
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
-		navx = new AHRS(SPI.Port.kMXP);
-
-		navx.enableLogging(false);
-
-		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
-
-		// Reset sensors
-		resetHeading();
-		resetOdometry();
-
 		System.out.println("Drivebase Initialized");
 	}
 
@@ -153,24 +149,6 @@ public class DriveBase extends SubsystemBase {
 		leftMaster.set(mode, motorVal);
 		rightMaster.set(mode, motorVal);
 
-		leftMetersPerSec = getLVeloTicks()
-				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
-
-		rightMetersPerSec = getRVeloTicks()
-				* (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
-
-		/*
-		SmartDashboard.putNumber("Left Enc Velo M/S", leftMetersPerSec);
-		SmartDashboard.putNumber("Right Enc Velo M/S", rightMetersPerSec);
-
-		SmartDashboard.putNumber("Left Meters Traveled", leftMetersTraveled);
-		SmartDashboard.putNumber("Right Meters Traveled", rightMetersTraveled);
-
-		SmartDashboard.putNumber("Heading", navx.getYaw());
-		SmartDashboard.putBoolean("NavX Calibrating", navx.isCalibrating());
-		SmartDashboard.putBoolean("NavX Alive", navx.isConnected());
-		*/
-
 		updateOdometry();
 	}
 
@@ -179,12 +157,12 @@ public class DriveBase extends SubsystemBase {
 		this.motorVal = motorVal;
 	}
 
-	public void arcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
+	public void rawArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
 		leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
 		rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
 	}
 
-	public void tankDrive(DoubleSupplier left, DoubleSupplier right) {
+	public void rawTankDrive(DoubleSupplier left, DoubleSupplier right) {
 		leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
 		rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
 	}
@@ -193,8 +171,8 @@ public class DriveBase extends SubsystemBase {
 		final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
 		final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-		final double leftOutput = m_LPID.calculate(getLVeloTicks(), speeds.leftMetersPerSecond);
-		final double rightOutput = m_RPID.calculate(getRVeloTicks(), speeds.rightMetersPerSecond);
+		final double leftOutput = m_LPID.calculate(getLVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters, speeds.leftMetersPerSecond);
+		final double rightOutput = m_RPID.calculate(getRVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters, speeds.rightMetersPerSecond);
 		
 		leftMaster.setVoltage(leftOutput + leftFeedforward);
 		rightMaster.setVoltage(rightOutput + rightFeedforward);

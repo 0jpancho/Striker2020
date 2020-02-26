@@ -4,16 +4,16 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 
 public class DriveByDistance extends CommandBase {
 
-    private DriveBase m_drive = new DriveBase();
+    private Drivebase m_drive = new Drivebase();
 
     private double targetDistance; // meters
     private double tolerance = 100; // ticks
 
-    public DriveByDistance(DriveBase drive, double targetDistance) {
+    public DriveByDistance(Drivebase drive, double targetDistance) {
         this.m_drive = drive;
         this.targetDistance = targetDistance;
 

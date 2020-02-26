@@ -8,7 +8,7 @@
 package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -18,12 +18,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
-  private DriveBase m_drive = new DriveBase();
+  private Drivebase m_drive = new Drivebase();
 
   private DoubleSupplier forward;
   private DoubleSupplier rot;
 
-  public DiffDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rot) {
+  public DiffDrive(Drivebase drive, DoubleSupplier forward, DoubleSupplier rot) {
     m_drive = drive;
     this.forward = forward;
     this.rot = rot;
@@ -55,8 +55,8 @@ public class DiffDrive extends CommandBase {
 
     //m_drive.updateOdometry();
 
-    m_drive.differentialDrive(-inputForward * Constants.Drive.kRawMaxSpeed,
-        -inputRot * Constants.Drive.kMaxRawAngularSpeed);
+    m_drive.differentialDrive(-inputForward * Constants.Drive.kAdjustedMaxSpeed,
+        -inputRot * Constants.Drive.kAdjustedAngularSpeed);
   }
 
   // Called once the command ends or is interrupted.

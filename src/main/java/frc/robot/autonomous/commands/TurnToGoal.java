@@ -3,12 +3,12 @@ package frc.robot.autonomous.commands;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 import frc.robot.vision.Limelight;
 
 public class TurnToGoal extends CommandBase {
 
-    private DriveBase m_drive = new DriveBase();
+    private Drivebase m_drive = new Drivebase();
     private Limelight m_limelight = new Limelight();
     private double kP = .1f;
     private double minPower = 0.05f;
@@ -16,7 +16,7 @@ public class TurnToGoal extends CommandBase {
     double leftPower;
     double rightPower;
 
-    public TurnToGoal(DriveBase m_drive, Limelight m_limelight) {
+    public TurnToGoal(Drivebase m_drive, Limelight m_limelight) {
         this.m_drive = m_drive;
         this.m_limelight = m_limelight;
 

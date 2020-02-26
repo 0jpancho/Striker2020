@@ -3,15 +3,15 @@ package frc.robot.commands.drivebase;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 
-public class ArcadeDrive extends CommandBase {
+public class RawArcadeDrive extends CommandBase {
 
-    private final DriveBase m_drive;
+    private final Drivebase m_drive;
     private final DoubleSupplier m_forward;
     private final DoubleSupplier m_rotation;
 
-    public ArcadeDrive(DriveBase drive, DoubleSupplier forward, DoubleSupplier rotation) {
+    public RawArcadeDrive(Drivebase drive, DoubleSupplier forward, DoubleSupplier rotation) {
         m_drive = drive;
         m_forward = forward;
         m_rotation = rotation;
@@ -29,7 +29,7 @@ public class ArcadeDrive extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.arcadeDrive(m_forward, m_rotation);
+        m_drive.rawArcadeDrive(m_forward, m_rotation);
     }
 
     // Called once the command ends or is interrupted.

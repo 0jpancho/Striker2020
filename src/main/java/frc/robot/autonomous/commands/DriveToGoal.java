@@ -6,16 +6,16 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Drivebase;
 
 public class DriveToGoal extends CommandBase {
 
-    private DriveBase m_drive = new DriveBase();
+    private Drivebase m_drive = new Drivebase();
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("ty");
 
-    public DriveToGoal(DriveBase m_drive) {
+    public DriveToGoal(Drivebase m_drive) {
         this.m_drive = m_drive;
     }
 
