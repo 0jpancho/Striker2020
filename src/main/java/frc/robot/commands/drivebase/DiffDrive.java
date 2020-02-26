@@ -55,8 +55,8 @@ public class DiffDrive extends CommandBase {
 
     //m_drive.updateOdometry();
 
-    m_drive.differentialDrive(-inputForward * Constants.Drive.kMaxSpeed,
-        -inputRot * Constants.Drive.kMaxAngularSpeed);
+    m_drive.differentialDrive(-inputForward * Constants.Drive.kRawMaxSpeed,
+        -inputRot * Constants.Drive.kMaxRawAngularSpeed);
   }
 
   // Called once the command ends or is interrupted.

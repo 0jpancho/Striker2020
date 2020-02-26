@@ -18,6 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -29,7 +30,6 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.vision.Limelight;
@@ -75,8 +75,6 @@ public class DriveBase extends SubsystemBase {
 	private double motorVal;
 
 	private Pose2d pose = new Pose2d();
-
-	private Limelight limelight = new Limelight();
 
 	public DriveBase() {
 		// Rest configs back to default - prevents conflicts
@@ -147,10 +145,6 @@ public class DriveBase extends SubsystemBase {
 		resetOdometry();
 
 		System.out.println("Drivebase Initialized");
-
-		SendableRegistry.add(m_LPID, "Left Drive PID");
-		SendableRegistry.add(m_RPID, "Right Drive PID)");
-		SendableRegistry.add(navx, "NavX");
 	}
 
 	@Override
@@ -201,6 +195,7 @@ public class DriveBase extends SubsystemBase {
 
 		final double leftOutput = m_LPID.calculate(getLVeloTicks(), speeds.leftMetersPerSecond);
 		final double rightOutput = m_RPID.calculate(getRVeloTicks(), speeds.rightMetersPerSecond);
+		
 		leftMaster.setVoltage(leftOutput + leftFeedforward);
 		rightMaster.setVoltage(rightOutput + rightFeedforward);
 	}
@@ -229,13 +224,9 @@ public class DriveBase extends SubsystemBase {
 	}
 
 	public Pose2d getPose() {
-		return pose;
+		return m_odometry.getPoseMeters();
 	}
 
-	public Limelight getLimelight() {
-		return limelight;
-	}
-	
 	public double getHeadingDegrees() {
 		return navx.getYaw();
 	}
@@ -252,11 +243,7 @@ public class DriveBase extends SubsystemBase {
 		System.out.println("Heading Reset");
 		navx.zeroYaw();
 	}
-	/*
-	public double getTotalAmps() {
-		return pdp.getTotalCurrent();
-	}
-	*/
+
 	public void resetEncoders() {
 		System.out.println("Encoders Reset");
 		leftMaster.getSensorCollection().setQuadraturePosition(0, 20);
@@ -280,18 +267,18 @@ public class DriveBase extends SubsystemBase {
 	}
 
 	public int getLVeloTicks() {
-		return -leftMaster.getSensorCollection().getQuadratureVelocity();
+		return -leftMaster.getSelectedSensorVelocity();
 	}
 
 	public int getLPosTicks() {
-		return -leftMaster.getSensorCollection().getQuadraturePosition();
+		return -leftMaster.getSelectedSensorPosition();
 	}
 
 	public int getRVeloTicks() {
-		return rightMaster.getSensorCollection().getQuadratureVelocity();
+		return rightMaster.getSelectedSensorVelocity();
 	}
 
 	public int getRPosTicks() {
-		return rightMaster.getSensorCollection().getQuadraturePosition();
+		return rightMaster.getSelectedSensorPosition();
 	}
 }

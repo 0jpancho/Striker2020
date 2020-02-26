@@ -72,8 +72,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Left MPerSec", m_driveBase.leftMetersPerSec);
     SmartDashboard.putNumber("Right MTraveled", m_driveBase.rightMetersTraveled);
     SmartDashboard.putNumber("Right MPerSec", m_driveBase.rightMetersPerSec);
-    SmartDashboard.putNumber("ShooterL Velo", m_shooter.left.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("ShooterR Velo", m_shooter.right.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("ShooterL Velo", m_shooter.leftMotor.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("ShooterR Velo", m_shooter.rightMotor.getSelectedSensorVelocity());
     SmartDashboard.putNumber("Shooter Setpoint", m_shooter.getMotorVal());
     
     SmartDashboard.updateValues();

@@ -34,8 +34,11 @@ public abstract class Constants {
         public static final double kInchesPerCount = kCircumferenceInches / kEncoderResolution;
         public static final double kMetersPerCount = kCircumferenceMeters / kEncoderResolution;
 
-        public static final double kMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
-        public static final double kMaxAngularSpeed = kMaxSpeed / kTrackWidth;
+        public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
+        public static final double kSpeedAdjust = 0.85;
+        public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kSpeedAdjust;
+        
+        public static final double kMaxRawAngularSpeed = kRawMaxSpeed / kTrackWidth;
 
         public final static Gains kDriveGains = new Gains(0, 0, 0, 0, 0, 1.00);
         public final static Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
@@ -62,7 +65,7 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
         // kP kI kD kF Iz PeakOut
-        public final static Gains kGains = new Gains(0.75, 0, 0, 0, 0, 1.00);
+        public final static Gains kGains = new Gains(0.1, 0, 0, 0, 0, 1.00);
     }
 
     public final static class Indexer {
