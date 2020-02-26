@@ -13,16 +13,18 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drivebase.DiffDrive;
+import frc.robot.commands.shooter.OpenLoopShooting;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.SimpleFeed;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.vision.Limelight;
+import frc.robot.vision.ControlMode.LedMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,8 +48,7 @@ public class RobotContainer {
   private final DriveBase m_driveBase = new DriveBase();
   private final Shooter m_shooter = new Shooter();
   private final Indexer m_indexer = new Indexer();
-
-  ShuffleboardTab sensorTab = Shuffleboard.getTab("Sensors");
+  private final Limelight m_limelight = new Limelight();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -56,18 +57,26 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
+    m_limelight.setPipeline(1);
+
     DoubleSupplier forward = () -> m_forwardLimiter.calculate(driver.getY(Hand.kLeft));
     DoubleSupplier rot = () -> m_rotLimiter.calculate(driver.getX(Hand.kRight));
 
     m_driveBase.setDefaultCommand(new DiffDrive(m_driveBase, forward, rot));
 
-    Shuffleboard.getTab("Sensors").add("Heading", m_driveBase.getHeadingDegrees()).withSize(1, 1).withPosition(0, 0);
-    Shuffleboard.getTab("Sensors").add("Navx Calibrating", m_driveBase.navxAlive()).withSize(1, 1).withPosition(1, 0);
-    Shuffleboard.getTab("Sensors").add("NavX Alive", m_driveBase.navxAlive()).withSize(1, 1).withPosition(0, 1);
-    Shuffleboard.getTab("Sensors").add("Left Meters", m_driveBase.leftMetersTraveled).withSize(1, 1).withPosition(2, 0);
-    Shuffleboard.getTab("Sensors").add("Left M/S", m_driveBase.leftMetersPerSec).withSize(1, 1).withPosition(3, 0);
-    Shuffleboard.getTab("Sensors").add("Right Meters", m_driveBase.rightMetersTraveled).withSize(1, 1).withPosition(2, 1);
-    Shuffleboard.getTab("Sensors").add("Right M/S", m_driveBase.rightMetersPerSec).withSize(1, 1).withPosition(3, 1);
+    SmartDashboard.putNumber("Heading", m_driveBase.getHeadingDegrees());
+    SmartDashboard.putNumber("Heading", m_driveBase.getHeadingDegrees());
+    SmartDashboard.putBoolean("Navx Calibrating", m_driveBase.navxAlive());
+    SmartDashboard.putBoolean("NavX Alive", m_driveBase.navxAlive());
+    SmartDashboard.putNumber("Left MTraveled", m_driveBase.leftMetersTraveled);
+    SmartDashboard.putNumber("Left MPerSec", m_driveBase.leftMetersPerSec);
+    SmartDashboard.putNumber("Right MTraveled", m_driveBase.rightMetersTraveled);
+    SmartDashboard.putNumber("Right MPerSec", m_driveBase.rightMetersPerSec);
+    SmartDashboard.putNumber("ShooterL Velo", m_shooter.left.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("ShooterR Velo", m_shooter.right.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Shooter Setpoint", m_shooter.getMotorVal());
+    
+    SmartDashboard.updateValues();
   }
 
   /**
@@ -90,10 +99,9 @@ public class RobotContainer {
     Button Select = new JoystickButton(driver, 8);
     */
 
-     //A.whileHeld(new OpenLoopShooting(m_shooter, 0.5));
-     A.whileHeld(new VeloShooting(m_shooter, 800));
+     A.whileHeld(new OpenLoopShooting(m_shooter, 1));
+     //A.whileHeld(new VeloShooting(m_shooter, 200));
      B.whileHeld(new SimpleFeed(m_indexer, 0.75));
-
   }
 
   /**

@@ -3,13 +3,13 @@ package frc.robot.vision;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.vision.ControlMode.CamMode;
 import frc.robot.vision.ControlMode.LedMode;
 import frc.robot.vision.ControlMode.Snapshot;
 import frc.robot.vision.ControlMode.StreamType;
 
-public class Limelight extends CommandBase {
+public class Limelight extends SubsystemBase {
 
     private NetworkTable m_table;
     private String m_tableName;
@@ -17,7 +17,6 @@ public class Limelight extends CommandBase {
     public Limelight() {
         m_tableName = "limelight";
         m_table = NetworkTableInstance.getDefault().getTable(m_tableName);
-        System.out.println(m_table);
     }
 
     public boolean getIsTargetFound() {

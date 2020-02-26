@@ -30,6 +30,7 @@ public class VeloShooting extends CommandBase {
     @Override
     public void execute() {
         m_shooter.setMotors(ControlMode.Velocity, targetCountsPer100ms);
+        //SmartDashboard.putNumber("L Velocity", m_shooter.)
     }
 
     // Called once the command ends or is interrupted.

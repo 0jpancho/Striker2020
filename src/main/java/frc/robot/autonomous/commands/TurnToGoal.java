@@ -2,28 +2,25 @@ package frc.robot.autonomous.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.vision.Limelight;
 
 public class TurnToGoal extends CommandBase {
 
     private DriveBase m_drive = new DriveBase();
+    private Limelight m_limelight = new Limelight();
     private double kP = .1f;
     private double minPower = 0.05f;
-
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    NetworkTableEntry tx = table.getEntry("tx");
 
     double leftPower;
     double rightPower;
 
-    public TurnToGoal(DriveBase m_drive) {
+    public TurnToGoal(DriveBase m_drive, Limelight m_limelight) {
         this.m_drive = m_drive;
+        this.m_limelight = m_limelight;
 
-        addRequirements(m_drive);
+        addRequirements(m_drive, m_limelight);
     }
 
     @Override
@@ -33,7 +30,8 @@ public class TurnToGoal extends CommandBase {
 
     @Override
     public void execute() {
-        double x = tx.getDouble(0.0);
+
+        double x = m_limelight.getDegRotationToTarget();
 
         double headingError = x;
         double turnCorrect = 0.0f;

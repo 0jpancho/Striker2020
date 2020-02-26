@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 import frc.robot.vision.Limelight;
@@ -73,21 +72,16 @@ public class Shooter implements Subsystem {
     @Override
     public void periodic() {
 
-        SmartDashboard.putNumber("LShooter Error", left.getClosedLoopError());
-        SmartDashboard.putNumber("RShooter Error", right.getClosedLoopError());
-
-        SmartDashboard.putNumber("LTarget", left.getClosedLoopTarget());
-        SmartDashboard.putNumber("RTarget", right.getClosedLoopTarget());
-
-        SmartDashboard.putNumber("L Counts / s", left.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("R Counts / s", right.getSelectedSensorVelocity());
-
         left.set(this.mode, this.motorVal);
     }
 
     public void setMotors(ControlMode mode, double motorVal) {
         left.set(mode, motorVal);
         right.set(mode, motorVal);
+    }
+
+    public double getMotorVal() {
+        return motorVal;
     }
 
     public void resetEncoders() {
@@ -98,6 +92,14 @@ public class Shooter implements Subsystem {
     public void setBrake(boolean isEnabled) {
         left.setInverted(isEnabled);
         right.setInverted(isEnabled);
+    }
+
+    public WPI_TalonSRX getLeft(){
+        return left;
+    }
+
+    public WPI_TalonSRX getRight(){
+        return right;
     }
 
     public Limelight getLimelight() {
