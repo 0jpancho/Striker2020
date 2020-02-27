@@ -23,6 +23,8 @@ public class DriveByDistance extends CommandBase {
     @Override
     public void initialize() {
         m_drive.configMotors(ControlMode.PercentOutput, 0);
+        m_drive.resetOdometry();
+        
         targetDistance *= Constants.Drive.kMetersPerCount;
     }
 

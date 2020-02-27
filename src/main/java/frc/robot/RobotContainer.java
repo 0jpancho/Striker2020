@@ -9,7 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
@@ -56,12 +55,19 @@ public class RobotContainer {
   private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
   private final RunClimber m_runClimberCommand = new RunClimber(m_climber);
 
+  // Init Shuffleboard
+  private final Dashboard dashboard;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    dashboard = new Dashboard(m_drivebase, m_shooter);
+    dashboard.constructCompetitionLayout();
+    dashboard.constructDiagnosticsLayout();
 
     m_limelight.setPipeline(1);
 

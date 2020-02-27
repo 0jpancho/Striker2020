@@ -13,7 +13,7 @@ public class TurnPID extends CommandBase {
     private Drivebase m_drive = new Drivebase();
 
     private double targetAngle = 0;
-    private double tolerance = 0;
+    private double tolerance = 1;
 
     private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP, Constants.Drive.kTurnGains.kI,
             Constants.Drive.kTurnGains.kD);
@@ -27,7 +27,7 @@ public class TurnPID extends CommandBase {
 
     @Override
     public void initialize() {
-        m_drive.resetHeading();
+        m_drive.resetOdometry();
         m_drive.configMotors(ControlMode.PercentOutput, 0);
 
         SendableRegistry.add(controller, "Turn Controller");

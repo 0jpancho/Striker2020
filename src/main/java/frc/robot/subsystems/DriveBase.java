@@ -126,7 +126,7 @@ public class Drivebase extends SubsystemBase {
 
 		// Set neutral mode
 		setBrakeMode(NeutralMode.Brake);
-
+		
 		// Config encoders
 		leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 		rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -231,12 +231,12 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.getSensorCollection().setQuadraturePosition(0, 20);
 	}
 
-	public void setBrakeMode(NeutralMode neutralMode) {
-		leftMaster.setNeutralMode(neutralMode);
-		leftSlave.setNeutralMode(neutralMode);
+	public void setBrakeMode(NeutralMode mode) {
+		leftMaster.setNeutralMode(mode);
+		leftSlave.setNeutralMode(mode);
 
-		rightMaster.setNeutralMode(neutralMode);
-		rightSlave.setNeutralMode(neutralMode);
+		rightMaster.setNeutralMode(mode);
+		rightSlave.setNeutralMode(mode);
 	}
 
 	public WPI_TalonSRX getLeftMaster() {

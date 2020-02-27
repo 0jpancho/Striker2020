@@ -69,7 +69,7 @@ public class Dashboard {
 
     private ComplexWidget complexWidgetCam;
     private ComplexWidget complexWidgetAuton;
-    private SendableChooser<Objective> autonChooser = new SendableChooser<>();
+    private SendableChooser<AutonomousMode> autonChooser = new SendableChooser<>();
     private NetworkTableEntry maxCapacityBox;
     private ShuffleboardLayout colorSpinnerGrid;
     private NetworkTableEntry colorGridRed;
@@ -118,18 +118,17 @@ public class Dashboard {
         m_drivebase = drivebase;
         m_shooter = shooter;
 
-        camStuff();
-        constructCompetitionLayout();
+        //camStuff();
     }
 
-    public enum Objective {
+    public enum AutonomousMode {
         SHOOTMOVE("ShootMove"), MOVE("Move"), SHOOT("Shoot"), NOTHING("Nothing");
 
-        public static final Objective DEFAULT = MOVE;
+        public static final AutonomousMode DEFAULT = MOVE;
 
         private String name;
 
-        private Objective(String setName) {
+        private AutonomousMode(String setName) {
             name = setName;
         }
 
@@ -208,7 +207,7 @@ public class Dashboard {
                 .withPosition(desiredColorColumnIndex, desiredColorRowIndex).getEntry();
     }
 
-    public void constructMonitoringLayout() {
+    public void constructDiagnosticsLayout() {
         shuffleboard = Shuffleboard.getTab("Diagnostics");
 
         driveLPos = shuffleboard.add("DriveLPos", m_drivebase.getLPosTicks()).withWidget(BuiltInWidgets.kGraph)
@@ -217,7 +216,7 @@ public class Dashboard {
                 .withSize(graphWidth, graphHeight).withPosition(0, 2);
         driveRPos = shuffleboard.add("DriveRPos", m_drivebase.getRPosTicks()).withWidget(BuiltInWidgets.kGraph)
                 .withSize(graphWidth, graphHeight).withPosition(2, 0);
-        driveRVelo = shuffleboard.add("DriveLVelo", m_drivebase.getRVeloTicks()).withWidget(BuiltInWidgets.kGraph)
+        driveRVelo = shuffleboard.add("DriveRVelo", m_drivebase.getRVeloTicks()).withWidget(BuiltInWidgets.kGraph)
                 .withSize(graphWidth, graphHeight).withPosition(2, 2);
 
         LMetersPerSec = shuffleboard.add("LMetersPerSec", m_drivebase.getLeftMetersPerSec())
@@ -233,12 +232,12 @@ public class Dashboard {
                 .withSize(graphWidth, graphHeight).withPosition(4, 0);
         navxAlive = shuffleboard.add("Navx Alive", m_drivebase.navxAlive()).withWidget(BuiltInWidgets.kBooleanBox)
                 .withSize(2, 1).withPosition(4, 2);
-        navxCalibrating = shuffleboard.add("Navx Alive", m_drivebase.navxCalibrating())
+        navxCalibrating = shuffleboard.add("Navx Calibrating", m_drivebase.navxCalibrating())
                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(4, 5);
 
-        shooterLVelo = shuffleboard.add("ShooterLVelo", m_shooter.getLeftVelo()).withWidget(BuiltInWidgets.kGraph)
+        shooterLVelo = shuffleboard.add("ShooterLVelo", m_shooter.getRightVeloTicks()).withWidget(BuiltInWidgets.kGraph)
                 .withSize(graphWidth, graphHeight).withPosition(6, 0);
-        shooterRVelo = shuffleboard.add("ShooterRVelo", m_shooter.getRightVelo()).withWidget(BuiltInWidgets.kGraph)
+        shooterRVelo = shuffleboard.add("ShooterRVelo", m_shooter.getRightVeloTicks()).withWidget(BuiltInWidgets.kGraph)
                 .withSize(graphWidth, graphHeight).withPosition(8, 0);
     }
 
@@ -297,7 +296,7 @@ public class Dashboard {
         colorGridGreen.setBoolean(colorIsPresent);
     }
 
-    public Objective getSelectedObjective() {
+    public AutonomousMode getSelectedObjective() {
         return autonChooser.getSelected();
     }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
@@ -84,9 +85,9 @@ public class Shooter implements Subsystem {
         rightMotor.setSelectedSensorPosition(0, Constants.Drive.kTimeoutMs, Constants.Shooter.kTimeoutMs);
     }
 
-    public void setBrake(boolean isEnabled) {
-        leftMotor.setInverted(isEnabled);
-        rightMotor.setInverted(isEnabled);
+    public void setBrake(NeutralMode mode) {
+        leftMotor.setNeutralMode(mode);
+        rightMotor.setNeutralMode(mode);
     }
 
     public WPI_TalonSRX getLeft() {
@@ -97,11 +98,11 @@ public class Shooter implements Subsystem {
         return rightMotor;
     }
 
-    public int getLeftVelo() {
+    public int getLeftVeloTicks() {
         return leftMotor.getSelectedSensorVelocity();
     }
 
-    public int getRightVelo() {
+    public int getRightVeloTicks() {
         return rightMotor.getSelectedSensorVelocity();
     }
 }
