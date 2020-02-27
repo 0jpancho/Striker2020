@@ -20,7 +20,6 @@ public class Shooter implements Subsystem {
     private double motorVal;
 
     public Shooter() {
-
         leftMotor.configFactoryDefault();
         rightMotor.configFactoryDefault();
 
@@ -90,13 +89,13 @@ public class Shooter implements Subsystem {
         rightMotor.setInverted(isEnabled);
     }
 
-    public WPI_TalonSRX getLeft(){
+    public WPI_TalonSRX getLeft() {
         return leftMotor;
     }
 
-    public WPI_TalonSRX getRight(){
+    public WPI_TalonSRX getRight() {
         return rightMotor;
-    } 
+    }
 
     public int getLeftVelo() {
         return leftMotor.getSelectedSensorVelocity();

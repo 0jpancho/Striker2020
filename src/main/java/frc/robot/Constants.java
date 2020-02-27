@@ -36,7 +36,7 @@ public abstract class Constants {
 
         public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
         public static final double kSpeedAdjust = 0.85;
-        
+
         public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kSpeedAdjust;
         public static final double kAdjustedAngularSpeed = kRawMaxSpeed / kTrackWidth;
 
@@ -48,14 +48,14 @@ public abstract class Constants {
         public static final int kTimeoutMs = 20;
     }
 
-    public final static class Shooter {
+    public static final class Shooter {
 
         public static final int kLShooterID = 21;
         public static final int kRShooterID = 22;
 
         public static final int kRadiusInches = 2;
         public static final int kDiameterInches = 4;
-        
+
         public static final double kCircumferenceInches = Math.PI * kDiameterInches;
 
         // Hi-Res CIMcoder
@@ -65,7 +65,9 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
         // kP kI kD kF Iz PeakOut
-        public final static Gains kGains = new Gains(0.1, 0, 0, 0, 0, 1.00);
+        public static final Gains kGains = new Gains(0.1, 0, 0, 0, 0, 1.00);
+
+        public static final double kTestRPM = 400;
     }
 
     public final static class Indexer {
@@ -73,7 +75,7 @@ public abstract class Constants {
         public static final int kMasterID = 31;
         public static final int kSlaveID = 32;
 
-        //  SRX Mag Encoder
+        // SRX Mag Encoder
         public static final int kEncoderResolution = 4096;
 
         public static final double kRadiusInches = 1.5;
@@ -84,14 +86,18 @@ public abstract class Constants {
         public static final int kSlotIdx = 0;
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
+
+        public static final double kIntakePower = 0.75;
     }
 
     public final static class Intake {
         public static final int kIntakeID = 0;
+        public static final double kIntakePower = 0.5;
     }
 
     public final static class Climber {
         public static final int kClimberID = 1;
+        public static final double kPower = 0.5;
     }
 
     // Logitech F310

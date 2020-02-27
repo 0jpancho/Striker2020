@@ -35,7 +35,7 @@ import frc.robot.Constants;
 
 public class Drivebase extends SubsystemBase {
 
-	//private PowerDistributionPanel pdp = new PowerDistributionPanel();
+	// private PowerDistributionPanel pdp = new PowerDistributionPanel();
 
 	public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.Drive.kLeftMasterID);
 
@@ -145,7 +145,6 @@ public class Drivebase extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-
 		leftMaster.set(mode, motorVal);
 		rightMaster.set(mode, motorVal);
 
@@ -171,9 +170,13 @@ public class Drivebase extends SubsystemBase {
 		final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
 		final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
 
-		final double leftOutput = m_LPID.calculate(getLVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters, speeds.leftMetersPerSecond);
-		final double rightOutput = m_RPID.calculate(getRVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters, speeds.rightMetersPerSecond);
-		
+		final double leftOutput = m_LPID.calculate(
+				getLVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters,
+				speeds.leftMetersPerSecond);
+		final double rightOutput = m_RPID.calculate(
+				getRVeloTicks() * (10.0 / Constants.Drive.kEncoderResolution) * Constants.Drive.kCircumferenceMeters,
+				speeds.rightMetersPerSecond);
+
 		leftMaster.setVoltage(leftOutput + leftFeedforward);
 		rightMaster.setVoltage(rightOutput + rightFeedforward);
 	}
@@ -209,11 +212,11 @@ public class Drivebase extends SubsystemBase {
 		return navx.getYaw();
 	}
 
-	public boolean navxCalibrating(){
+	public boolean navxCalibrating() {
 		return navx.isCalibrating();
 	}
 
-	public boolean navxAlive(){
+	public boolean navxAlive() {
 		return navx.isConnected();
 	}
 
@@ -258,5 +261,21 @@ public class Drivebase extends SubsystemBase {
 
 	public int getRPosTicks() {
 		return rightMaster.getSelectedSensorPosition();
+	}
+
+	public double getLeftMetersPerSec() {
+		return getLVeloTicks() * (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
+	}
+
+	public double getLeftMetersTraveled() {
+		return getLPosTicks() * (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
+	}
+
+	public double getRightMetersPerSec() {
+		return getRVeloTicks() * (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
+	}
+
+	public double getRightMetersTraveled() {
+		return getRPosTicks() * (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 	}
 }

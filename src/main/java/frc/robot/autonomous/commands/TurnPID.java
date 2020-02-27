@@ -15,8 +15,8 @@ public class TurnPID extends CommandBase {
     private double targetAngle = 0;
     private double tolerance = 0;
 
-    private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP,
-            Constants.Drive.kTurnGains.kI, Constants.Drive.kTurnGains.kD);
+    private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP, Constants.Drive.kTurnGains.kI,
+            Constants.Drive.kTurnGains.kD);
 
     public TurnPID(Drivebase drive, double targetAngle, double tolerance) {
         this.m_drive = drive;
@@ -55,8 +55,8 @@ public class TurnPID extends CommandBase {
     public boolean isFinished() {
         if (Math.abs(targetAngle - m_drive.getHeadingDegrees()) < 1) {
             return true;
-          }
-          return false;
+        }
+        return false;
     }
 
 }

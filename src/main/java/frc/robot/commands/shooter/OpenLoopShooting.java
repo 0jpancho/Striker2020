@@ -7,7 +7,7 @@ import frc.robot.subsystems.Shooter;
 
 public class OpenLoopShooting extends CommandBase {
 
-    private Shooter m_shooter = new Shooter();
+    private Shooter m_shooter;
     private double power;
 
     public OpenLoopShooting(Shooter shooter, double power) {

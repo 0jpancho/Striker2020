@@ -7,24 +7,22 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Intake;
+import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
-import frc.robot.commands.shooter.OpenLoopShooting;
 import frc.robot.commands.shooter.VeloShooting;
-import frc.robot.commands.indexer.SimpleFeed;
+import frc.robot.commands.indexer.RunIndexerSimple;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.vision.Limelight;
-import frc.robot.vision.ControlMode.LedMode;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -42,17 +40,21 @@ public class RobotContainer {
 
   private XboxController driver = new XboxController(0);
 
-  private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(0.5);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(0.5);
-
-  //Subsystems
+  // Subsystems
   private final Drivebase m_drivebase = new Drivebase();
-  private final Shooter m_shooter = new Shooter();
+  private final Intake m_intake = new Intake();
   private final Indexer m_indexer = new Indexer();
+  private final Shooter m_shooter = new Shooter();
+  private final Climber m_climber = new Climber();
+
   private final Limelight m_limelight = new Limelight();
 
-  //Commands
-
+  // Commands
+  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
+  private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
+  private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kIntakePower);
+  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
+  private final RunClimber m_runClimberCommand = new RunClimber(m_climber);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -63,24 +65,8 @@ public class RobotContainer {
 
     m_limelight.setPipeline(1);
 
-    DoubleSupplier forward = () -> m_forwardLimiter.calculate(driver.getY(Hand.kLeft));
-    DoubleSupplier rot = () -> m_rotLimiter.calculate(driver.getX(Hand.kRight));
+    m_drivebase.setDefaultCommand(m_diffDriveCommand);
 
-    m_drivebase.setDefaultCommand(new DiffDrive(m_drivebase, forward, rot));
-
-    SmartDashboard.putNumber("Heading", m_drivebase.getHeadingDegrees());
-    SmartDashboard.putNumber("Heading", m_drivebase.getHeadingDegrees());
-    SmartDashboard.putBoolean("Navx Calibrating", m_drivebase.navxAlive());
-    SmartDashboard.putBoolean("NavX Alive", m_drivebase.navxAlive());
-    SmartDashboard.putNumber("Left MTraveled", m_drivebase.leftMetersTraveled);
-    SmartDashboard.putNumber("Left MPerSec", m_drivebase.leftMetersPerSec);
-    SmartDashboard.putNumber("Right MTraveled", m_drivebase.rightMetersTraveled);
-    SmartDashboard.putNumber("Right MPerSec", m_drivebase.rightMetersPerSec);
-    SmartDashboard.putNumber("ShooterL Velo", m_shooter.leftMotor.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("ShooterR Velo", m_shooter.rightMotor.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("Shooter Setpoint", m_shooter.getMotorVal());
-    
-    SmartDashboard.updateValues();
   }
 
   /**
@@ -90,22 +76,21 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-  
+
     Button A = new JoystickButton(driver, 1);
     Button B = new JoystickButton(driver, 2);
-
-    /*
     Button X = new JoystickButton(driver, 3);
     Button Y = new JoystickButton(driver, 4);
-    Button LB = new JoystickButton(driver, 5);
-    Button RB = new JoystickButton(driver, 6);
-    Button Start = new JoystickButton(driver, 7);
-    Button Select = new JoystickButton(driver, 8);
-    */
+    /*
+     * Button LB = new JoystickButton(driver, 5); Button RB = new
+     * JoystickButton(driver, 6); Button Start = new JoystickButton(driver, 7);
+     * Button Select = new JoystickButton(driver, 8);
+     */
 
-     A.whileHeld(new OpenLoopShooting(m_shooter, 1));
-     //A.whileHeld(new VeloShooting(m_shooter, 200));
-     B.whileHeld(new SimpleFeed(m_indexer, 0.75));
+    A.whileHeld(m_runIntakeCommand);
+    B.whileHeld(m_runIndexerCommand);
+    X.whileHeld(m_veloShootingCommand);
+    Y.whileHeld(m_runClimberCommand);
   }
 
   /**

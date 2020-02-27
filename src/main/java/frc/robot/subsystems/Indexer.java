@@ -9,15 +9,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Indexer extends SubsystemBase{
-    
+public class Indexer extends SubsystemBase {
+
     private WPI_TalonSRX master = new WPI_TalonSRX(Constants.Indexer.kMasterID);
     private WPI_VictorSPX slave = new WPI_VictorSPX(Constants.Indexer.kSlaveID);
 
     private ControlMode mode = ControlMode.Disabled;
     private double motorVal;
 
-    public Indexer(){
+    public Indexer() {
         master.configFactoryDefault();
         slave.configFactoryDefault();
 
@@ -34,7 +34,8 @@ public class Indexer extends SubsystemBase{
         slave.configPeakOutputForward(1);
         slave.configPeakOutputReverse(-1);
 
-        master.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, Constants.Indexer.kPIDLoopIdx, Constants.Indexer.kTimeoutMs);
+        master.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative,
+                Constants.Indexer.kPIDLoopIdx, Constants.Indexer.kTimeoutMs);
 
         master.setInverted(true);
         slave.setInverted(true);
@@ -46,7 +47,7 @@ public class Indexer extends SubsystemBase{
         System.out.println("Shooter Initialized");
     }
 
-    public void periodic(){
+    public void periodic() {
         master.set(this.mode, this.motorVal);
     }
 

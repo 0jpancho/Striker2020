@@ -8,7 +8,7 @@ import frc.robot.subsystems.Shooter;
 
 public class VeloShooting extends CommandBase {
 
-    private Shooter m_shooter = new Shooter();
+    private Shooter m_shooter;
     private double inputRPM;
     private double targetCountsPer100ms;
 
@@ -23,14 +23,14 @@ public class VeloShooting extends CommandBase {
     public void initialize() {
         // Scale RPM input with units per 100ms (hence / 600)
         targetCountsPer100ms = (inputRPM * Constants.Shooter.kEncoderResolution) / 600;
-        
+
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         m_shooter.setMotors(ControlMode.Velocity, targetCountsPer100ms);
-        //SmartDashboard.putNumber("L Velocity", m_shooter.)
+        // SmartDashboard.putNumber("L Velocity", m_shooter.)
     }
 
     // Called once the command ends or is interrupted.

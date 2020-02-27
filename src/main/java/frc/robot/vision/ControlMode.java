@@ -45,7 +45,7 @@ public class ControlMode extends SubsystemBase {
 
     public enum CamMode {
         kvision(0),
-        kdriver(1);
+        klightsOff(1);
     
         private static final Map<Double, CamMode> MY_MAP = new HashMap<Double, CamMode>();
   
@@ -55,9 +55,9 @@ public class ControlMode extends SubsystemBase {
             }
         }
         
-        private double value;
+        private int value;
 
-        private CamMode(double value) {
+        private CamMode(int value) {
             this.value = value;
         }
 
@@ -107,7 +107,7 @@ public class ControlMode extends SubsystemBase {
 
     }
 
-    public enum  Snapshot {
+    public enum Snapshot {
 
         kon(1), koff(0);
       

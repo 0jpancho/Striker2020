@@ -9,7 +9,9 @@ package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -19,14 +21,11 @@ public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
   private Drivebase m_drive = new Drivebase();
+  private XboxController controller;
 
-  private DoubleSupplier forward;
-  private DoubleSupplier rot;
-
-  public DiffDrive(Drivebase drive, DoubleSupplier forward, DoubleSupplier rot) {
+  public DiffDrive(Drivebase drive, XboxController controller) {
     m_drive = drive;
-    this.forward = forward;
-    this.rot = rot;
+    this.controller = controller;
 
     addRequirements(drive);
   }
@@ -42,9 +41,9 @@ public class DiffDrive extends CommandBase {
   @Override
   public void execute() {
 
-    double inputForward = forward.getAsDouble();
-    double inputRot = rot.getAsDouble();
-
+    double inputForward = controller.getY(Hand.kLeft);
+    double inputRot = controller.getX(Hand.kRight);
+   
     if (Math.abs(inputForward) < 0.05) {
       inputForward = 0;
     }
