@@ -55,24 +55,20 @@ public class RobotContainer {
   private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
   private final RunClimber m_runClimberCommand = new RunClimber(m_climber);
 
-  // Init Shuffleboard
-  private final Dashboard dashboard;
-
+  Dashboard m_dashboard;
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_dashboard = new Dashboard(m_drivebase, m_shooter);
+
     // Configure the button bindings
     configureButtonBindings();
-
-    dashboard = new Dashboard(m_drivebase, m_shooter);
-    dashboard.constructCompetitionLayout();
-    dashboard.constructDiagnosticsLayout();
 
     m_limelight.setPipeline(1);
 
     m_drivebase.setDefaultCommand(m_diffDriveCommand);
-
   }
 
   /**
@@ -87,6 +83,7 @@ public class RobotContainer {
     Button B = new JoystickButton(driver, 2);
     Button X = new JoystickButton(driver, 3);
     Button Y = new JoystickButton(driver, 4);
+    
     /*
      * Button LB = new JoystickButton(driver, 5); Button RB = new
      * JoystickButton(driver, 6); Button Start = new JoystickButton(driver, 7);

@@ -118,7 +118,10 @@ public class Dashboard {
         m_drivebase = drivebase;
         m_shooter = shooter;
 
-        //camStuff();
+        constructCompetitionLayout();
+        constructDiagnosticsLayout();
+
+        // camStuff();
     }
 
     public enum AutonomousMode {
@@ -170,20 +173,14 @@ public class Dashboard {
         // .withSize(cam2Height, cam2Width)
         // .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
 
-        /*
-         * for(Dashboard.Objective o: Objective.values()){
-         * autonChooser.addOption(o.getName(), o ); }
-         * autonChooser.setDefaultOption(Objective.DEFAULT.getName(),
-         * Objective.DEFAULT);
-         */
+        for (Dashboard.AutonomousMode o : AutonomousMode.values()) {
+            autonChooser.addOption(o.getName(), o);
+        }
+        autonChooser.setDefaultOption(AutonomousMode.DEFAULT.getName(), AutonomousMode.DEFAULT);
 
         complexWidgetAuton = shuffleboard.add("AutonChooser", autonChooser)
                 .withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(autonChooserWidth, autonChooserHeight)
                 .withPosition(autonChooserColumnIndex, autonChooserRowIndex);
-
-        maxCapacityBox = shuffleboard.add("MaxCapacity", false).withWidget(BuiltInWidgets.kBooleanBox)
-                .withSize(maxCapacityWidth, maxCapacityHeight).withPosition(maxCapacityColumnIndex, maxCapacityRowIndex)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "grey")).getEntry();
 
         colorSpinnerGrid = shuffleboard.getLayout("Color Spinner", BuiltInLayouts.kGrid)
                 .withSize(colorSpinnerGridWidth, colorSpinnerGridHeight)
@@ -211,29 +208,29 @@ public class Dashboard {
         shuffleboard = Shuffleboard.getTab("Diagnostics");
 
         driveLPos = shuffleboard.add("DriveLPos", m_drivebase.getLPosTicks()).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(0, 0);
+                .withSize(graphWidth, graphHeight).withPosition(6, 2);
         driveLVelo = shuffleboard.add("DriveLVelo", m_drivebase.getLVeloTicks()).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(0, 2);
+                .withSize(graphWidth, graphHeight).withPosition(6, 3);
         driveRPos = shuffleboard.add("DriveRPos", m_drivebase.getRPosTicks()).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(2, 0);
+                .withSize(graphWidth, graphHeight).withPosition(7, 2);
         driveRVelo = shuffleboard.add("DriveRVelo", m_drivebase.getRVeloTicks()).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(2, 2);
+                .withSize(graphWidth, graphHeight).withPosition(7, 3);
 
         LMetersPerSec = shuffleboard.add("LMetersPerSec", m_drivebase.getLeftMetersPerSec())
-                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(6, 2);
+                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(0, 0);
         LMetersTraveled = shuffleboard.add("LMetersTraveled", m_drivebase.getLeftMetersTraveled())
-                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(6, 2);
+                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(0, 2);
         RMetersPerSec = shuffleboard.add("RMetersPerSec", m_drivebase.getRightMetersPerSec())
-                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(6, 2);
+                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(2, 0);
         RMetersTraveled = shuffleboard.add("RMetersTraveled", m_drivebase.getRightMetersTraveled())
-                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(6, 2);
+                .withWidget(BuiltInWidgets.kTextView).withSize(2, 1).withPosition(2, 2);
 
         heading = shuffleboard.add("Heading", m_drivebase.getHeadingDegrees()).withWidget(BuiltInWidgets.kGyro)
                 .withSize(graphWidth, graphHeight).withPosition(4, 0);
         navxAlive = shuffleboard.add("Navx Alive", m_drivebase.navxAlive()).withWidget(BuiltInWidgets.kBooleanBox)
                 .withSize(2, 1).withPosition(4, 2);
         navxCalibrating = shuffleboard.add("Navx Calibrating", m_drivebase.navxCalibrating())
-                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(4, 5);
+                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(4, 4);
 
         shooterLVelo = shuffleboard.add("ShooterLVelo", m_shooter.getRightVeloTicks()).withWidget(BuiltInWidgets.kGraph)
                 .withSize(graphWidth, graphHeight).withPosition(6, 0);
