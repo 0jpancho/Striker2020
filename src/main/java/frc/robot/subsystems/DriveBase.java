@@ -208,7 +208,7 @@ public class Drivebase extends SubsystemBase {
 		return m_odometry.getPoseMeters();
 	}
 
-	public double getHeadingDegrees() {
+	public float getHeadingDegrees() {
 		return navx.getYaw();
 	}
 

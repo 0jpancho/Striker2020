@@ -81,8 +81,8 @@ public class Shooter implements Subsystem {
     }
 
     public void resetEncoders() {
-        leftMotor.setSelectedSensorPosition(0, Constants.Drive.kTimeoutMs, Constants.Shooter.kTimeoutMs);
-        rightMotor.setSelectedSensorPosition(0, Constants.Drive.kTimeoutMs, Constants.Shooter.kTimeoutMs);
+        leftMotor.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
+        rightMotor.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
     }
 
     public void setBrake(NeutralMode mode) {

@@ -92,12 +92,12 @@ public abstract class Constants {
 
     public final static class Intake {
         public static final int kIntakeID = 0;
-        public static final double kIntakePower = 0.5;
+        public static final double kIntakePower = -0.5;
     }
 
     public final static class Climber {
         public static final int kClimberID = 1;
-        public static final double kPower = 0.5;
+        public static final double kPower = -0.5;
     }
 
     // Logitech F310
@@ -124,5 +124,10 @@ public abstract class Constants {
         public static final int kGamepadButtonRightStick = 10;
         public static final int kGamepadButtonMode = -1;
         public static final int kGamepadButtonLogitech = -1;
+    }
+
+    public static final class Limelight {
+        public static final double height = 18;
+        public static final double angle = 33.69;
     }
 }
