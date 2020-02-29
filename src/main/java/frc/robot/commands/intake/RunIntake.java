@@ -21,7 +21,7 @@ public class RunIntake extends CommandBase {
 
     @Override
     public void execute() {
-        m_intake.setPower(Constants.Intake.kIntakePower);
+        m_intake.setPower(Constants.Intake.kPower);
     }
 
     @Override

@@ -87,17 +87,19 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
 
-        public static final double kIntakePower = 0.75;
+        public static final double kPower = 0.5;
     }
 
     public final static class Intake {
         public static final int kIntakeID = 0;
-        public static final double kIntakePower = -0.5;
+        public static final double kPower = -0.25;
     }
 
     public final static class Climber {
         public static final int kClimberID = 1;
-        public static final double kPower = -0.5;
+        public static final int kLiftID = 2;
+        public static final double kClimberPower = -0.25;
+        public static final double kLiftPower = 1;
     }
 
     // Logitech F310

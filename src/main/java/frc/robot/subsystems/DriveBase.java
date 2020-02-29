@@ -116,13 +116,15 @@ public class Drivebase extends SubsystemBase {
 		rightSlave.follow(rightMaster);
 
 		// Configure motor inversions/sensor phase
+		
+		leftMaster.setSensorPhase(true);
 		leftMaster.setInverted(false);
 		leftSlave.setInverted(InvertType.FollowMaster);
-		leftMaster.setSensorPhase(false);
 
+		rightMaster.setSensorPhase(true);
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(InvertType.FollowMaster);
-		rightMaster.setSensorPhase(true);
+	
 
 		// Set neutral mode
 		setBrakeMode(NeutralMode.Brake);
@@ -156,9 +158,9 @@ public class Drivebase extends SubsystemBase {
 		this.motorVal = motorVal;
 	}
 
-	public void rawArcadeDrive(DoubleSupplier forward, DoubleSupplier rotation) {
-		leftMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() + rotation.getAsDouble());
-		rightMaster.set(ControlMode.PercentOutput, -forward.getAsDouble() - rotation.getAsDouble());
+	public void rawArcadeDrive(double forward, double rot) {
+		leftMaster.set(ControlMode.PercentOutput, forward + rot);
+		rightMaster.set(ControlMode.PercentOutput, forward - rot);
 	}
 
 	public void rawTankDrive(DoubleSupplier left, DoubleSupplier right) {

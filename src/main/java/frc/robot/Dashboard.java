@@ -16,10 +16,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.subsystems.Shooter;
 
@@ -254,9 +252,9 @@ public class Dashboard {
                 .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(4, 2);
 
         shooterLVelo = shuffleboard.addNumber("ShooterLVelo", shooterLVeloSup).withWidget(BuiltInWidgets.kTextView)
-                .withSize(1, 1).withPosition(5, 0);
-        shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup).withWidget(BuiltInWidgets.kTextView)
                 .withSize(1, 1).withPosition(6, 0);
+        shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(1, 1).withPosition(7, 0);
         
         /*
         driveLPos = shuffleboard.addNumber("DriveLPos", driveLPosSup);

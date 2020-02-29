@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
+import frc.robot.commands.drivebase.RawArcadeDrive;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.RunIndexerSimple;
 import frc.robot.commands.intake.RunIntake;
@@ -49,11 +51,14 @@ public class RobotContainer {
   private final Limelight m_limelight = new Limelight();
 
   // Commands
-  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
+  //private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
+
+  private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
+
   private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
-  private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kIntakePower);
+  private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
   private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
-  private final RunClimber m_runClimberCommand = new RunClimber(m_climber);
+  private final RunClimber m_runClimberCommand = new RunClimber(m_climber, driver);
 
   Dashboard m_dashboard;
   
@@ -68,7 +73,10 @@ public class RobotContainer {
 
     m_limelight.setPipeline(1);
 
-    m_drivebase.setDefaultCommand(m_diffDriveCommand);
+    //m_drivebase.setDefaultCommand(m_diffDriveCommand);
+    m_drivebase.setDefaultCommand(m_rawArcadeDrive);
+
+    m_climber.setDefaultCommand(m_runClimberCommand);
   }
 
   /**
@@ -84,16 +92,17 @@ public class RobotContainer {
     Button X = new JoystickButton(driver, 3);
     Button Y = new JoystickButton(driver, 4);
     
-    /*
-     * Button LB = new JoystickButton(driver, 5); Button RB = new
-     * JoystickButton(driver, 6); Button Start = new JoystickButton(driver, 7);
-     * Button Select = new JoystickButton(driver, 8);
-     */
-
-    A.whileHeld(m_runIntakeCommand);
-    B.whileHeld(m_runIndexerCommand);
-    X.whileHeld(m_veloShootingCommand);
-    Y.whileHeld(m_runClimberCommand);
+    
+    Button LB = new JoystickButton(driver, 5); 
+    Button RB = new JoystickButton(driver, 6); 
+    Button Start = new JoystickButton(driver, 7);
+    Button Select = new JoystickButton(driver, 8);
+    
+    LB.whileHeld(m_runIntakeCommand);
+    RB.whileHeld(m_runIndexerCommand);
+    
+    A.whileHeld(m_veloShootingCommand);
+    X.whileHeld(m_runClimberCommand);
   }
 
   /**

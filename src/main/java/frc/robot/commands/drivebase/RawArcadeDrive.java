@@ -2,19 +2,22 @@ package frc.robot.commands.drivebase;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.SlewRateLimiter;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivebase;
 
 public class RawArcadeDrive extends CommandBase {
 
     private final Drivebase m_drive;
-    private final DoubleSupplier m_forward;
-    private final DoubleSupplier m_rotation;
+    private final XboxController m_controller;
 
-    public RawArcadeDrive(Drivebase drive, DoubleSupplier forward, DoubleSupplier rotation) {
+    private SlewRateLimiter inputs = new SlewRateLimiter(0.5);
+
+    public RawArcadeDrive(Drivebase drive, XboxController controller) {
         m_drive = drive;
-        m_forward = forward;
-        m_rotation = rotation;
+        m_controller = controller;
 
         addRequirements(drive);
     }
@@ -29,7 +32,7 @@ public class RawArcadeDrive extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.rawArcadeDrive(m_forward, m_rotation);
+        m_drive.rawArcadeDrive(-m_controller.getY(Hand.kLeft) * 0.75, m_controller.getX(Hand.kRight) * 0.75);
     }
 
     // Called once the command ends or is interrupted.
