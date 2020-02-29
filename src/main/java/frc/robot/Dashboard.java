@@ -131,7 +131,6 @@ public class Dashboard {
     private BooleanSupplier navxAliveSup = () -> m_drivebase.navxAlive();
     private BooleanSupplier navxCalibratingSup = () -> m_drivebase.navxCalibrating();
 
-
     private int graphHeight = 2;
     private int graphWidth = 2;
 
@@ -190,7 +189,7 @@ public class Dashboard {
          * .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
          */
 
-        // complexWidgetCam2 = shuffleboard.add( "LimeLight", m_limeLight)
+        // complexWidgetCam2 = shuffleboard.add("LimeLight", m_limeLight)
         // .withWidget(BuiltInWidgets.kCameraStream)
         // .withSize(cam2Height, cam2Width)
         // .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
@@ -239,25 +238,25 @@ public class Dashboard {
                 .withSize(1, 1).withPosition(1, 1);
 
         LMetersPerSec = shuffleboard.addNumber("LMetersPerSec", LMetersPerSecSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(1, 1);
+                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(2, 0);
         LMetersTraveled = shuffleboard.addNumber("LMetersTraveled", LMetersTraveledSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(1, 3);
+                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 0);
         RMetersPerSec = shuffleboard.addNumber("RMetersPerSec", RMetersPerSecSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 1);
+                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(2, 1);
         RMetersTraveled = shuffleboard.addNumber("RMetersTraveled", RMetersTraveledSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 3);
+                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 1);
 
-        heading = shuffleboard.addNumber("Heading", headingSup).withWidget(BuiltInWidgets.kGyro)
-                .withSize(graphWidth, graphHeight).withPosition(5, 1);
+        heading = shuffleboard.addNumber("Heading", headingSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(2, 1).withPosition(4, 0);
         navxAlive = shuffleboard.addBoolean("Navx Alive", navxAliveSup).withWidget(BuiltInWidgets.kBooleanBox)
-                .withSize(2, 1).withPosition(5, 3);
+                .withSize(2, 1).withPosition(4, 1);
         navxCalibrating = shuffleboard.addBoolean("Navx Calibrating", navxCalibratingSup)
-                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(5, 5);
+                .withWidget(BuiltInWidgets.kBooleanBox).withSize(2, 1).withPosition(4, 2);
 
-        shooterLVelo = shuffleboard.addNumber("ShooterLVelo", shooterLVeloSup).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(7, 1);
-        shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup).withWidget(BuiltInWidgets.kGraph)
-                .withSize(graphWidth, graphHeight).withPosition(9, 1);
+        shooterLVelo = shuffleboard.addNumber("ShooterLVelo", shooterLVeloSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(1, 1).withPosition(5, 0);
+        shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(1, 1).withPosition(6, 0);
         
         /*
         driveLPos = shuffleboard.addNumber("DriveLPos", driveLPosSup);
