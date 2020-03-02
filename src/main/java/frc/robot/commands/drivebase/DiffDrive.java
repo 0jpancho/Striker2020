@@ -9,7 +9,7 @@ package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -22,6 +22,9 @@ public class DiffDrive extends CommandBase {
 
   private Drivebase m_drive = new Drivebase();
   private XboxController controller;
+
+  private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(1);
+  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(1);
 
   public DiffDrive(Drivebase drive, XboxController controller) {
     m_drive = drive;
@@ -54,8 +57,8 @@ public class DiffDrive extends CommandBase {
 
     //m_drive.updateOdometry();
 
-    m_drive.differentialDrive(-inputForward * Constants.Drive.kAdjustedMaxSpeed,
-        -inputRot * Constants.Drive.kAdjustedAngularSpeed);
+    m_drive.differentialDrive(m_forwardLimiter.calculate(-inputForward) * Constants.Drive.kAdjustedMaxSpeed,
+                              m_rotLimiter.calculate(-inputRot) * Constants.Drive.kAdjustedAngularSpeed);
   }
 
   // Called once the command ends or is interrupted.
