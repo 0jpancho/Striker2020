@@ -158,16 +158,6 @@ public class Drivebase extends SubsystemBase {
 		this.motorVal = motorVal;
 	}
 
-	public void rawArcadeDrive(double forward, double rot) {
-		leftMaster.set(ControlMode.PercentOutput, forward + rot);
-		rightMaster.set(ControlMode.PercentOutput, forward - rot);
-	}
-
-	public void rawTankDrive(DoubleSupplier left, DoubleSupplier right) {
-		leftMaster.set(ControlMode.PercentOutput, -left.getAsDouble());
-		rightMaster.set(ControlMode.PercentOutput, -right.getAsDouble());
-	}
-
 	public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
 		final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
 		final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
@@ -203,6 +193,7 @@ public class Drivebase extends SubsystemBase {
 
 	public void resetOdometry() {
 		resetEncoders();
+		resetHeading();
 		m_odometry.resetPosition(new Pose2d(), getHeadingPose());
 	}
 

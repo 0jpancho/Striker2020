@@ -2,6 +2,8 @@ package frc.robot.commands.drivebase;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -13,7 +15,8 @@ public class RawArcadeDrive extends CommandBase {
     private final Drivebase m_drive;
     private final XboxController m_controller;
 
-    private SlewRateLimiter inputs = new SlewRateLimiter(0.5);
+    private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(0.5);
+    private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(0.5);
 
     public RawArcadeDrive(Drivebase drive, XboxController controller) {
         m_drive = drive;
@@ -25,14 +28,26 @@ public class RawArcadeDrive extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_drive.resetEncoders();
         m_drive.resetHeading();
+        m_drive.resetOdometry();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.rawArcadeDrive(-m_controller.getY(Hand.kLeft) * 0.75, m_controller.getX(Hand.kRight) * 0.75);
+        DoubleSupplier forward = () -> m_forwardLimiter.calculate(m_controller.getY(Hand.kLeft));
+        DoubleSupplier rot = () -> m_rotLimiter.calculate(m_controller.getX(Hand.kRight));
+
+        if (Math.abs(forward.getAsDouble()) < 0.05) {
+            forward = () -> 0;
+          }
+      
+          if (Math.abs(rot.getAsDouble()) < 0.05) {
+            rot = () -> 0;
+          }
+
+        m_drive.getLeftMaster().set(ControlMode.PercentOutput, forward.getAsDouble() + rot.getAsDouble());
+		m_drive.getRightMaster().set(ControlMode.PercentOutput, forward.getAsDouble() - rot.getAsDouble());
     }
 
     // Called once the command ends or is interrupted.
