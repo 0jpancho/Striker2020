@@ -51,9 +51,9 @@ public class RobotContainer {
   private final Limelight m_limelight = new Limelight();
 
   // Commands
-  //private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
+  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
 
-  private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
+  //private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
 
   private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
   private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
@@ -73,8 +73,8 @@ public class RobotContainer {
 
     m_limelight.setPipeline(1);
 
-    //m_drivebase.setDefaultCommand(m_diffDriveCommand);
-    m_drivebase.setDefaultCommand(m_rawArcadeDrive);
+    m_drivebase.setDefaultCommand(m_diffDriveCommand);
+    //m_drivebase.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
   }

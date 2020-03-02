@@ -62,7 +62,7 @@ public class Drivebase extends SubsystemBase {
 	private final DifferentialDriveOdometry m_odometry;
 
 	// Gains are for example purposes only - must be determined for your own robot!
-	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 1, 1);
+	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 
 	public double leftMetersPerSec;
 	public double rightMetersPerSec;
