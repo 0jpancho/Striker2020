@@ -20,15 +20,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
-  private Drivebase m_drive = new Drivebase();
-  private XboxController controller;
+  private Drivebase m_drive;
+  private XboxController m_controller;
 
   private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(1);
   private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(1);
 
   public DiffDrive(Drivebase drive, XboxController controller) {
     m_drive = drive;
-    this.controller = controller;
+    this.m_controller = controller;
 
     addRequirements(drive);
   }
@@ -44,8 +44,8 @@ public class DiffDrive extends CommandBase {
   @Override
   public void execute() {
 
-    double inputForward = controller.getY(Hand.kLeft);
-    double inputRot = controller.getX(Hand.kRight);
+    double inputForward = m_controller.getY(Hand.kLeft);
+    double inputRot = m_controller.getX(Hand.kRight);
    
     if (Math.abs(inputForward) < 0.05) {
       inputForward = 0;

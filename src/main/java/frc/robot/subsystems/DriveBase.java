@@ -7,8 +7,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -187,8 +185,7 @@ public class Drivebase extends SubsystemBase {
 	}
 
 	public Rotation2d getHeadingPose() {
-		double angle = navx.getYaw();
-		return Rotation2d.fromDegrees(angle);
+		return Rotation2d.fromDegrees(-getHeadingDegrees());
 	}
 
 	public void resetOdometry() {

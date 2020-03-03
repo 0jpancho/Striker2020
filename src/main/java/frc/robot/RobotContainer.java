@@ -39,7 +39,8 @@ public class RobotContainer {
   // private Joystick driverLeft = new Joystick(0);
   // private Joystick driverRight = new Joystick(1);
 
-  private XboxController driver = new XboxController(0);
+  private XboxController m_driver = new XboxController(0);
+  private XboxController m_operator = new XboxController(1);
 
   // Subsystems
   private final Drivebase m_drivebase = new Drivebase();
@@ -51,14 +52,14 @@ public class RobotContainer {
   private final Limelight m_limelight = new Limelight();
 
   // Commands
-  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, driver);
+  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, m_driver);
 
   //private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
 
   private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
   private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
   private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
-  private final RunClimber m_runClimberCommand = new RunClimber(m_climber, driver);
+  private final RunClimber m_runClimberCommand = new RunClimber(m_climber, m_driver);
 
   Dashboard m_dashboard;
   
@@ -87,22 +88,47 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    Button A = new JoystickButton(driver, 1);
-    Button B = new JoystickButton(driver, 2);
-    Button X = new JoystickButton(driver, 3);
-    Button Y = new JoystickButton(driver, 4);
+
+    /**
+     * 
+     * Driver Bindings 
+     * 
+     */
+
+    Button A = new JoystickButton(m_driver, 1);
+    Button B = new JoystickButton(m_driver, 2);
+    Button X = new JoystickButton(m_driver, 3);
+    Button Y = new JoystickButton(m_driver, 4);
     
     
-    Button LB = new JoystickButton(driver, 5); 
-    Button RB = new JoystickButton(driver, 6); 
-    Button Start = new JoystickButton(driver, 7);
-    Button Select = new JoystickButton(driver, 8);
+    Button LB = new JoystickButton(m_driver, 5); 
+    Button RB = new JoystickButton(m_driver, 6); 
+    Button Start = new JoystickButton(m_driver, 7);
+    Button Select = new JoystickButton(m_driver, 8);
     
     LB.whileHeld(m_runIntakeCommand);
     RB.whileHeld(m_runIndexerCommand);
     
     A.whileHeld(m_veloShootingCommand);
     X.whileHeld(m_runClimberCommand);
+
+    /**
+     * 
+     * Operator Bindings
+     * 
+     */
+
+
+    Button opA = new JoystickButton(m_operator, 1);
+    Button opB = new JoystickButton(m_operator, 2);
+    Button opX = new JoystickButton(m_operator, 3);
+    Button opY = new JoystickButton(m_operator, 4);
+    
+    
+    Button opLB = new JoystickButton(m_operator, 5); 
+    Button opRB = new JoystickButton(m_operator, 6); 
+    Button opStart = new JoystickButton(m_operator, 7);
+    Button opSelect = new JoystickButton(m_operator, 8);
   }
 
   /**

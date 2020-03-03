@@ -35,10 +35,11 @@ public abstract class Constants {
         public static final double kMetersPerCount = kCircumferenceMeters / kEncoderResolution;
 
         public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
+        public static final double kRawAngularSpeed = kRawMaxSpeed / kTrackWidth;
         public static final double kSpeedAdjust = 0.85;
 
         public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kSpeedAdjust;
-        public static final double kAdjustedAngularSpeed = kRawMaxSpeed / kTrackWidth;
+        public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kSpeedAdjust;
 
         public final static Gains kDriveGains = new Gains(0.00809, 0, 0.00371, 0, 0, 1.00);
         public final static Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);

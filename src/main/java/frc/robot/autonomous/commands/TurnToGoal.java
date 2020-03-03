@@ -8,8 +8,8 @@ import frc.robot.vision.Limelight;
 
 public class TurnToGoal extends CommandBase {
 
-    private Drivebase m_drive = new Drivebase();
-    private Limelight m_limelight = new Limelight();
+    private Drivebase m_drive;
+    private Limelight m_limelight;
     private double kP = .1f;
     private double minPower = 0.05f;
 
