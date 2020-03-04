@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
@@ -20,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -59,7 +61,9 @@ public class Drivebase extends SubsystemBase {
 
 	private final DifferentialDriveOdometry m_odometry;
 
-	// Gains are for example purposes only - must be determined for your own robot!
+	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 
 	public double leftMetersPerSec;
@@ -140,6 +144,9 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
+		leftMaster.config_kP(0, 0.8);
+		rightMaster.config_kP(0, 0.8);
+
 		System.out.println("Drivebase Initialized");
 
 		m_LPID.reset();
@@ -177,6 +184,31 @@ public class Drivebase extends SubsystemBase {
 	public void differentialDrive(double forward, double rot) {
 		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
 		setSpeeds(wheelSpeeds);
+	}
+
+	public void arcadeDriveVelo(double forward, double rot, boolean useSquares) {
+		var xSpeed = forward;
+		var zRot = rot;
+
+		if (useSquares) {
+			xSpeed *= Math.abs(xSpeed);
+			zRot *= Math.abs(zRot);
+		}
+
+		xSpeed = m_forwardLimiter.calculate(forward);
+		zRot = m_rotLimiter.calculate(rot);
+
+		xSpeed *= Constants.Drive.kRawMaxSpeed;
+		zRot *= Constants.Drive.kRawAngularSpeed;
+
+		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, zRot));
+
+		var leftFeedForwardVolts = m_feedforward.calculate(wheelSpeeds.leftMetersPerSecond);
+		var rightFeedForwardVolts = m_feedforward.calculate(wheelSpeeds.rightMetersPerSecond);
+
+		leftMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.leftMetersPerSecond), DemandType.ArbitraryFeedForward, leftFeedForwardVolts / 12);
+		rightMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.rightMetersPerSecond), DemandType.ArbitraryFeedForward, rightFeedForwardVolts / 12);
+
 	}
 
 	public void updateOdometry() {
@@ -271,4 +303,48 @@ public class Drivebase extends SubsystemBase {
 	public double getRightMetersTraveled() {
 		return getRPosTicks() * (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution);
 	}
+
+	/**
+   * Converts from encoder edges to meters.
+   * 
+   * @param steps encoder edges to convert
+   * @return meters
+   */
+  public static double edgesToMeters(int steps) {
+	return (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution) * steps;
+  }
+
+  /**
+   * Converts from encoder edges per 100 milliseconds to meters per second.
+   * @param stepsPerDecisec edges per decisecond
+   * @return meters per second
+   */
+  public static double edgesPerDecisecToMetersPerSec(int stepsPerDecisec) {
+    return edgesToMeters(stepsPerDecisec * 10);
+  }
+
+  /**
+   * Converts from meters to encoder edges.
+   * @param meters meters
+   * @return encoder edges
+   */
+  public static double metersToEdges(double meters) {
+    return (meters / Constants.Drive.kCircumferenceMeters) * Constants.Drive.kEncoderResolution;
+  }
+
+  /**
+   * Converts from meters per second to encoder edges per 100 milliseconds.
+   * @param metersPerSec meters per second
+   * @return encoder edges per decisecond
+   */
+  public static double metersPerSecToEdgesPerDecisec(double metersPerSec) {
+    return metersToEdges(metersPerSec) * .1d;
+  }
+
+  public void stop() {
+	  leftMaster.set(0);
+	  rightMaster.set(0);
+	  m_forwardLimiter.reset(0);
+	  m_rotLimiter.reset(0);
+  }
 }

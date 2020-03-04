@@ -43,7 +43,7 @@ public abstract class Constants {
         public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kRotAdjust;
 
         public static final Gains kVeloGains = new Gains(0.0303, 0, 0.35, 0, 0, 1.00);
-        public static final Gains kPosGains = new Gains(0.00061, 0, 0.000276, 0, 0, 1.00);
+        public static final Gains kPosGains = new Gains(0.624, 0, 283.0, 0, 0, 1.00);
         public static final Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
 
         public static final int kSlotIdx = 0;
@@ -98,10 +98,10 @@ public abstract class Constants {
         public static final double kPower = -0.25;
     }
 
-    public final static class Climber {
-        public static final int kClimberID = 1;
+    public final static class Winch {
+        public static final int kWinchID = 1;
         public static final int kLiftID = 2;
-        public static final double kClimberPower = -0.25;
+        public static final double kWinchPower = -1;
         public static final double kLiftPower = 1;
     }
 

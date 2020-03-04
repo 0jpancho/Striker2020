@@ -9,7 +9,6 @@ package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -23,8 +22,8 @@ public class DiffDrive extends CommandBase {
   private Drivebase m_drive;
   private XboxController m_controller;
 
-  private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
-  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
+  //private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
+  //private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
 
   public DiffDrive(Drivebase drive, XboxController controller) {
     m_drive = drive;
@@ -36,6 +35,16 @@ public class DiffDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_drive.getLeftMaster().config_kP(0, Constants.Drive.kVeloGains.kP);
+    m_drive.getLeftMaster().config_kI(0, Constants.Drive.kVeloGains.kI);
+    m_drive.getLeftMaster().config_kD(0, Constants.Drive.kVeloGains.kD);
+    m_drive.getLeftMaster().config_kF(0, Constants.Drive.kVeloGains.kF);
+
+    m_drive.getRightMaster().config_kP(0, Constants.Drive.kVeloGains.kP);
+    m_drive.getRightMaster().config_kI(0, Constants.Drive.kVeloGains.kI);
+    m_drive.getRightMaster().config_kD(0, Constants.Drive.kVeloGains.kD);
+    m_drive.getRightMaster().config_kF(0, Constants.Drive.kVeloGains.kF);
+
     m_drive.resetHeading();
     m_drive.resetOdometry();
   }
@@ -44,8 +53,8 @@ public class DiffDrive extends CommandBase {
   @Override
   public void execute() {
 
-    double inputForward = m_controller.getY(Hand.kLeft);
-    double inputRot = m_controller.getX(Hand.kRight);
+    double inputForward = -m_controller.getY(Hand.kLeft);
+    double inputRot = -m_controller.getX(Hand.kRight);
    
     if (Math.abs(inputForward) < 0.05) {
       inputForward = 0;
@@ -57,8 +66,10 @@ public class DiffDrive extends CommandBase {
 
     //m_drive.updateOdometry();
 
-    m_drive.differentialDrive(m_forwardLimiter.calculate(-inputForward) * Constants.Drive.kAdjustedMaxSpeed,
-                              m_rotLimiter.calculate(-inputRot) * Constants.Drive.kAdjustedAngularSpeed);
+    //m_drive.differentialDrive(-inputForward * Constants.Drive.kAdjustedMaxSpeed,
+    //                          -inputRot * Constants.Drive.kAdjustedAngularSpeed);
+
+    m_drive.arcadeDriveVelo(inputForward, inputRot, true);
   }
 
   // Called once the command ends or is interrupted.

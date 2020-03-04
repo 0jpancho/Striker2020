@@ -4,14 +4,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.vision.Limelight;
 
 public class AlignToTarget extends CommandBase {
 
     private Drivebase m_drive;
-    private Shooter m_shooter;
     private Limelight m_limelight;
     
     double kPAim = -0.1f;
@@ -19,21 +17,18 @@ public class AlignToTarget extends CommandBase {
     double kMinAimPower = 0.05f;
     //double kTargetDist;
 
-    public AlignToTarget(Drivebase drive, Shooter shooter, Limelight limelight) {
+    public AlignToTarget(Drivebase drive, Limelight limelight) {
         m_drive = drive;
         m_limelight = limelight;
-        m_shooter = shooter;
-
-        m_limelight.setPipeline(0);
 
         //kTargetDist = targetDist;
 
-        addRequirements(drive, shooter, limelight);
+        addRequirements(drive, limelight);
     }
 
     @Override
     public void initialize() {
-        
+        m_limelight.setPipeline(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -70,7 +65,7 @@ public class AlignToTarget extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_drive.configMotors(ControlMode.PercentOutput, 0);
-        //m_limelight.setPipeline(1);
+        m_limelight.setPipeline(1);
     }
 
     // Returns true when the command should end.

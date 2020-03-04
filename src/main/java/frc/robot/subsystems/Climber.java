@@ -7,12 +7,12 @@ import frc.robot.Constants;
 
 public class  Climber extends SubsystemBase {
 
-    private Spark climberMotor;
+    private Spark winchMotor;
     private Talon liftMotor;
 
     public Climber() {
-        climberMotor = new Spark(Constants.Climber.kClimberID);
-        liftMotor = new Talon(Constants.Climber.kLiftID);
+        winchMotor = new Spark(Constants.Winch.kWinchID);
+        liftMotor = new Talon(Constants.Winch.kLiftID);
     }
 
     @Override
@@ -20,8 +20,8 @@ public class  Climber extends SubsystemBase {
 
     }
 
-    public void setClimberPower(double power) {
-        climberMotor.set(power);
+    public void setWinchPower(double power) {
+        winchMotor.set(power);
     }
 
     public void setLiftPower(double power) {

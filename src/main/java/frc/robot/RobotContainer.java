@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -44,39 +45,55 @@ public class RobotContainer {
   private XboxController m_operator = new XboxController(1);
 
   // Subsystems
-  private final Drivebase m_drive = new Drivebase();
-  private final Intake m_intake = new Intake();
-  private final Indexer m_indexer = new Indexer();
-  private final Shooter m_shooter = new Shooter();
-  private final Climber m_climber = new Climber();
+  private final Drivebase m_drive;
+  private final Intake m_intake;
+  private final Indexer m_indexer;
+  private final Shooter m_shooter;
+  private final Climber m_climber;
 
-  private final Limelight m_limelight = new Limelight();
+  private Limelight m_limelight;
 
   // Commands
-  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drive, m_driver);
+  private final DiffDrive m_diffDriveCommaned;
 
   //private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
 
-  private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
-  private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
-  private final RunClimber m_runClimberCommand = new RunClimber(m_climber, m_driver);
-  private final AlignToTarget m_alignToTarget = new AlignToTarget(m_drive, m_shooter, m_limelight);
-  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kRPM);
+  private final RunIntake m_runIntakeCommand;
+  private final RunIndexerSimple m_runIndexerCommand;
+  private final RunClimber m_runClimberCommand;
+  private final AlignToTarget m_alignToTarget;
+  private final VeloShooting m_veloShootingCommand;
 
-  Dashboard m_dashboard;
+  private final Dashboard m_dashboard;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_dashboard = new Dashboard(m_drive, m_shooter);
+    LiveWindow.disableAllTelemetry();
 
-    m_limelight.setPipeline(0);
+    // Instantiate Subsystems
+    m_drive = new Drivebase();
+    m_intake = new Intake();
+    m_indexer = new Indexer();
+    m_shooter = new Shooter();
+    m_climber = new Climber();
+    m_limelight = new Limelight();
+
+    // Instantiate Commands
+    m_diffDriveCommaned = new DiffDrive(m_drive, m_driver);
+    m_runIntakeCommand = new RunIntake(m_intake);
+    m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
+    m_runClimberCommand = new RunClimber(m_climber, m_operator);
+    m_alignToTarget = new AlignToTarget(m_drive, m_limelight);
+    m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kRPM);
+
+    m_dashboard = new Dashboard(m_drive, m_shooter);
 
     // Configure the button bindings
     configureButtonBindings();
 
-    m_drive.setDefaultCommand(m_diffDriveCommand);
+    m_drive.setDefaultCommand(m_diffDriveCommaned);
     //m_drivebase.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
@@ -129,9 +146,14 @@ public class RobotContainer {
     Button opStart = new JoystickButton(m_operator, 7);
     Button opSelect = new JoystickButton(m_operator, 8);
 
+    Button opDPadUp = new DPad(m_operator, DPad.Direction.up);
+	  Button opDPadDown = new DPad(m_operator, DPad.Direction.down);
+	  Button opDPadRight = new DPad(m_operator, DPad.Direction.right);
+    Button opDPadLeft = new DPad(m_operator, DPad.Direction.left);
+    
     opLB.whileHeld(m_runIntakeCommand);
     opRB.whileHeld(m_runIndexerCommand);
-    opRB.whileHeld(m_veloShootingCommand);
+    opB.whileHeld(m_veloShootingCommand);
   }
 
   /**
@@ -144,7 +166,7 @@ public class RobotContainer {
   
     switch (m_dashboard.getSelectedObjective()) {
       case MOVE:
-        return new DriveByDistance(m_drive, 5);
+        return new DriveByDistance(m_drive, 1);
 
       case SHOOTMOVE:
         return null;
