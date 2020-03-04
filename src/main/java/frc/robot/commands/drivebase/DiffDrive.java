@@ -23,8 +23,8 @@ public class DiffDrive extends CommandBase {
   private Drivebase m_drive;
   private XboxController m_controller;
 
-  private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(1);
-  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(1);
+  private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
+  private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
 
   public DiffDrive(Drivebase drive, XboxController controller) {
     m_drive = drive;

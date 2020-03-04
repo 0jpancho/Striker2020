@@ -48,11 +48,11 @@ public class Drivebase extends SubsystemBase {
 
 	private final AHRS navx;
 
-	private final PIDController m_LPID = new PIDController(Constants.Drive.kDriveGains.kP,
-			Constants.Drive.kDriveGains.kI, Constants.Drive.kDriveGains.kD);
+	private final PIDController m_LPID = new PIDController(Constants.Drive.kVeloGains.kP,
+			Constants.Drive.kVeloGains.kI, Constants.Drive.kVeloGains.kD);
 
-	private final PIDController m_RPID = new PIDController(Constants.Drive.kDriveGains.kP,
-			Constants.Drive.kDriveGains.kI, Constants.Drive.kDriveGains.kD);
+	private final PIDController m_RPID = new PIDController(Constants.Drive.kVeloGains.kP,
+			Constants.Drive.kVeloGains.kI, Constants.Drive.kVeloGains.kD);
 
 	private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
 			Constants.Drive.kTrackWidth);
@@ -238,11 +238,11 @@ public class Drivebase extends SubsystemBase {
 	}
 
 	public int getLVeloTicks() {
-		return -leftMaster.getSelectedSensorVelocity();
+		return leftMaster.getSelectedSensorVelocity();
 	}
 
 	public int getLPosTicks() {
-		return -leftMaster.getSelectedSensorPosition();
+		return leftMaster.getSelectedSensorPosition();
 	}
 
 	public int getRVeloTicks() {

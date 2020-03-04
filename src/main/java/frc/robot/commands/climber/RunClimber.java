@@ -24,18 +24,29 @@ public class RunClimber extends CommandBase {
 
     @Override
     public void execute() {
-       if (m_controller.getYButton()) {
+        if (m_controller.getYButton()) {
            m_climber.setClimberPower(Constants.Climber.kClimberPower);
-       }
+        }
 
-       if (m_controller.getXButton()) {
-           m_climber.setLiftPower(Constants.Climber.kLiftPower);
-       }
+        else {
+            m_climber.setClimberPower(0);
+        }
+
+        if (m_controller.getXButton()) {
+            m_climber.setLiftPower(Constants.Climber.kLiftPower);
+        }
+
+        else {
+            m_climber.setLiftPower(0);
+        }
+
+       
     }
 
     @Override
     public void end(boolean interrupted) {
         m_climber.setClimberPower(0);
+        m_climber.setLiftPower(0);
     }
 
     @Override

@@ -9,14 +9,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
+import frc.robot.autonomous.commands.DriveByDistance;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
 import frc.robot.commands.drivebase.RawArcadeDrive;
+import frc.robot.commands.shooter.AlignToTarget;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.RunIndexerSimple;
 import frc.robot.commands.intake.RunIntake;
@@ -43,7 +48,7 @@ public class RobotContainer {
   private XboxController m_operator = new XboxController(1);
 
   // Subsystems
-  private final Drivebase m_drivebase = new Drivebase();
+  private final Drivebase m_drive = new Drivebase();
   private final Intake m_intake = new Intake();
   private final Indexer m_indexer = new Indexer();
   private final Shooter m_shooter = new Shooter();
@@ -52,14 +57,15 @@ public class RobotContainer {
   private final Limelight m_limelight = new Limelight();
 
   // Commands
-  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drivebase, m_driver);
+  private final DiffDrive m_diffDriveCommand = new DiffDrive(m_drive, m_driver);
 
   //private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
 
   private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
   private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
-  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
   private final RunClimber m_runClimberCommand = new RunClimber(m_climber, m_driver);
+  private final AlignToTarget m_alignToTarget = new AlignToTarget(m_drive, m_limelight);
+  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
 
   Dashboard m_dashboard;
   
@@ -67,14 +73,14 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_dashboard = new Dashboard(m_drivebase, m_shooter);
+    m_dashboard = new Dashboard(m_drive, m_shooter);
+
+    m_limelight.setPipeline(0);
 
     // Configure the button bindings
     configureButtonBindings();
 
-    m_limelight.setPipeline(1);
-
-    m_drivebase.setDefaultCommand(m_diffDriveCommand);
+    m_drive.setDefaultCommand(m_diffDriveCommand);
     //m_drivebase.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
@@ -106,11 +112,10 @@ public class RobotContainer {
     Button Start = new JoystickButton(m_driver, 7);
     Button Select = new JoystickButton(m_driver, 8);
     
-    LB.whileHeld(m_runIntakeCommand);
-    RB.whileHeld(m_runIndexerCommand);
-    
-    A.whileHeld(m_veloShootingCommand);
-    X.whileHeld(m_runClimberCommand);
+    A.whileHeld(m_runIndexerCommand);
+
+    LB.whileHeld(m_alignToTarget);
+    RB.whileHeld(m_veloShootingCommand);
 
     /**
      * 
@@ -129,6 +134,9 @@ public class RobotContainer {
     Button opRB = new JoystickButton(m_operator, 6); 
     Button opStart = new JoystickButton(m_operator, 7);
     Button opSelect = new JoystickButton(m_operator, 8);
+
+    opLB.whileHeld(m_runIntakeCommand);
+    opRB.whileHeld(m_runIndexerCommand);
   }
 
   /**
@@ -136,8 +144,25 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  /*
-   * public Command getAutonomousCommand() { // An ExampleCommand will run in
-   * autonomous return null; }
-   */
+  
+  public Command getAutonomousCommand() { // An ExampleCommand will run in autonomous 
+  
+    switch (m_dashboard.getSelectedObjective()) {
+      case MOVE:
+        return new DriveByDistance(m_drive, 5);
+
+      case SHOOTMOVE:
+        return null;
+
+      case SHOOT:
+        return null;
+
+      case NOTHING:
+        return null;
+
+      default:
+        return null;
+
+    }
+  } 
 }

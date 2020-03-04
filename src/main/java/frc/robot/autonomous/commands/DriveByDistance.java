@@ -22,6 +22,12 @@ public class DriveByDistance extends CommandBase {
 
     @Override
     public void initialize() {
+
+        m_drive.getLeftMaster().config_kP(0, Constants.Drive.kPosGains.kP);
+        m_drive.getLeftMaster().config_kI(0, Constants.Drive.kPosGains.kI);
+        m_drive.getLeftMaster().config_kD(0, Constants.Drive.kPosGains.kD);
+        m_drive.getLeftMaster().config_kF(0, Constants.Drive.kPosGains.kF);
+
         m_drive.configMotors(ControlMode.PercentOutput, 0);
         m_drive.resetOdometry();
         

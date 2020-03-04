@@ -40,11 +40,11 @@ public class Shooter implements Subsystem {
         leftMotor.configAllSettings(motorConfig);
         rightMotor.configAllSettings(motorConfig);
 
-        leftMotor.setSensorPhase(false);
-        rightMotor.setSensorPhase(false);
-
         leftMotor.setInverted(false);
         rightMotor.setInverted(true);
+
+        leftMotor.setSensorPhase(false);
+        rightMotor.setSensorPhase(false);
 
         leftMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.Shooter.kPIDLoopIdx,
                 Constants.Shooter.kTimeoutMs);

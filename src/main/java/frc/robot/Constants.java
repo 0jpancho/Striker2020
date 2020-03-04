@@ -35,14 +35,16 @@ public abstract class Constants {
         public static final double kMetersPerCount = kCircumferenceMeters / kEncoderResolution;
 
         public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
-        public static final double kRawAngularSpeed = kRawMaxSpeed / kTrackWidth;
-        public static final double kSpeedAdjust = 0.85;
+        public static final double kRawAngularSpeed = 2 * Math.PI;
+        public static final double kForwardAdjust = 0.85;
+        public static final double kRotAdjust = 0.3;
 
-        public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kSpeedAdjust;
-        public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kSpeedAdjust;
+        public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kForwardAdjust;
+        public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kRotAdjust;
 
-        public final static Gains kDriveGains = new Gains(0.00809, 0, 0.00371, 0, 0, 1.00);
-        public final static Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
+        public static final Gains kVeloGains = new Gains(0.028, 0, 0.35, 0, 0, 1.00);
+        public static final Gains kPosGains = new Gains(0.00061, 0, 0.000276, 0, 0, 1.00);
+        public static final Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
 
         public static final int kSlotIdx = 0;
         public static final int kPIDLoopIdx = 0;
@@ -66,9 +68,9 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
         // kP kI kD kF Iz PeakOut
-        public static final Gains kGains = new Gains(0.1, 0, 0, 0, 0, 1.00);
+        public static final Gains kGains = new Gains(1.47, 0, 0, 0, 0, 1.00);
 
-        public static final double kTestRPM = 400;
+        public static final double kTestRPM = 275;
     }
 
     public final static class Indexer {
@@ -88,7 +90,7 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
 
-        public static final double kPower = 0.5;
+        public static final double kPower = 0.75;
     }
 
     public final static class Intake {
