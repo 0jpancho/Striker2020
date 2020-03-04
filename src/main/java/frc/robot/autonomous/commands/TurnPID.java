@@ -30,7 +30,6 @@ public class TurnPID extends CommandBase {
         m_drive.resetOdometry();
         m_drive.configMotors(ControlMode.PercentOutput, 0);
 
-        SendableRegistry.add(controller, "Turn Controller");
         controller.reset();
 
         controller.setTolerance(tolerance);

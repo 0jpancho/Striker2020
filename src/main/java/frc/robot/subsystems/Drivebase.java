@@ -141,6 +141,9 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
 		System.out.println("Drivebase Initialized");
+
+		m_LPID.reset();
+		m_RPID.reset();
 	}
 
 	@Override

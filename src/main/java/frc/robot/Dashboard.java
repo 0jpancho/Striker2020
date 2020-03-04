@@ -4,11 +4,13 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -81,7 +83,7 @@ public class Dashboard {
 
     // Cam
     private UsbCamera m_cameraIntake;
-    private UsbCamera m_cameraClimber;
+    private HttpCamera m_limeLight;
     private int m_currVideoSourceIndex = 0;
     private VideoSink m_videoSink;
     private VideoSource[] m_videoSources;
@@ -129,9 +131,6 @@ public class Dashboard {
     private BooleanSupplier navxAliveSup = () -> m_drivebase.navxAlive();
     private BooleanSupplier navxCalibratingSup = () -> m_drivebase.navxCalibrating();
 
-    private int graphHeight = 2;
-    private int graphWidth = 2;
-
     public Dashboard(Drivebase drivebase, Shooter shooter) {
 
         m_drivebase = drivebase;
@@ -140,7 +139,7 @@ public class Dashboard {
         constructCompetitionLayout();
         constructDiagnosticsLayout();
 
-        // camStuff();
+        camStuff();
     }
 
     public enum AutonomousMode {
@@ -162,7 +161,10 @@ public class Dashboard {
     private void camStuff() {
         // m_cameraIntake = CameraServer.getInstance().startAutomaticCapture();
 
-        m_videoSources = new VideoSource[] { m_cameraIntake, m_cameraClimber };
+        m_videoSources = new VideoSource[] { m_cameraIntake };
+        m_cameraIntake = CameraServer.getInstance().startAutomaticCapture();
+        m_limeLight = new HttpCamera("limelight", "http://10.10.1.2:5800");
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
 
         // m_videoSources = new VideoSource[] {
         // m_cameraIntake,
@@ -198,34 +200,16 @@ public class Dashboard {
         autonChooser.setDefaultOption(AutonomousMode.DEFAULT.getName(), AutonomousMode.DEFAULT);
 
         complexWidgetAuton = shuffleboard.add("AutonChooser", autonChooser)
-                .withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(3, 1)
-                .withPosition(0, 0);
+                .withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(3, 1).withPosition(0, 0);
 
-        colorSpinnerGrid = shuffleboard.getLayout("Color Spinner", BuiltInLayouts.kGrid)
-                .withSize(colorSpinnerGridWidth, colorSpinnerGridHeight)
-                .withPosition(colorSpinnerGridColumnIndex, colorSpinnerGridRowIndex)
-                .withProperties(Map.of("Number of columns", 1, "Number of Rows", 4));
-
-        colorGridBlue = colorSpinnerGrid.add("Blue", false).withWidget(BuiltInWidgets.kBooleanBox)
-                .withProperties(Map.of("colorWhenTrue", "blue", "colorWhenFalse", "grey")).getEntry();
-
-        colorGridYellow = colorSpinnerGrid.add("Yellow", false).withWidget(BuiltInWidgets.kBooleanBox)
-                .withProperties(Map.of("colorWhenTrue", "yellow", "colorWhenFalse", "grey")).getEntry();
-
-        colorGridRed = colorSpinnerGrid.add("Red", false).withWidget(BuiltInWidgets.kBooleanBox)
-                .withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "grey")).getEntry();
-
-        colorGridGreen = colorSpinnerGrid.add("Green", false).withWidget(BuiltInWidgets.kBooleanBox)
-                .withProperties(Map.of("colorWhenTrue", "green", "colorWhenFalse", "grey")).getEntry();
-
-        shuffleboard.add("DesiredColor | FMSColor", "No Game Message yet").withWidget(BuiltInWidgets.kTextView)
-                .withSize(desiredColorWidth, desiredColorHeight)
-                .withPosition(desiredColorColumnIndex, desiredColorRowIndex).getEntry();
+        complexWidgetCam = shuffleboard.add("Cams", m_videoSink.getSource()).withWidget(BuiltInWidgets.kCameraStream)
+                .withSize(4, 4).withPosition(3, 0)
+                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
     }
 
     public void constructDiagnosticsLayout() {
         shuffleboard = Shuffleboard.getTab("Diagnostics");
-        
+
         driveLPos = shuffleboard.addNumber("DriveLPos", driveLPosSup).withWidget(BuiltInWidgets.kTextView)
                 .withSize(1, 1).withPosition(0, 0);
         driveLVelo = shuffleboard.addNumber("DriveLVelo", driveLVeloSup).withWidget(BuiltInWidgets.kTextView)
@@ -235,17 +219,17 @@ public class Dashboard {
         driveRVelo = shuffleboard.addNumber("DriveRVelo", driveRVeloSup).withWidget(BuiltInWidgets.kTextView)
                 .withSize(1, 1).withPosition(1, 1);
 
-        LMetersPerSec = shuffleboard.addNumber("LMetersPerSec", LMetersPerSecSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(2, 0);
+        LMetersPerSec = shuffleboard.addNumber("LMetersPerSec", LMetersPerSecSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(1, 1).withPosition(2, 0);
         LMetersTraveled = shuffleboard.addNumber("LMetersTraveled", LMetersTraveledSup)
                 .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 0);
-        RMetersPerSec = shuffleboard.addNumber("RMetersPerSec", RMetersPerSecSup)
-                .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(2, 1);
+        RMetersPerSec = shuffleboard.addNumber("RMetersPerSec", RMetersPerSecSup).withWidget(BuiltInWidgets.kTextView)
+                .withSize(1, 1).withPosition(2, 1);
         RMetersTraveled = shuffleboard.addNumber("RMetersTraveled", RMetersTraveledSup)
                 .withWidget(BuiltInWidgets.kTextView).withSize(1, 1).withPosition(3, 1);
 
-        heading = shuffleboard.addNumber("Heading", headingSup).withWidget(BuiltInWidgets.kTextView)
-                .withSize(2, 1).withPosition(4, 0);
+        heading = shuffleboard.addNumber("Heading", headingSup).withWidget(BuiltInWidgets.kTextView).withSize(2, 1)
+                .withPosition(4, 0);
         navxAlive = shuffleboard.addBoolean("Navx Alive", navxAliveSup).withWidget(BuiltInWidgets.kBooleanBox)
                 .withSize(2, 1).withPosition(4, 1);
         navxCalibrating = shuffleboard.addBoolean("Navx Calibrating", navxCalibratingSup)
@@ -255,80 +239,14 @@ public class Dashboard {
                 .withSize(1, 1).withPosition(6, 0);
         shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup).withWidget(BuiltInWidgets.kTextView)
                 .withSize(1, 1).withPosition(7, 0);
-        
-        /*
-        driveLPos = shuffleboard.addNumber("DriveLPos", driveLPosSup);
-        driveLVelo = shuffleboard.addNumber("DriveLVelo", driveLVeloSup);
-        driveRPos = shuffleboard.addNumber("DriveRPos", driveRPosSup);
-        driveRVelo = shuffleboard.addNumber("DriveRVelo", driveRVeloSup);
 
-        LMetersPerSec = shuffleboard.addNumber("LMetersPerSec", LMetersPerSecSup);
-        LMetersTraveled = shuffleboard.addNumber("LMetersTraveled", LMetersTraveledSup);
-        RMetersPerSec = shuffleboard.addNumber("RMetersPerSec", RMetersPerSecSup);
-        RMetersTraveled = shuffleboard.addNumber("RMetersTraveled", RMetersTraveledSup);
-
-        heading = shuffleboard.addNumber("Heading", headingSup);
-        navxAlive = shuffleboard.addBoolean("Navx Alive", navxAliveSup);
-        navxCalibrating = shuffleboard.addBoolean("Navx Calibrating", navxCalibratingSup);
-
-        shooterLVelo = shuffleboard.addNumber("ShooterLVelo", shooterLVeloSup);
-        shooterRVelo = shuffleboard.addNumber("ShooterRVelo", shooterRVeloSup);
-        */
     }
-    
+
     public void switchVideoSource() {
         m_currVideoSourceIndex = (m_currVideoSourceIndex + 1) % m_videoSources.length;
         if (m_videoSources[m_currVideoSourceIndex] != null) {
             m_videoSink.setSource(m_videoSources[m_currVideoSourceIndex]);
         }
-    }
-
-    public String getFMSColor() {
-        String gameMessage = DriverStation.getInstance().getGameSpecificMessage();
-        if (gameMessage.length() > 0) {
-            switch (gameMessage.charAt(0)) {
-            case 'R':
-                // desiredColorDisplay.setString( "Red" );
-                // break;
-                return "Red";
-            case 'B':
-                // desiredColorDisplay.setString( "Blue" );
-                // break;
-                return "Blue";
-            case 'G':
-                // desiredColorDisplay.setString( "Green" );
-                // break;
-                return "Green";
-            case 'Y':
-                // desiredColorDisplay.setString( "Yellow" );
-                // break;
-                return "Yellow";
-            default:
-                // desiredColorDisplay.setString( "No Game Data" );
-                return "DataNotKnown";
-            }
-        }
-        return "NoData";
-    }
-
-    public void setMaxCapacity(boolean isFull) {
-        maxCapacityBox.setBoolean(isFull);
-    }
-
-    public void setRed(boolean colorIsPresent) {
-        colorGridRed.setBoolean(colorIsPresent);
-    }
-
-    public void setBlue(boolean colorIsPresent) {
-        colorGridBlue.setBoolean(colorIsPresent);
-    }
-
-    public void setYellow(boolean colorIsPresent) {
-        colorGridYellow.setBoolean(colorIsPresent);
-    }
-
-    public void setGreen(boolean colorIsPresent) {
-        colorGridGreen.setBoolean(colorIsPresent);
     }
 
     public AutonomousMode getSelectedObjective() {

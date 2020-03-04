@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
 
@@ -104,5 +105,10 @@ public class Shooter implements Subsystem {
 
     public int getRightVeloTicks() {
         return rightMotor.getSelectedSensorVelocity();
+    }
+
+    public double getDistToTarget(double targetY) {
+        return (Constants.Limelight.kTargetHeight - Constants.Limelight.kAngleDegrees)
+                / Math.tan(Units.degreesToRadians((Constants.Limelight.kAngleDegrees) - targetY));
     }
 }

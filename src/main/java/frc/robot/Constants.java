@@ -42,7 +42,7 @@ public abstract class Constants {
         public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kForwardAdjust;
         public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kRotAdjust;
 
-        public static final Gains kVeloGains = new Gains(0.028, 0, 0.35, 0, 0, 1.00);
+        public static final Gains kVeloGains = new Gains(0.0303, 0, 0.35, 0, 0, 1.00);
         public static final Gains kPosGains = new Gains(0.00061, 0, 0.000276, 0, 0, 1.00);
         public static final Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
 
@@ -70,7 +70,7 @@ public abstract class Constants {
         // kP kI kD kF Iz PeakOut
         public static final Gains kGains = new Gains(1.47, 0, 0, 0, 0, 1.00);
 
-        public static final double kTestRPM = 275;
+        public static final double kRPM = 275;
     }
 
     public final static class Indexer {
@@ -132,7 +132,10 @@ public abstract class Constants {
     }
 
     public static final class Limelight {
-        public static final double height = 18;
-        public static final double angle = 33.69;
+        
+        public static final double kHeightInches = 18; 
+        public static final double kAngleDegrees = 33.69; 
+
+        public static final double kTargetHeight = 98.25; // inches to center hexagon
     }
 }

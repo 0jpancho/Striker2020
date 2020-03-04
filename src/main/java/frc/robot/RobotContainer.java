@@ -9,19 +9,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.autonomous.commands.DriveByDistance;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
-import frc.robot.commands.drivebase.RawArcadeDrive;
-import frc.robot.commands.shooter.AlignToTarget;
+import frc.robot.commands.drivebase.AlignToTarget;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.RunIndexerSimple;
 import frc.robot.commands.intake.RunIntake;
@@ -64,8 +60,8 @@ public class RobotContainer {
   private final RunIntake m_runIntakeCommand = new RunIntake(m_intake);
   private final RunIndexerSimple m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
   private final RunClimber m_runClimberCommand = new RunClimber(m_climber, m_driver);
-  private final AlignToTarget m_alignToTarget = new AlignToTarget(m_drive, m_limelight);
-  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kTestRPM);
+  private final AlignToTarget m_alignToTarget = new AlignToTarget(m_drive, m_shooter, m_limelight);
+  private final VeloShooting m_veloShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kRPM);
 
   Dashboard m_dashboard;
   
@@ -112,10 +108,8 @@ public class RobotContainer {
     Button Start = new JoystickButton(m_driver, 7);
     Button Select = new JoystickButton(m_driver, 8);
     
-    A.whileHeld(m_runIndexerCommand);
-
     LB.whileHeld(m_alignToTarget);
-    RB.whileHeld(m_veloShootingCommand);
+    
 
     /**
      * 
@@ -137,6 +131,7 @@ public class RobotContainer {
 
     opLB.whileHeld(m_runIntakeCommand);
     opRB.whileHeld(m_runIndexerCommand);
+    opRB.whileHeld(m_veloShootingCommand);
   }
 
   /**
