@@ -60,4 +60,9 @@ public class Indexer extends SubsystemBase {
         master.setInverted(isEnabled);
         slave.setInverted(isEnabled);
     }
+
+    public void stop() {
+        master.set(0);
+        slave.set(0);
+    }
 }

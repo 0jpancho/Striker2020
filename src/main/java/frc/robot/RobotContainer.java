@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.autonomous.commands.DriveByDistance;
+import frc.robot.autonomous.groups.ShootAndMove;
+import frc.robot.autonomous.groups.ShootOnly;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
 import frc.robot.commands.drivebase.AlignToTarget;
@@ -56,7 +58,8 @@ public class RobotContainer {
   // Commands
   private final DiffDrive m_diffDriveCommaned;
 
-  //private final RawArcadeDrive m_rawArcadeDrive = new RawArcadeDrive(m_drivebase, driver);
+  // private final RawArcadeDrive m_rawArcadeDrive = new
+  // RawArcadeDrive(m_drivebase, driver);
 
   private final RunIntake m_runIntakeCommand;
   private final RunIndexerSimple m_runIndexerCommand;
@@ -65,7 +68,7 @@ public class RobotContainer {
   private final VeloShooting m_veloShootingCommand;
 
   private final Dashboard m_dashboard;
-  
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -94,7 +97,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_drive.setDefaultCommand(m_diffDriveCommaned);
-    //m_drivebase.setDefaultCommand(m_rawArcadeDrive);
+    // m_drivebase.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
   }
@@ -107,10 +110,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-
     /**
      * 
-     * Driver Bindings 
+     * Driver Bindings
      * 
      */
 
@@ -118,15 +120,13 @@ public class RobotContainer {
     Button B = new JoystickButton(m_driver, 2);
     Button X = new JoystickButton(m_driver, 3);
     Button Y = new JoystickButton(m_driver, 4);
-    
-    
-    Button LB = new JoystickButton(m_driver, 5); 
-    Button RB = new JoystickButton(m_driver, 6); 
+
+    Button LB = new JoystickButton(m_driver, 5);
+    Button RB = new JoystickButton(m_driver, 6);
     Button Start = new JoystickButton(m_driver, 7);
     Button Select = new JoystickButton(m_driver, 8);
-    
+
     LB.whileHeld(m_alignToTarget);
-    
 
     /**
      * 
@@ -134,24 +134,22 @@ public class RobotContainer {
      * 
      */
 
-
     Button opA = new JoystickButton(m_operator, 1);
     Button opB = new JoystickButton(m_operator, 2);
     Button opX = new JoystickButton(m_operator, 3);
     Button opY = new JoystickButton(m_operator, 4);
-    
-    
-    Button opLB = new JoystickButton(m_operator, 5); 
-    Button opRB = new JoystickButton(m_operator, 6); 
+
+    Button opLB = new JoystickButton(m_operator, 5);
+    Button opRB = new JoystickButton(m_operator, 6);
     Button opStart = new JoystickButton(m_operator, 7);
     Button opSelect = new JoystickButton(m_operator, 8);
 
     /*
-    Button opDPadUp = new DPad(m_operator, DPad.Direction.up);
-	  Button opDPadDown = new DPad(m_operator, DPad.Direction.down);
-	  Button opDPadRight = new DPad(m_operator, DPad.Direction.right);
-    Button opDPadLeft = new DPad(m_operator, DPad.Direction.left);
-    */
+     * Button opDPadUp = new DPad(m_operator, DPad.Direction.up); Button opDPadDown
+     * = new DPad(m_operator, DPad.Direction.down); Button opDPadRight = new
+     * DPad(m_operator, DPad.Direction.right); Button opDPadLeft = new
+     * DPad(m_operator, DPad.Direction.left);
+     */
 
     opLB.whileHeld(m_runIntakeCommand);
     opRB.whileHeld(m_runIndexerCommand);
@@ -163,25 +161,25 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  
-  public Command getAutonomousCommand() { // An ExampleCommand will run in autonomous 
-  
+
+  public Command getAutonomousCommand() { // An ExampleCommand will run in autonomous
+
     switch (m_dashboard.getSelectedObjective()) {
-      case MOVE:
-        return new DriveByDistance(m_drive, 1);
+    case MOVE:
+      return new DriveByDistance(m_drive, 1);
 
-      case SHOOT:
-        return null;
+    case SHOOT:
+      return new ShootOnly(m_drive, m_indexer, m_shooter, m_limelight);
 
-      case SHOOTMOVE:
-        return null;
+    case SHOOTMOVE:
+      return new ShootAndMove(m_drive, m_indexer, m_shooter, m_limelight);
 
-      case NOTHING:
-        return null;
+    case NOTHING:
+      return null;
 
-      default:
-        return null;
+    default:
+      return null;
 
     }
-  } 
+  }
 }

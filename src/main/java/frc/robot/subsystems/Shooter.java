@@ -91,6 +91,11 @@ public class Shooter implements Subsystem {
         rightMotor.setNeutralMode(mode);
     }
 
+    public void stop() {
+        leftMotor.set(0);
+        rightMotor.set(0);
+    }
+
     public WPI_TalonSRX getLeft() {
         return leftMotor;
     }

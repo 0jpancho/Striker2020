@@ -23,7 +23,6 @@ public class VeloShooting extends CommandBase {
     public void initialize() {
         // Scale RPM input with units per 100ms (hence / 600)
         targetCountsPer100ms = (kInputRPM * Constants.Shooter.kEncoderResolution) / 600;
-        System.out.println(targetCountsPer100ms);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
