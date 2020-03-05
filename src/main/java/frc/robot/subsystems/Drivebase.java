@@ -50,19 +50,19 @@ public class Drivebase extends SubsystemBase {
 
 	private final AHRS navx;
 
-	private final PIDController m_LPID = new PIDController(Constants.Drive.kVeloGains.kP,
-			Constants.Drive.kVeloGains.kI, Constants.Drive.kVeloGains.kD);
+	private final PIDController m_LPID = new PIDController(Constants.Drive.kVeloGains.kP, Constants.Drive.kVeloGains.kI,
+			Constants.Drive.kVeloGains.kD);
 
-	private final PIDController m_RPID = new PIDController(Constants.Drive.kVeloGains.kP,
-			Constants.Drive.kVeloGains.kI, Constants.Drive.kVeloGains.kD);
+	private final PIDController m_RPID = new PIDController(Constants.Drive.kVeloGains.kP, Constants.Drive.kVeloGains.kI,
+			Constants.Drive.kVeloGains.kD);
 
 	private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(
 			Constants.Drive.kTrackWidth);
 
 	private final DifferentialDriveOdometry m_odometry;
 
-	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
+	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
 
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 
@@ -118,7 +118,7 @@ public class Drivebase extends SubsystemBase {
 		rightSlave.follow(rightMaster);
 
 		// Configure motor inversions/sensor phase
-		
+
 		leftMaster.setSensorPhase(true);
 		leftMaster.setInverted(false);
 		leftSlave.setInverted(InvertType.FollowMaster);
@@ -126,11 +126,10 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.setSensorPhase(true);
 		rightMaster.setInverted(true);
 		rightSlave.setInverted(InvertType.FollowMaster);
-	
 
 		// Set neutral mode
 		setBrakeMode(NeutralMode.Brake);
-		
+
 		// Config encoders
 		leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
 		rightMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.CTRE_MagEncoder_Relative, 0, 20);
@@ -144,8 +143,6 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
 
-		leftMaster.config_kP(0, 0.8);
-		rightMaster.config_kP(0, 0.8);
 
 		System.out.println("Drivebase Initialized");
 
@@ -206,9 +203,10 @@ public class Drivebase extends SubsystemBase {
 		var leftFeedForwardVolts = m_feedforward.calculate(wheelSpeeds.leftMetersPerSecond);
 		var rightFeedForwardVolts = m_feedforward.calculate(wheelSpeeds.rightMetersPerSecond);
 
-		leftMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.leftMetersPerSecond), DemandType.ArbitraryFeedForward, leftFeedForwardVolts / 12);
-		rightMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.rightMetersPerSecond), DemandType.ArbitraryFeedForward, rightFeedForwardVolts / 12);
-
+		leftMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.leftMetersPerSecond),
+				DemandType.ArbitraryFeedForward, leftFeedForwardVolts / 12);
+		rightMaster.set(ControlMode.Velocity, metersPerSecToEdgesPerDecisec(wheelSpeeds.rightMetersPerSecond),
+				DemandType.ArbitraryFeedForward, rightFeedForwardVolts / 12);
 	}
 
 	public void updateOdometry() {
@@ -305,46 +303,49 @@ public class Drivebase extends SubsystemBase {
 	}
 
 	/**
-   * Converts from encoder edges to meters.
-   * 
-   * @param steps encoder edges to convert
-   * @return meters
-   */
-  public static double edgesToMeters(int steps) {
-	return (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution) * steps;
-  }
+	 * Converts from encoder edges to meters.
+	 * 
+	 * @param steps encoder edges to convert
+	 * @return meters
+	 */
+	public static double edgesToMeters(int steps) {
+		return (Constants.Drive.kCircumferenceMeters / Constants.Drive.kEncoderResolution) * steps;
+	}
 
-  /**
-   * Converts from encoder edges per 100 milliseconds to meters per second.
-   * @param stepsPerDecisec edges per decisecond
-   * @return meters per second
-   */
-  public static double edgesPerDecisecToMetersPerSec(int stepsPerDecisec) {
-    return edgesToMeters(stepsPerDecisec * 10);
-  }
+	/**
+	 * Converts from encoder edges per 100 milliseconds to meters per second.
+	 * 
+	 * @param stepsPerDecisec edges per decisecond
+	 * @return meters per second
+	 */
+	public static double edgesPerDecisecToMetersPerSec(int stepsPerDecisec) {
+		return edgesToMeters(stepsPerDecisec * 10);
+	}
 
-  /**
-   * Converts from meters to encoder edges.
-   * @param meters meters
-   * @return encoder edges
-   */
-  public static double metersToEdges(double meters) {
-    return (meters / Constants.Drive.kCircumferenceMeters) * Constants.Drive.kEncoderResolution;
-  }
+	/**
+	 * Converts from meters to encoder edges.
+	 * 
+	 * @param meters meters
+	 * @return encoder edges
+	 */
+	public static double metersToEdges(double meters) {
+		return (meters / Constants.Drive.kCircumferenceMeters) * Constants.Drive.kEncoderResolution;
+	}
 
-  /**
-   * Converts from meters per second to encoder edges per 100 milliseconds.
-   * @param metersPerSec meters per second
-   * @return encoder edges per decisecond
-   */
-  public static double metersPerSecToEdgesPerDecisec(double metersPerSec) {
-    return metersToEdges(metersPerSec) * .1d;
-  }
+	/**
+	 * Converts from meters per second to encoder edges per 100 milliseconds.
+	 * 
+	 * @param metersPerSec meters per second
+	 * @return encoder edges per decisecond
+	 */
+	public static double metersPerSecToEdgesPerDecisec(double metersPerSec) {
+		return metersToEdges(metersPerSec) * .1d;
+	}
 
-  public void stop() {
-	  leftMaster.set(0);
-	  rightMaster.set(0);
-	  m_forwardLimiter.reset(0);
-	  m_rotLimiter.reset(0);
-  }
+	public void stop() {
+		leftMaster.set(0);
+		rightMaster.set(0);
+		m_forwardLimiter.reset(0);
+		m_rotLimiter.reset(0);
+	}
 }

@@ -13,12 +13,14 @@ public class TurnToGoal extends CommandBase {
     private double kP = .1f;
     private double minPower = 0.05f;
 
-    double leftPower;
-    double rightPower;
+    private double leftPower;
+    private double rightPower;
 
-    public TurnToGoal(Drivebase m_drive, Limelight m_limelight) {
-        this.m_drive = m_drive;
-        this.m_limelight = m_limelight;
+    private double headingError;
+
+    public TurnToGoal(Drivebase drive, Limelight limelight) {
+        m_drive = drive;
+        m_limelight = limelight;
 
         addRequirements(m_drive, m_limelight);
     }
@@ -31,9 +33,7 @@ public class TurnToGoal extends CommandBase {
     @Override
     public void execute() {
 
-        double x = m_limelight.getDegRotationToTarget();
-
-        double headingError = x;
+        headingError = m_limelight.getDegRotationToTarget();
         double turnCorrect = 0.0f;
 
         if (headingError > 1.0) {
@@ -60,6 +60,6 @@ public class TurnToGoal extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return headingError < 2;
     }
 }

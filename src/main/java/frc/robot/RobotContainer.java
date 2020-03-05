@@ -146,11 +146,13 @@ public class RobotContainer {
     Button opStart = new JoystickButton(m_operator, 7);
     Button opSelect = new JoystickButton(m_operator, 8);
 
+    /*
     Button opDPadUp = new DPad(m_operator, DPad.Direction.up);
 	  Button opDPadDown = new DPad(m_operator, DPad.Direction.down);
 	  Button opDPadRight = new DPad(m_operator, DPad.Direction.right);
     Button opDPadLeft = new DPad(m_operator, DPad.Direction.left);
-    
+    */
+
     opLB.whileHeld(m_runIntakeCommand);
     opRB.whileHeld(m_runIndexerCommand);
     opB.whileHeld(m_veloShootingCommand);
@@ -168,10 +170,10 @@ public class RobotContainer {
       case MOVE:
         return new DriveByDistance(m_drive, 1);
 
-      case SHOOTMOVE:
+      case SHOOT:
         return null;
 
-      case SHOOT:
+      case SHOOTMOVE:
         return null;
 
       case NOTHING:

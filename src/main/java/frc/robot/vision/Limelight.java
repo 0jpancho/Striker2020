@@ -20,8 +20,7 @@ public class Limelight extends SubsystemBase {
     }
 
     public boolean getIsTargetFound() {
-        NetworkTableEntry tv = m_table.getEntry("tv");
-        double v = tv.getDouble(0);
+        double v = m_table.getEntry("tv").getDouble(0.0);
         if (v == 0.0f){
             return false;
         } else {
@@ -30,33 +29,23 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getDegRotationToTarget() {
-        NetworkTableEntry tx = m_table.getEntry("tx");
-        double x = tx.getDouble(0.0);
-        return x;
+        return m_table.getEntry("tx").getDouble(0.0);
     }
 
     public double getDegVerticalToTarget() {
-        NetworkTableEntry ty = m_table.getEntry("ty");
-        double y = ty.getDouble(0.0);
-        return y;
+        return m_table.getEntry("ty").getDouble(0.0);
     }
 
     public double getTargetArea() {
-        NetworkTableEntry ta = m_table.getEntry("ts");
-        double a = ta.getDouble(0.0);
-        return a;
+        return m_table.getEntry("ta").getDouble(0.0);
     }
 
     public double getSkewRot() {
-        NetworkTableEntry tl = m_table.getEntry("tl");
-        double l = tl.getDouble(0.0);
-        return l;
+        return m_table.getEntry("ts").getDouble(0.0);
     }
 
     public double getPipelineLatency() {
-        NetworkTableEntry tl = m_table.getEntry("tl");
-        double l = tl.getDouble(0.0);
-        return l;
+        return m_table.getEntry("tl").getDouble(0.0);
     }
 
     public void setLEDMode(LedMode ledMode) {
@@ -93,17 +82,8 @@ public class Limelight extends SubsystemBase {
     }
 
     public double getPipeline(){
-        NetworkTableEntry pipeline = m_table.getEntry("pipeline");
-        double pipe = pipeline.getDouble(0.0);
-        return pipe;
+        return m_table.getEntry("pipeline").getDouble(0.0);
     }
-
-    public Integer getPipelineInt(){
-        NetworkTableEntry pipeline = m_table.getEntry("pipeline");
-        Integer pipe = (int) pipeline.getDouble(0.0);
-        return pipe;
-    }
-
      /**
          * stream   Sets limelight’s streaming mode
          * 
