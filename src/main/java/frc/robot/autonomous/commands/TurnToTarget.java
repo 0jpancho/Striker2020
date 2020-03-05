@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivebase;
 import frc.robot.vision.Limelight;
 
-public class TurnToGoal extends CommandBase {
+public class TurnToTarget extends CommandBase {
 
     private Drivebase m_drive;
     private Limelight m_limelight;
@@ -18,7 +18,7 @@ public class TurnToGoal extends CommandBase {
 
     private double headingError;
 
-    public TurnToGoal(Drivebase drive, Limelight limelight) {
+    public TurnToTarget(Drivebase drive, Limelight limelight) {
         m_drive = drive;
         m_limelight = limelight;
 

@@ -12,6 +12,7 @@ public class RevThenShoot extends CommandBase {
     private Indexer m_indexer;
     private Shooter m_shooter;
 
+
     double targetCountsPer100ms = (Constants.Shooter.kRPM * Constants.Shooter.kEncoderResolution) / 600;
 
     public RevThenShoot(Indexer indexer, Shooter shooter) {

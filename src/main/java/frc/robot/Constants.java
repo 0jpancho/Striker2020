@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.util.Units;
+import frc.robot.util.Gains;
 
 public abstract class Constants {
     public final static class Drive {
