@@ -11,10 +11,10 @@ import frc.robot.subsystems.Drivebase;
 
 public class ShootAndMove extends SequentialCommandGroup {
 
-    public ShootAndMove(Drivebase drive, Indexer indexer, Shooter shooter, Limelight limelight) {
+    public ShootAndMove(Drivebase drive, Indexer indexer, Shooter shooter, Limelight limelight, int pipeline) {
 
         addCommands(
-            new TurnToTarget(drive, limelight),
+            new TurnToTarget(drive, limelight, pipeline),
             new RevThenShoot(indexer, shooter).withTimeout(8),
             new DriveByDistance(drive, -1)
         );

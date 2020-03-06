@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -7,6 +8,7 @@ import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -32,39 +34,28 @@ public class Dashboard {
          * 
          */
         /*
-        // cam dimensions
-        private final int cam2Height = 4;
-        private final int cam2Width = 4;
-
-        // auton chooser
-        private final int autonChooserWidth = 3;
-        private final int autonChooserHeight = 1;
-        private final int autonChooserColumnIndex = 0;
-        private final int autonChooserRowIndex = 0;
-
-        // max capacity
-        private final int maxCapacityWidth = 3;
-        private final int maxCapacityHeight = 3;
-        private final int maxCapacityColumnIndex = 0;
-        private final int maxCapacityRowIndex = 6;
-        // cam
-        private final int camWidth = 10;
-        private final int camHeight = 10;
-        private final int camColumnIndex = 8;
-        private final int camRowIndex = 0;
-
-        // color spinner grid
-        private final int colorSpinnerGridWidth = 5;
-        private final int colorSpinnerGridHeight = 7;
-        private final int colorSpinnerGridColumnIndex = 21;
-        private final int colorSpinnerGridRowIndex = 0;
-
-        // desired color
-        private final int desiredColorWidth = 5;
-        private final int desiredColorHeight = 2;
-        private final int desiredColorColumnIndex = 21;
-        private final int desiredColorRowIndex = 7;
-        */
+         * // cam dimensions private final int cam2Height = 4; private final int
+         * cam2Width = 4;
+         * 
+         * // auton chooser private final int autonChooserWidth = 3; private final int
+         * autonChooserHeight = 1; private final int autonChooserColumnIndex = 0;
+         * private final int autonChooserRowIndex = 0;
+         * 
+         * // max capacity private final int maxCapacityWidth = 3; private final int
+         * maxCapacityHeight = 3; private final int maxCapacityColumnIndex = 0; private
+         * final int maxCapacityRowIndex = 6; // cam private final int camWidth = 10;
+         * private final int camHeight = 10; private final int camColumnIndex = 8;
+         * private final int camRowIndex = 0;
+         * 
+         * // color spinner grid private final int colorSpinnerGridWidth = 5; private
+         * final int colorSpinnerGridHeight = 7; private final int
+         * colorSpinnerGridColumnIndex = 21; private final int colorSpinnerGridRowIndex
+         * = 0;
+         * 
+         * // desired color private final int desiredColorWidth = 5; private final int
+         * desiredColorHeight = 2; private final int desiredColorColumnIndex = 21;
+         * private final int desiredColorRowIndex = 7;
+         */
 
         private ShuffleboardTab shuffleboard;
 
@@ -72,21 +63,19 @@ public class Dashboard {
         private ComplexWidget complexWidgetAuton;
         private SendableChooser<AutonomousMode> autonChooser = new SendableChooser<>();
         private NetworkTableEntry maxCapacityBox;
-       
+
         /*
-        private ShuffleboardLayout colorSpinnerGrid;
-        private NetworkTableEntry colorGridRed;
-        private NetworkTableEntry colorGridGreen;
-        private NetworkTableEntry colorGridYellow;
-        private NetworkTableEntry colorGridBlue;
-        */
+         * private ShuffleboardLayout colorSpinnerGrid; private NetworkTableEntry
+         * colorGridRed; private NetworkTableEntry colorGridGreen; private
+         * NetworkTableEntry colorGridYellow; private NetworkTableEntry colorGridBlue;
+         */
 
         // Cam
-        private UsbCamera m_cameraIntake;
+        private UsbCamera m_driverCam;
         private HttpCamera m_limeLight;
-        //private int m_currVideoSourceIndex = 0;
-        //private VideoSink m_videoSink;
-        //private VideoSource[] m_videoSources;
+        private int m_currVideoSourceIndex = 0;
+        private VideoSink m_videoSink;
+        private VideoSource[] m_videoSources;
 
         /**
          * 
@@ -136,14 +125,16 @@ public class Dashboard {
                 m_drivebase = drivebase;
                 m_shooter = shooter;
 
+                //m_driverCam = CameraServer.getInstance().startAutomaticCapture();
+
                 constructCompetitionLayout();
                 constructDiagnosticsLayout();
 
-                camStuff();
+                //camStuff();
         }
 
         public enum AutonomousMode {
-                SHOOTMOVE("ShootMove"), MOVE("Move"), SHOOT("Shoot"), NOTHING("Nothing");
+                SHOOT_MOVE("ShootMove"), MOVE("Move"), SHOOT("Shoot"), ENCODERS_ARE_BAD("EncodersAreBad"), NOTHING("Nothing");
 
                 public static final AutonomousMode DEFAULT = MOVE;
 
@@ -158,27 +149,29 @@ public class Dashboard {
                 }
         }
 
+        
         private void camStuff() {
                 // m_cameraIntake = CameraServer.getInstance().startAutomaticCapture();
 
-                //m_videoSources = new VideoSource[] { m_cameraIntake };
-                // m_cameraIntake = CameraServer.getInstance().startAutomaticCapture();
-                m_limeLight = new HttpCamera("limelight", "http://limelight.local:5801");
-                NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(1);
+                // m_videoSources = new VideoSource[] { m_cameraIntake };
+                //m_driverCam = new UsbCamera("Driver Cam", 1);
 
-                // m_videoSources = new VideoSource[] {
-                // m_cameraIntake,
-                // };
+                //CameraServer.getInstance().addCamera(m_driverCam);
+                m_limeLight = new HttpCamera("limelight", "http://10.1.1.11:5801");
+                NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
 
-                // m_videoSink = CameraServer.getInstance().getServer();
+                m_videoSources = new VideoSource[] { m_driverCam, };
+
+                m_videoSink = CameraServer.getInstance().getServer();
 
                 /*
-                if (m_cameraIntake != null) {
-                        m_videoSink.setSource(m_cameraIntake);
+                if (m_driverCam != null) {
+                        m_videoSink.setSource(m_driverCam);
                 }
                 */
 
         }
+        
 
         public void constructCompetitionLayout() {
                 shuffleboard = Shuffleboard.getTab("Competition");
@@ -204,11 +197,11 @@ public class Dashboard {
                                 .withWidget(BuiltInWidgets.kSplitButtonChooser).withSize(3, 1).withPosition(0, 0);
 
                 /*
-                 * complexWidgetCam = shuffleboard.add("Cams",
-                 * m_videoSink.getSource()).withWidget(BuiltInWidgets.kCameraStream)
-                 * .withSize(4, 4).withPosition(3, 0) .withProperties(Map.of("Show Crosshair",
-                 * true, "Show Controls", false));
-                 */
+                complexWidgetCam = shuffleboard.add("Cams", m_videoSink.getSource())
+                                .withWidget(BuiltInWidgets.kCameraStream).withSize(4, 4).withPosition(3, 0)
+                                .withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
+
+                */
         }
 
         public void constructDiagnosticsLayout() {
@@ -247,13 +240,11 @@ public class Dashboard {
         }
 
         /*
-        public void switchVideoSource() {
-                m_currVideoSourceIndex = (m_currVideoSourceIndex + 1) % m_videoSources.length;
-                if (m_videoSources[m_currVideoSourceIndex] != null) {
-                        m_videoSink.setSource(m_videoSources[m_currVideoSourceIndex]);
-                }
-        }
-        */
+         * public void switchVideoSource() { m_currVideoSourceIndex =
+         * (m_currVideoSourceIndex + 1) % m_videoSources.length; if
+         * (m_videoSources[m_currVideoSourceIndex] != null) {
+         * m_videoSink.setSource(m_videoSources[m_currVideoSourceIndex]); } }
+         */
 
         public AutonomousMode getSelectedObjective() {
                 return autonChooser.getSelected();

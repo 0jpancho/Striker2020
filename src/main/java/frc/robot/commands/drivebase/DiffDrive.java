@@ -9,6 +9,8 @@ package frc.robot.commands.drivebase;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivebase;
+import frc.robot.vision.Limelight;
+import frc.robot.vision.ControlMode.LedMode;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,14 +22,16 @@ public class DiffDrive extends CommandBase {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
 
   private Drivebase m_drive;
+  private Limelight m_limelight;
   private XboxController m_controller;
 
   //private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
   //private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
 
-  public DiffDrive(Drivebase drive, XboxController controller) {
+  public DiffDrive(Drivebase drive, Limelight limelight, XboxController controller) {
     m_drive = drive;
-    this.m_controller = controller;
+    m_limelight = limelight;
+    m_controller = controller;
 
     addRequirements(drive);
   }
@@ -44,9 +48,6 @@ public class DiffDrive extends CommandBase {
     m_drive.getRightMaster().config_kI(0, Constants.Drive.kVeloGains.kI);
     m_drive.getRightMaster().config_kD(0, Constants.Drive.kVeloGains.kD);
     m_drive.getRightMaster().config_kF(0, Constants.Drive.kVeloGains.kF);
-
-    m_drive.resetHeading();
-    m_drive.resetOdometry();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,11 +57,11 @@ public class DiffDrive extends CommandBase {
     double inputForward = -m_controller.getY(Hand.kLeft);
     double inputRot = -m_controller.getX(Hand.kRight);
    
-    if (Math.abs(inputForward) < 0.05) {
+    if (Math.abs(inputForward) < 0.1) {
       inputForward = 0;
     }
 
-    if (Math.abs(inputRot) < 0.05) {
+    if (Math.abs(inputRot) < 0.1) {
       inputRot = 0;
     }
 
@@ -69,7 +70,7 @@ public class DiffDrive extends CommandBase {
     //m_drive.differentialDrive(-inputForward * Constants.Drive.kAdjustedMaxSpeed,
     //                          -inputRot * Constants.Drive.kAdjustedAngularSpeed);
 
-    m_drive.arcadeDriveVelo(inputForward, inputRot, true);
+    m_drive.arcadeDriveVelo(inputForward, inputRot, true);    
   }
 
   // Called once the command ends or is interrupted.

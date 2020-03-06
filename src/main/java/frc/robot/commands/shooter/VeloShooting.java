@@ -29,8 +29,8 @@ public class VeloShooting extends CommandBase {
     @Override
     public void execute() {
         //m_shooter.setMotors(ControlMode.Velocity, targetCountsPer100ms);
-        m_shooter.getLeft().set(ControlMode.Velocity, targetCountsPer100ms);
-        m_shooter.getRight().set(ControlMode.Velocity, targetCountsPer100ms);
+        m_shooter.getLeftMotor().set(ControlMode.Velocity, targetCountsPer100ms);
+        m_shooter.getRightMotor().set(ControlMode.Velocity, targetCountsPer100ms);
     }
     
     // Called once the command ends or is interrupted.

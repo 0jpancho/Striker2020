@@ -10,10 +10,10 @@ import frc.robot.vision.Limelight;
 
 public class ShootOnly extends SequentialCommandGroup  {
 
-    public ShootOnly(Drivebase drive, Indexer indexer, Shooter shooter, Limelight limelight) {
+    public ShootOnly(Drivebase drive, Indexer indexer, Shooter shooter, Limelight limelight, int pipeline) {
 
         addCommands(
-            new TurnToTarget(drive, limelight),
+            new TurnToTarget(drive, limelight, pipeline),
             new RevThenShoot(indexer, shooter).withTimeout(8)
         );
     }

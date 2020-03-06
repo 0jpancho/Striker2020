@@ -65,7 +65,7 @@ public class AlignToTarget extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_drive.configMotors(ControlMode.PercentOutput, 0);
-        m_limelight.setPipeline(1);
+        m_limelight.setPipeline(2);
     }
 
     // Returns true when the command should end.

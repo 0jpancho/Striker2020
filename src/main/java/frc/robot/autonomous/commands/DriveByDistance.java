@@ -10,12 +10,15 @@ public class DriveByDistance extends CommandBase {
 
     private Drivebase m_drive = new Drivebase();
 
-    private double targetMeters; // meters
+    private double m_targetMeters; // meters
     private double tolerance = 100; // ticks
 
+    
+
     public DriveByDistance(Drivebase drive, double targetMeters) {
+        System.out.println("CONSTRUCTOR");
         m_drive = drive;
-        this.targetMeters = targetMeters;
+        m_targetMeters = targetMeters;
 
         addRequirements(drive);
     }
@@ -35,28 +38,32 @@ public class DriveByDistance extends CommandBase {
 
         m_drive.stop();
         m_drive.resetOdometry();
+
+        m_targetMeters /= Constants.Drive.kMetersPerCount;
+        System.out.println(m_targetMeters);
         
-        targetMeters *= Constants.Drive.kMetersPerCount;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_drive.configMotors(ControlMode.Position, targetMeters);
+        System.out.println("DRIVING");
+        m_drive.getLeftMaster().set(ControlMode.Position, m_targetMeters);
+        m_drive.getRightMaster().set(ControlMode.Position, m_targetMeters);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_drive.configMotors(ControlMode.PercentOutput, 0);
+        m_drive.stop();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (Math.abs(m_drive.getLPosTicks() - targetMeters) < tolerance
-                && Math.abs(m_drive.getRPosTicks() - targetMeters) < tolerance) {
-            return true;
+        if (m_drive.getLeftMaster().getClosedLoopTarget() < 200 && m_drive.getRightMaster().getClosedLoopTarget() < 200) {
+             System.out.println("DONE");
+           return true;
         } else {
             return false;
         }

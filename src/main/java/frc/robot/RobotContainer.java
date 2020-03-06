@@ -18,10 +18,12 @@ import frc.robot.subsystems.Intake;
 import frc.robot.autonomous.commands.DriveByDistance;
 import frc.robot.autonomous.commands.RevThenShoot;
 import frc.robot.autonomous.commands.TurnToTarget;
+import frc.robot.autonomous.groups.DriveByTime;
 import frc.robot.autonomous.groups.ShootAndMove;
 import frc.robot.autonomous.groups.ShootOnly;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
+import frc.robot.commands.shooter.ToggleLED;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.RunIndexerSimple;
 import frc.robot.commands.intake.RunIntake;
@@ -69,6 +71,8 @@ public class RobotContainer {
   private final TurnToTarget m_turnToTargetCommand;
   private final VeloShooting m_manualShootingCommand;
 
+  private final ToggleLED m_toggleLEDCommand;
+
   private final RevThenShoot m_revThenShootCommand;
 
   private final Dashboard m_dashboard;
@@ -87,13 +91,18 @@ public class RobotContainer {
     m_climber = new Climber();
     m_limelight = new Limelight();
 
+    //m_limelight.setPipeline(2);
+
     // Instantiate Commands
-    m_diffDriveCommaned = new DiffDrive(m_drive, m_driver);
+    m_diffDriveCommaned = new DiffDrive(m_drive, m_limelight, m_driver);
     m_runIntakeCommand = new RunIntake(m_intake);
     m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
     m_runClimberCommand = new RunClimber(m_climber, m_operator);
     // m_alignToTarget = new AlignToTarget(m_drive, m_limelight);
-    m_turnToTargetCommand = new TurnToTarget(m_drive, m_limelight);
+    m_turnToTargetCommand = new TurnToTarget(m_drive, m_limelight, 0);
+
+    m_toggleLEDCommand = new ToggleLED(m_limelight);
+    
 
     m_manualShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kRPM);
     m_revThenShootCommand = new RevThenShoot(m_indexer, m_shooter);
@@ -129,12 +138,13 @@ public class RobotContainer {
     // Button Y = new JoystickButton(m_driver, 4);
 
     Button LB = new JoystickButton(m_driver, 5);
-    // Button RB = new JoystickButton(m_driver, 6);
+    Button RB = new JoystickButton(m_driver, 6);
     // Button Start = new JoystickButton(m_driver, 7);
     // Button Select = new JoystickButton(m_driver, 8);
 
     LB.whileHeld(m_turnToTargetCommand);
-
+    RB.whenPressed(m_toggleLEDCommand);
+    
     /**
      * 
      * Operator Bindings
@@ -163,6 +173,8 @@ public class RobotContainer {
     opB.whileHeld(m_manualShootingCommand);
 
     opX.whileHeld(m_revThenShootCommand);
+
+
   }
 
   /**
@@ -171,24 +183,27 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
 
-  public Command getAutonomousCommand() { // An ExampleCommand will run in autonomous
+  public Command getAutonomousCommand() { 
+    // An ExampleCommand will run in autonomous    
 
     switch (m_dashboard.getSelectedObjective()) {
       case MOVE:
-        return new DriveByDistance(m_drive, 1);
+      return new DriveByDistance(m_drive, 1);
 
       case SHOOT:
-        return new ShootOnly(m_drive, m_indexer, m_shooter, m_limelight);
+        return new ShootOnly(m_drive, m_indexer, m_shooter, m_limelight, 0);
 
-      case SHOOTMOVE:
-        return new ShootAndMove(m_drive, m_indexer, m_shooter, m_limelight);
+      case SHOOT_MOVE:
+        return new ShootAndMove(m_drive, m_indexer, m_shooter, m_limelight, 0);
 
+      case ENCODERS_ARE_BAD:
+        return new DriveByTime(m_drive, 0.5, 3);
       case NOTHING:
         return null;
 
       default:
         return null;
 
-    }
+   }
   }
 }

@@ -96,11 +96,11 @@ public class Shooter implements Subsystem {
         rightMotor.set(0);
     }
 
-    public WPI_TalonSRX getLeft() {
+    public WPI_TalonSRX getLeftMotor() {
         return leftMotor;
     }
 
-    public WPI_TalonSRX getRight() {
+    public WPI_TalonSRX getRightMotor() {
         return rightMotor;
     }
 

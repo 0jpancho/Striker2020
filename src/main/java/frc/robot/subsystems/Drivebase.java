@@ -61,8 +61,8 @@ public class Drivebase extends SubsystemBase {
 
 	private final DifferentialDriveOdometry m_odometry;
 
-	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(5);
-	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(5);
+	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 
@@ -93,7 +93,7 @@ public class Drivebase extends SubsystemBase {
 		rightSlave.configFactoryDefault();
 
 		// Set current limit
-		masterConfig.continuousCurrentLimit = 40;
+		masterConfig.continuousCurrentLimit = 30;
 		masterConfig.peakCurrentDuration = 0;
 
 		masterConfig.nominalOutputForward = 0;
@@ -138,11 +138,12 @@ public class Drivebase extends SubsystemBase {
 		leftMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
 		leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		leftMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+		leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 		rightMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-
+		rightMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
 		System.out.println("Drivebase Initialized");
 
@@ -196,7 +197,7 @@ public class Drivebase extends SubsystemBase {
 		zRot = m_rotLimiter.calculate(rot);
 
 		xSpeed *= Constants.Drive.kRawMaxSpeed;
-		zRot *= Constants.Drive.kRawAngularSpeed;
+		zRot *= Constants.Drive.kAdjustedAngularSpeed;
 
 		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(xSpeed, 0.0, zRot));
 

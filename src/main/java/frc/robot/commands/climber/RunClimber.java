@@ -3,7 +3,6 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
 public class RunClimber extends CommandBase {
@@ -20,14 +19,13 @@ public class RunClimber extends CommandBase {
 
     @Override
     public void initialize() {
-        m_climber.setWinchPower(0);
     }
 
     @Override
     public void execute() {
         
         if (m_controller.getYButton()) {
-            m_climber.setLiftPower(Constants.Winch.kLiftPower);
+            m_climber.setLiftPower(1);
         }
 
         else if (m_controller.getAButton()) {
@@ -40,7 +38,7 @@ public class RunClimber extends CommandBase {
 
         if (m_controller.getStickButton(Hand.kLeft)) {
             
-            m_climber.setWinchPower(-Constants.Winch.kWinchPower);
+            m_climber.setWinchPower(1);
         }
 
         else if (m_controller.getStickButton(Hand.kRight)) {
@@ -50,8 +48,6 @@ public class RunClimber extends CommandBase {
         else {
             m_climber.setLiftPower(0);
         }
-
-       
     }
 
     @Override

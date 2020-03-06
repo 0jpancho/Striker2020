@@ -37,16 +37,16 @@ public abstract class Constants {
 
         public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
         public static final double kRawAngularSpeed = 2 * Math.PI;
-        public static final double kForwardAdjust = 0.85;
-        public static final double kRotAdjust = 0.3;
+        public static final double kForwardAdjust = 1;
+        public static final double kRotAdjust = .8;
 
         public static final double kAdjustedMaxSpeed = kRawMaxSpeed * kForwardAdjust;
         public static final double kAdjustedAngularSpeed = kRawAngularSpeed * kRotAdjust;
 
         //public static final Gains kVeloGains = new Gains(0.0303, 0, 0.35, 0, 0, 1.00);
-        public static final Gains kVeloGains = new Gains(0.8, 0, 0, 0, 0, 1.00);
+        public static final Gains kVeloGains = new Gains(0.6, 0, 0, 0, 0, 1.00);
 
-        public static final Gains kPosGains = new Gains(0.624, 0, 283.0, 0, 0, 1.00);
+        public static final Gains kPosGains = new Gains(0.4, 0, 0, 0, 0, 1.00);
         
         public static final Gains kTurnGains = new Gains(1, 0, 0, 0, 0, 1.00);
 
@@ -74,7 +74,7 @@ public abstract class Constants {
         // kP kI kD kF Iz PeakOut
         public static final Gains kGains = new Gains(1.47, 0, 0, 0, 0, 1.00);
 
-        public static final double kRPM = 275;
+        public static final double kRPM = 200;
     }
 
     public final static class Indexer {
@@ -105,10 +105,11 @@ public abstract class Constants {
     public final static class Winch {
         public static final int kWinchID = 1;
         public static final int kLiftID = 2;
+
         public static final double kWinchPower = -1;
         public static final double kLiftPower = 1;
     }
-
+ 
     // Logitech F310
     public final static class GamepadIDs {
 
