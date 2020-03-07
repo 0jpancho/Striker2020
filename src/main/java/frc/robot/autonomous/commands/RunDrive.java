@@ -20,11 +20,10 @@ public class RunDrive extends CommandBase {
 
     public void initialize() {
         timer.reset();
+        timer.start();
     }
 
     public void execute() {
-
-        timer.start();
 
         if (timer.get() < kDuration) {
             m_drive.getLeftMaster().set(ControlMode.PercentOutput, kPower);

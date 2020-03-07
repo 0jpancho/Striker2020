@@ -44,7 +44,7 @@ public class DriveToGoal extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.configMotors(ControlMode.PercentOutput, 0);
+        m_drive.stop();
     }
 
     @Override

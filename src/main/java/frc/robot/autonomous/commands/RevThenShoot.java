@@ -32,15 +32,17 @@ public class RevThenShoot extends CommandBase {
         m_shooter.getRightMotor().set(ControlMode.Velocity, targetCountsPer100ms);
 
 
+        /*
         if (m_shooter.getLeftMotor().getClosedLoopError() < 300 && m_shooter.getRightMotor().getClosedLoopError() < 300) {
             m_indexer.getMaster().set(ControlMode.PercentOutput, Constants.Indexer.kPower);
             m_indexer.getSlave().set(ControlMode.PercentOutput, Constants.Indexer.kPower);
         }
+        */
     }
   
   
     public void end(boolean interrupted) {
-        m_indexer.stop();
+        //m_indexer.stop();
         m_shooter.stop();
     }
 

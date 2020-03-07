@@ -134,7 +134,7 @@ public class Dashboard {
         }
 
         public enum AutonomousMode {
-                SHOOT_MOVE("ShootMove"), MOVE("Move"), SHOOT("Shoot"), ENCODERS_ARE_BAD("EncodersAreBad"), NOTHING("Nothing");
+                SHOOT_MOVE("Shoot + Move"), MOVE("Move"), SHOOT("Shoot"), ENCODERS_ARE_BAD("Encoders are Bad"), NOTHING("Nothing");
 
                 public static final AutonomousMode DEFAULT = MOVE;
 
@@ -158,7 +158,6 @@ public class Dashboard {
 
                 //CameraServer.getInstance().addCamera(m_driverCam);
                 m_limeLight = new HttpCamera("limelight", "http://10.1.1.11:5801");
-                NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(2);
 
                 m_videoSources = new VideoSource[] { m_driverCam, };
 

@@ -101,7 +101,7 @@ public class RobotContainer {
     m_toggleLEDCommand = new ToggleLED(m_limelight);
     
 
-    m_manualShootingCommand = new VeloShooting(m_shooter, 100);
+    m_manualShootingCommand = new VeloShooting(m_shooter, 200);
     m_revThenShootCommand = new RevThenShoot(m_indexer, m_shooter);
 
     m_dashboard = new Dashboard(m_drive, m_shooter);
@@ -109,8 +109,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    m_drive.setDefaultCommand(m_diffDriveCommaned);
-    //m_drive.setDefaultCommand(m_rawArcadeDrive);
+    //m_drive.setDefaultCommand(m_diffDriveCommaned);
+    m_drive.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
   }
@@ -142,6 +142,7 @@ public class RobotContainer {
     A.whenPressed(m_toggleLEDCommand);
 
     LB.whileHeld(m_turnToTargetCommand);
+    //LB.whenInactive(m_rawArcadeDrive, false);
    
     
     /**

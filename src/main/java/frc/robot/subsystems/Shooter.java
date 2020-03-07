@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
@@ -13,17 +12,16 @@ import frc.robot.Constants;
 
 public class Shooter implements Subsystem {
 
-    public final WPI_TalonSRX leftMotor = new WPI_TalonSRX(Constants.Shooter.kLShooterID);
-    public final WPI_TalonSRX rightMotor = new WPI_TalonSRX(Constants.Shooter.kRShooterID);
+    public final WPI_TalonSRX leftMaster = new WPI_TalonSRX(Constants.Shooter.kLShooterID);
+    public final WPI_TalonSRX rightSlave = new WPI_TalonSRX(Constants.Shooter.kRShooterID);
 
     private TalonSRXConfiguration motorConfig = new TalonSRXConfiguration();
 
-    private ControlMode mode = ControlMode.Disabled;
     private double motorVal;
 
     public Shooter() {
-        leftMotor.configFactoryDefault();
-        rightMotor.configFactoryDefault();
+        leftMaster.configFactoryDefault();
+        rightSlave.configFactoryDefault();
 
         motorConfig.slot0.kP = Constants.Shooter.kGains.kP;
         motorConfig.slot0.kI = Constants.Shooter.kGains.kI;
@@ -38,31 +36,34 @@ public class Shooter implements Subsystem {
         motorConfig.continuousCurrentLimit = 35;
         motorConfig.peakCurrentDuration = 0;
 
-        leftMotor.configAllSettings(motorConfig);
-        rightMotor.configAllSettings(motorConfig);
+        leftMaster.configAllSettings(motorConfig);
+        rightSlave.configAllSettings(motorConfig);
 
-        leftMotor.setInverted(false);
-        rightMotor.setInverted(true);
+        leftMaster.setInverted(false);
+        rightSlave.setInverted(true);
 
-        leftMotor.setSensorPhase(false);
-        rightMotor.setSensorPhase(false);
+        // SET TO TRUE AFTER QUAL 71
+        leftMaster.setSensorPhase(false);
+        rightSlave.setSensorPhase(false);
 
-        leftMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.Shooter.kPIDLoopIdx,
+        rightSlave.follow(leftMaster);
+
+        leftMaster.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.Shooter.kPIDLoopIdx,
                 Constants.Shooter.kTimeoutMs);
-        rightMotor.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.Shooter.kPIDLoopIdx,
+        rightSlave.configSelectedFeedbackSensor(TalonSRXFeedbackDevice.QuadEncoder, Constants.Shooter.kPIDLoopIdx,
                 Constants.Shooter.kTimeoutMs);
 
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
+        leftMaster.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+        leftMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        leftMaster.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+        leftMaster.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        leftMaster.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
 
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
+        rightSlave.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+        rightSlave.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        rightSlave.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+        rightSlave.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+        rightSlave.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
 
         resetEncoders();
 
@@ -79,34 +80,34 @@ public class Shooter implements Subsystem {
     }
 
     public void resetEncoders() {
-        leftMotor.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
-        rightMotor.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
+        leftMaster.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
+        rightSlave.getSensorCollection().setQuadraturePosition(0, Constants.Drive.kTimeoutMs);
     }
 
     public void setBrake(NeutralMode mode) {
-        leftMotor.setNeutralMode(mode);
-        rightMotor.setNeutralMode(mode);
+        leftMaster.setNeutralMode(mode);
+        rightSlave.setNeutralMode(mode);
     }
 
     public void stop() {
-        leftMotor.set(0);
-        rightMotor.set(0);
+        leftMaster.set(0);
+        rightSlave.set(0);
     }
 
     public WPI_TalonSRX getLeftMotor() {
-        return leftMotor;
+        return leftMaster;
     }
 
     public WPI_TalonSRX getRightMotor() {
-        return rightMotor;
+        return rightSlave;
     }
 
     public int getLeftVeloTicks() {
-        return leftMotor.getSelectedSensorVelocity();
+        return leftMaster.getSelectedSensorVelocity();
     }
 
     public int getRightVeloTicks() {
-        return rightMotor.getSelectedSensorVelocity();
+        return rightSlave.getSelectedSensorVelocity();
     }
 
     public double getDistToTarget(double targetY) {

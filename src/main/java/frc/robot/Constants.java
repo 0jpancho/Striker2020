@@ -72,7 +72,7 @@ public abstract class Constants {
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 20;
         // kP kI kD kF Iz PeakOut
-        public static final Gains kGains = new Gains(1.47, 0, 0, 0, 0, 1.00);
+        public static final Gains kGains = new Gains(1.47, 0, 0, 0, 0, 1.00); // CHANGE TO 0.6 TO TEST AFTER QUAL 61
 
         public static final double kRPM = 200;
     }

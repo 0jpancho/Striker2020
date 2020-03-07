@@ -11,29 +11,30 @@ public class TurnPID extends CommandBase {
 
     private Drivebase m_drive = new Drivebase();
 
-    private double targetAngle = 0;
-    private double tolerance = 1;
+    private double kTargetAngle;
+    private double kTolerance = 1;
 
     private PIDController controller = new PIDController(Constants.Drive.kTurnGains.kP, Constants.Drive.kTurnGains.kI,
             Constants.Drive.kTurnGains.kD);
 
     public TurnPID(Drivebase drive, double targetAngle, double tolerance) {
-        this.m_drive = drive;
+        m_drive = drive;
 
-        this.targetAngle = targetAngle;
-        this.tolerance = tolerance;
+        kTargetAngle = targetAngle;
+        kTolerance = tolerance;
     }
 
     @Override
     public void initialize() {
+      
+        m_drive.stop();
         m_drive.resetOdometry();
-        m_drive.configMotors(ControlMode.PercentOutput, 0);
-
+      
         controller.reset();
 
-        controller.setTolerance(tolerance);
+        controller.setTolerance(kTolerance);
         controller.enableContinuousInput(-180, 180);
-        controller.setSetpoint(targetAngle);
+        controller.setSetpoint(kTargetAngle);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -51,7 +52,7 @@ public class TurnPID extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (Math.abs(targetAngle - m_drive.getHeadingDegrees()) < 1) {
+        if (controller.atSetpoint()) {
             return true;
         }
         return false;

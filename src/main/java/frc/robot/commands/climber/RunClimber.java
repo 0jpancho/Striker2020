@@ -12,9 +12,9 @@ public class RunClimber extends CommandBase {
     private Climber m_climber;
     private XboxController m_controller;
 
-    DoubleSupplier downPow = () -> .5;
+    DoubleSupplier downPow = () -> -1;
 
-    DoubleSupplier upPow = () -> -.5;
+    DoubleSupplier upPow = () -> 1;
   
     DoubleSupplier stop = () -> 0;
 
@@ -33,11 +33,11 @@ public class RunClimber extends CommandBase {
     public void execute() {
                 
         if (m_controller.getYButton()) {
-            m_climber.setLiftPower(downPow);
+            m_climber.setLiftPower(upPow);
         }
 
         else if (m_controller.getAButton()) {
-            m_climber.setLiftPower(upPow);
+            m_climber.setLiftPower(downPow);
         }
         
         else {

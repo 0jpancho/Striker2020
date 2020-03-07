@@ -62,7 +62,7 @@ public class Drivebase extends SubsystemBase {
 	private final DifferentialDriveOdometry m_odometry;
 
 	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
+	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(1);
 
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 
@@ -71,14 +71,11 @@ public class Drivebase extends SubsystemBase {
 
 	public double leftMetersTraveled;
 	public double rightMetersTraveled;
-
-	private ControlMode mode = ControlMode.PercentOutput;
-	private double motorVal;
-
+	
 	public Drivebase() {
 
 		navx = new AHRS(SPI.Port.kMXP);
-		navx.enableLogging(false);
+		navx.enableLogging(true);
 
 		m_odometry = new DifferentialDriveOdometry(getHeadingPose());
 
@@ -153,15 +150,12 @@ public class Drivebase extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		leftMaster.set(mode, motorVal);
-		rightMaster.set(mode, motorVal);
-
 		updateOdometry();
 	}
 
-	public void configMotors(ControlMode controlMode, double motorVal) {
-		this.mode = controlMode;
-		this.motorVal = motorVal;
+	public void arcadeDrive(double forward, double rot) {
+		leftMaster.set(ControlMode.PercentOutput, -forward + rot);
+		rightMaster.set(ControlMode.PercentOutput, -forward - rot);
 	}
 
 	public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
