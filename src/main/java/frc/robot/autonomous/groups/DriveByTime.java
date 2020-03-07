@@ -9,7 +9,7 @@ public class DriveByTime extends SequentialCommandGroup {
     public DriveByTime(Drivebase drive, double power, double timeout) {
 
         addCommands(
-            new RunDrive(drive, 0.5).withTimeout(timeout)
+        
         );
     }
 }

@@ -53,11 +53,13 @@ public class Shooter implements Subsystem {
                 Constants.Shooter.kTimeoutMs);
 
         leftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+        leftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
         leftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         leftMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
         leftMotor.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
 
         rightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 20);
+        rightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
         rightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         rightMotor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
         rightMotor.setStatusFramePeriod(StatusFrame.Status_15_FirmwareApiStatus, 20);
@@ -69,14 +71,9 @@ public class Shooter implements Subsystem {
 
     @Override
     public void periodic() {
-        leftMotor.set(this.mode, this.motorVal);
+        
     }
-
-    public void setMotors(ControlMode mode, double motorVal) {
-        leftMotor.set(mode, motorVal);
-        rightMotor.set(mode, motorVal);
-    }
-
+    
     public double getMotorVal() {
         return motorVal;
     }

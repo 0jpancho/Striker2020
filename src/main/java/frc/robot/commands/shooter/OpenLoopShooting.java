@@ -19,19 +19,20 @@ public class OpenLoopShooting extends CommandBase {
 
     @Override
     public void initialize() {
-        m_shooter.setMotors(ControlMode.PercentOutput, 0);
+        m_shooter.stop();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_shooter.setMotors(ControlMode.PercentOutput, kPower);
+        m_shooter.getLeftMotor().set(kPower);
+        m_shooter.getRightMotor().set(kPower);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_shooter.setMotors(ControlMode.PercentOutput, 0);
+        m_shooter.stop();
     }
 
     // Returns true when the command should end.

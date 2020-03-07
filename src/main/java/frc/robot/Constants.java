@@ -102,7 +102,7 @@ public abstract class Constants {
         public static final double kPower = -0.25;
     }
 
-    public final static class Winch {
+    public final static class Climber {
         public static final int kWinchID = 1;
         public static final int kLiftID = 2;
 

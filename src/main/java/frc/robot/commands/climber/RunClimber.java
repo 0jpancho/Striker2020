@@ -1,5 +1,7 @@
 package frc.robot.commands.climber;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,6 +11,12 @@ public class RunClimber extends CommandBase {
 
     private Climber m_climber;
     private XboxController m_controller;
+
+    DoubleSupplier downPow = () -> .5;
+
+    DoubleSupplier upPow = () -> -.5;
+  
+    DoubleSupplier stop = () -> 0;
 
     public RunClimber(Climber climber, XboxController controller) {
         m_climber = climber;
@@ -24,18 +32,19 @@ public class RunClimber extends CommandBase {
     @Override
     public void execute() {
         
+        
         if (m_controller.getYButton()) {
-            m_climber.setLiftPower(1);
+            m_climber.setLiftPower(downPow);
         }
 
         else if (m_controller.getAButton()) {
-            m_climber.setLiftPower(-0.25);
+            m_climber.setLiftPower(upPow);
         }
-
+        
         else {
-            m_climber.setWinchPower(0);
+            m_climber.setLiftPower(stop);
         }
-
+        
         if (m_controller.getStickButton(Hand.kLeft)) {
             
             m_climber.setWinchPower(1);
@@ -46,14 +55,14 @@ public class RunClimber extends CommandBase {
         }
 
         else {
-            m_climber.setLiftPower(0);
+            m_climber.setWinchPower(0);
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         m_climber.setWinchPower(0);
-        m_climber.setLiftPower(0);
+        //m_climber.setLiftPower(0);
     }
 
     @Override

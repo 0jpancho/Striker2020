@@ -62,7 +62,7 @@ public class Drivebase extends SubsystemBase {
 	private final DifferentialDriveOdometry m_odometry;
 
 	private SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter m_rotLimiter = new SlewRateLimiter(2);
 
 	SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1.06, 6.16, 1.43);
 

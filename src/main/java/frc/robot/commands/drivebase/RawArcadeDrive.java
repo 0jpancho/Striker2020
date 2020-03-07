@@ -15,8 +15,8 @@ public class RawArcadeDrive extends CommandBase {
     private final Drivebase m_drive;
     private final XboxController m_controller;
 
-    private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(0.5);
-    private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(0.5);
+    private final SlewRateLimiter m_forwardLimiter = new SlewRateLimiter(3);
+    private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(10);
 
     public RawArcadeDrive(Drivebase drive, XboxController controller) {
         m_drive = drive;
@@ -35,14 +35,14 @@ public class RawArcadeDrive extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        DoubleSupplier forward = () -> m_forwardLimiter.calculate(m_controller.getY(Hand.kLeft));
+        DoubleSupplier forward = () -> -m_forwardLimiter.calculate(m_controller.getY(Hand.kLeft));
         DoubleSupplier rot = () -> m_rotLimiter.calculate(m_controller.getX(Hand.kRight));
 
-        if (Math.abs(forward.getAsDouble()) < 0.05) {
+        if (Math.abs(forward.getAsDouble()) < 0.1) {
             forward = () -> 0;
           }
       
-          if (Math.abs(rot.getAsDouble()) < 0.05) {
+          if (Math.abs(rot.getAsDouble()) < 0.1) {
             rot = () -> 0;
           }
 

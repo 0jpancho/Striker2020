@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -17,12 +19,13 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.autonomous.commands.DriveByDistance;
 import frc.robot.autonomous.commands.RevThenShoot;
+import frc.robot.autonomous.commands.RunDrive;
 import frc.robot.autonomous.commands.TurnToTarget;
-import frc.robot.autonomous.groups.DriveByTime;
 import frc.robot.autonomous.groups.ShootAndMove;
 import frc.robot.autonomous.groups.ShootOnly;
 import frc.robot.commands.climber.RunClimber;
 import frc.robot.commands.drivebase.DiffDrive;
+import frc.robot.commands.drivebase.RawArcadeDrive;
 import frc.robot.commands.shooter.ToggleLED;
 import frc.robot.commands.shooter.VeloShooting;
 import frc.robot.commands.indexer.RunIndexerSimple;
@@ -61,8 +64,7 @@ public class RobotContainer {
   // Commands
   private final DiffDrive m_diffDriveCommaned;
 
-  // private final RawArcadeDrive m_rawArcadeDrive = new
-  // RawArcadeDrive(m_drivebase, driver);
+  private final RawArcadeDrive m_rawArcadeDrive;
 
   private final RunIntake m_runIntakeCommand;
   private final RunIndexerSimple m_runIndexerCommand;
@@ -76,6 +78,8 @@ public class RobotContainer {
   private final RevThenShoot m_revThenShootCommand;
 
   private final Dashboard m_dashboard;
+
+ 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -94,7 +98,8 @@ public class RobotContainer {
     //m_limelight.setPipeline(2);
 
     // Instantiate Commands
-    m_diffDriveCommaned = new DiffDrive(m_drive, m_limelight, m_driver);
+    m_rawArcadeDrive = new RawArcadeDrive(m_drive, m_driver);
+    m_diffDriveCommaned = new DiffDrive(m_drive, m_driver);
     m_runIntakeCommand = new RunIntake(m_intake);
     m_runIndexerCommand = new RunIndexerSimple(m_indexer, Constants.Indexer.kPower);
     m_runClimberCommand = new RunClimber(m_climber, m_operator);
@@ -104,7 +109,7 @@ public class RobotContainer {
     m_toggleLEDCommand = new ToggleLED(m_limelight);
     
 
-    m_manualShootingCommand = new VeloShooting(m_shooter, Constants.Shooter.kRPM);
+    m_manualShootingCommand = new VeloShooting(m_shooter, 100);
     m_revThenShootCommand = new RevThenShoot(m_indexer, m_shooter);
 
     m_dashboard = new Dashboard(m_drive, m_shooter);
@@ -113,7 +118,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     m_drive.setDefaultCommand(m_diffDriveCommaned);
-    // m_drivebase.setDefaultCommand(m_rawArcadeDrive);
+    //m_drive.setDefaultCommand(m_rawArcadeDrive);
 
     m_climber.setDefaultCommand(m_runClimberCommand);
   }
@@ -151,10 +156,10 @@ public class RobotContainer {
      * 
      */
 
-    // Button opA = new JoystickButton(m_operator, 1);
+    Button opA = new JoystickButton(m_operator, 1);
     Button opB = new JoystickButton(m_operator, 2);
     Button opX = new JoystickButton(m_operator, 3);
-    // Button opY = new JoystickButton(m_operator, 4);
+    Button opY = new JoystickButton(m_operator, 4);
 
     Button opLB = new JoystickButton(m_operator, 5);
     Button opRB = new JoystickButton(m_operator, 6);
@@ -174,6 +179,19 @@ public class RobotContainer {
 
     opX.whileHeld(m_revThenShootCommand);
 
+    /*
+    if (opA.get()) {
+      m_climber.setLiftPower(downPow);
+    }
+
+    else if (opY.get()) {
+      m_climber.setLiftPower(upPow);
+    }
+
+    else {
+      m_climber.setLiftPower(stop);
+    }
+    */
 
   }
 
@@ -184,7 +202,6 @@ public class RobotContainer {
    */
 
   public Command getAutonomousCommand() { 
-    // An ExampleCommand will run in autonomous    
 
     switch (m_dashboard.getSelectedObjective()) {
       case MOVE:
@@ -197,7 +214,7 @@ public class RobotContainer {
         return new ShootAndMove(m_drive, m_indexer, m_shooter, m_limelight, 0);
 
       case ENCODERS_ARE_BAD:
-        return new DriveByTime(m_drive, 0.5, 3);
+        return new RunDrive(m_drive, 0.5, 2);
       case NOTHING:
         return null;
 

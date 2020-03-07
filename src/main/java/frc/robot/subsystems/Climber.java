@@ -1,18 +1,18 @@
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class  Climber extends SubsystemBase {
 
-    private Spark winchMotor;
-    private Talon liftMotor;
+    private Spark winchMotor, liftMotor;
 
     public Climber() {
-        winchMotor = new Spark(Constants.Winch.kWinchID);
-        liftMotor = new Talon(Constants.Winch.kLiftID);
+        winchMotor = new Spark(Constants.Climber.kWinchID);
+        liftMotor = new Spark(Constants.Climber.kLiftID);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class  Climber extends SubsystemBase {
         winchMotor.set(power);
     }
 
-    public void setLiftPower(double power) {
-        liftMotor.set(power);
+    public void setLiftPower(DoubleSupplier power) {
+        liftMotor.set(power.getAsDouble());
     }
 }

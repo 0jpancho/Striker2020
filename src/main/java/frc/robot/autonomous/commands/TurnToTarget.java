@@ -12,7 +12,7 @@ public class TurnToTarget extends CommandBase {
     private Drivebase m_drive;
     private Limelight m_limelight;
     private double kP = -.005;
-    private double minPower = 0.04;
+    private double minPower = 0.004;
 
     private double leftPower;
     private double rightPower;

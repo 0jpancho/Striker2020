@@ -17,6 +17,8 @@ public class Limelight extends SubsystemBase {
     public Limelight() {
         m_tableName = "limelight";
         m_table = NetworkTableInstance.getDefault().getTable(m_tableName);
+
+        setStream(ControlMode.StreamType.kPiPMain);
     }
 
     public boolean getIsTargetFound() {

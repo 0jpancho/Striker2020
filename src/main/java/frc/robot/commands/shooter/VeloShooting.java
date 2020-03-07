@@ -23,6 +23,7 @@ public class VeloShooting extends CommandBase {
     public void initialize() {
         // Scale RPM input with units per 100ms (hence / 600)
         targetCountsPer100ms = (kInputRPM * Constants.Shooter.kEncoderResolution) / 600;
+        System.out.println("Target 'RPM': " + targetCountsPer100ms);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -36,7 +37,7 @@ public class VeloShooting extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_shooter.setMotors(ControlMode.PercentOutput, 0);
+        m_shooter.stop();
     }
 
     // Returns true when the command should end.
