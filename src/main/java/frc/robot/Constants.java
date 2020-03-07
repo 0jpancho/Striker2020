@@ -35,7 +35,7 @@ public abstract class Constants {
         public static final double kInchesPerCount = kCircumferenceInches / kEncoderResolution;
         public static final double kMetersPerCount = kCircumferenceMeters / kEncoderResolution;
 
-        public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini)
+        public static final double kRawMaxSpeed = 3.956304; // 12.98 ft/s to m/s (AndyMark 10.71:1 Toughbox Mini w/ 6in wheels)
         public static final double kRawAngularSpeed = 2 * Math.PI;
         public static final double kForwardAdjust = 1;
         public static final double kRotAdjust = .8;
@@ -99,7 +99,9 @@ public abstract class Constants {
 
     public final static class Intake {
         public static final int kIntakeID = 0;
-        public static final double kPower = -0.25;
+
+        // Increased power from .25 to .5 to compensate for balls going under the robot
+        public static final double kPower = -0.5;
     }
 
     public final static class Climber {

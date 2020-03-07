@@ -31,8 +31,7 @@ public class RunClimber extends CommandBase {
 
     @Override
     public void execute() {
-        
-        
+                
         if (m_controller.getYButton()) {
             m_climber.setLiftPower(downPow);
         }

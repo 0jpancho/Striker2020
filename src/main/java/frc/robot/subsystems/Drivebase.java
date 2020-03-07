@@ -179,10 +179,29 @@ public class Drivebase extends SubsystemBase {
 		rightMaster.setVoltage(rightOutput + rightFeedforward);
 	}
 
+	/*
 	public void differentialDrive(double forward, double rot) {
 		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
 		setSpeeds(wheelSpeeds);
 	}
+
+	public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {
+		final double leftFeedforward = m_feedforward.calculate(speeds.leftMetersPerSecond);
+		final double rightFeedforward = m_feedforward.calculate(speeds.rightMetersPerSecond);
+	
+		final double leftOutput = m_LPID.calculate(getLVeloTicks(),
+			speeds.leftMetersPerSecond);
+		final double rightOutput = m_RPID.calculate(getRVeloTicks(),
+			speeds.rightMetersPerSecond);
+		leftMaster.setVoltage(leftOutput + leftFeedforward);
+		rightMaster.setVoltage(rightOutput + rightFeedforward);
+	  }
+	
+	  public void differentialDrive(double forward, double rot) {
+		var wheelSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(forward, 0.0, rot));
+		setSpeeds(wheelSpeeds);
+	  }
+	*/
 
 	public void arcadeDriveVelo(double forward, double rot, boolean useSquares) {
 		var xSpeed = forward;

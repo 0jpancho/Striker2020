@@ -7,14 +7,13 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 import frc.robot.autonomous.commands.DriveByDistance;
@@ -46,9 +45,6 @@ import frc.robot.vision.Limelight;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  // private Joystick driverLeft = new Joystick(0);
-  // private Joystick driverRight = new Joystick(1);
-
   private XboxController m_driver = new XboxController(0);
   private XboxController m_operator = new XboxController(1);
 
@@ -79,8 +75,6 @@ public class RobotContainer {
 
   private final Dashboard m_dashboard;
 
- 
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -94,8 +88,6 @@ public class RobotContainer {
     m_shooter = new Shooter();
     m_climber = new Climber();
     m_limelight = new Limelight();
-
-    //m_limelight.setPipeline(2);
 
     // Instantiate Commands
     m_rawArcadeDrive = new RawArcadeDrive(m_drive, m_driver);
@@ -137,18 +129,20 @@ public class RobotContainer {
      * 
      */
 
-    // Button A = new JoystickButton(m_driver, 1);
+    Button A = new JoystickButton(m_driver, 1);
     // Button B = new JoystickButton(m_driver, 2);
     // Button X = new JoystickButton(m_driver, 3);
     // Button Y = new JoystickButton(m_driver, 4);
 
     Button LB = new JoystickButton(m_driver, 5);
-    Button RB = new JoystickButton(m_driver, 6);
+    // Button RB = new JoystickButton(m_driver, 6);
     // Button Start = new JoystickButton(m_driver, 7);
     // Button Select = new JoystickButton(m_driver, 8);
 
+    A.whenPressed(m_toggleLEDCommand);
+
     LB.whileHeld(m_turnToTargetCommand);
-    RB.whenPressed(m_toggleLEDCommand);
+   
     
     /**
      * 
@@ -166,32 +160,15 @@ public class RobotContainer {
     // Button opStart = new JoystickButton(m_operator, 7);
     // Button opSelect = new JoystickButton(m_operator, 8);
 
-    /*
-     * Button opDPadUp = new DPad(m_operator, DPad.Direction.up); Button opDPadDown
-     * = new DPad(m_operator, DPad.Direction.down); Button opDPadRight = new
-     * DPad(m_operator, DPad.Direction.right); Button opDPadLeft = new
-     * DPad(m_operator, DPad.Direction.left);
-     */
+   
+    POVButton opUp = new POVButton(m_operator, 0);
+    POVButton opDown = new POVButton(m_operator, 180);
 
     opLB.whileHeld(m_runIntakeCommand);
     opRB.whileHeld(m_runIndexerCommand);
     opB.whileHeld(m_manualShootingCommand);
 
     opX.whileHeld(m_revThenShootCommand);
-
-    /*
-    if (opA.get()) {
-      m_climber.setLiftPower(downPow);
-    }
-
-    else if (opY.get()) {
-      m_climber.setLiftPower(upPow);
-    }
-
-    else {
-      m_climber.setLiftPower(stop);
-    }
-    */
 
   }
 
@@ -220,7 +197,6 @@ public class RobotContainer {
 
       default:
         return null;
-
    }
   }
 }
